@@ -15,6 +15,7 @@ import { User } from '../../users/entities/user.entity';
 import { Enrollment } from '../../enrollments/entities/enrollment.entity';
 import { Grade } from '../../grades/entities/grade.entity';
 import { Attendance } from '../../attendance/entities/attendance.entity';
+import { Department } from '../../departments/entities/department.entity';
 
 @Entity({ name: 'courses' })
 export class Course {
@@ -33,9 +34,12 @@ export class Course {
   @Column({ type: 'int' })
   credits: number;
 
-  @Index('idx_courses_department')
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  department?: string | null;
+  @Column({ name: 'department_id', type: 'int', nullable: true })
+  departmentId?: number | null;
+
+  @ManyToOne(() => Department, { nullable: true })
+  @JoinColumn({ name: 'department_id' })
+  departmentEntity?: Department | null;
 
   @Index('idx_courses_semester')
   @Column({ type: 'int', nullable: true })

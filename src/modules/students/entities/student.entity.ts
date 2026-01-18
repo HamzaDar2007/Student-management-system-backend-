@@ -13,6 +13,7 @@ import { User } from '../../users/entities/user.entity';
 import { Enrollment } from '../../enrollments/entities/enrollment.entity';
 import { Grade } from '../../grades/entities/grade.entity';
 import { Attendance } from '../../attendance/entities/attendance.entity';
+import { Department } from '../../departments/entities/department.entity';
 
 export enum Gender {
   MALE = 'male',
@@ -57,9 +58,12 @@ export class Student {
   @Column({ name: 'enrollment_date', type: 'date' })
   enrollmentDate: string;
 
-  @Index('idx_students_department')
-  @Column({ type: 'varchar', length: 100, nullable: true })
-  department?: string | null;
+  @Column({ name: 'department_id', type: 'int', nullable: true })
+  departmentId?: number | null;
+
+  @ManyToOne(() => Department, (dept) => dept.students, { nullable: true })
+  @JoinColumn({ name: 'department_id' })
+  departmentEntity?: Department | null;
 
   @Index('idx_students_semester')
   @Column({ type: 'int', nullable: true })

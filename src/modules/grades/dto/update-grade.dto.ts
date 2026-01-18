@@ -2,6 +2,14 @@ import { IsInt, IsNumber, IsOptional, IsString, Length, Max, Min } from 'class-v
 
 export class UpdateGradeDto {
   @IsOptional()
+  @IsInt()
+  student_id?: number;
+
+  @IsOptional()
+  @IsInt()
+  course_id?: number;
+
+  @IsOptional()
   @IsString()
   @Length(1, 50)
   assessment_type?: string;
