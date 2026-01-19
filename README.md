@@ -1,98 +1,291 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Students Management System - Backend API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A comprehensive RESTful API for managing students, courses, enrollments, grades, attendance, and academic administration built with NestJS.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 🚀 Features
 
-## Description
+- **Authentication & Authorization**
+  - JWT-based authentication with access & refresh tokens
+  - Role-based access control (Admin, Teacher, Student)
+  - Email verification and password reset
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **User Management**
+  - User CRUD operations
+  - Profile management
+  - Password hashing with bcrypt
 
-## Project setup
+- **Academic Management**
+  - Students management with enrollment tracking
+  - Teachers management with course assignments
+  - Courses with capacity and scheduling
+  - Enrollments with grade tracking
+  - Grades with multiple assessment types
+  - Attendance tracking with bulk operations
+
+- **Administrative**
+  - Faculties and Departments management
+  - Academic Terms/Semesters
+  - Course Scheduling with conflict detection
+  - Classroom management
+  - Audit logging for all operations
+
+- **Infrastructure**
+  - Rate limiting protection
+  - Health checks (liveness, readiness)
+  - Swagger API documentation
+  - Global exception handling
+
+## 🛠️ Tech Stack
+
+- **Framework:** NestJS v11
+- **Database:** PostgreSQL with TypeORM
+- **Authentication:** Passport.js with JWT
+- **Validation:** class-validator & class-transformer
+- **Documentation:** Swagger/OpenAPI
+- **Security:** Helmet, Rate Limiting, XSS Protection
+- **Email:** Nodemailer
+
+## 📋 Prerequisites
+
+- Node.js >= 18
+- PostgreSQL >= 14
+- npm or yarn
+
+## 🔧 Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd students-management/backend
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Configure environment variables**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` with your configuration:
+   ```env
+   # Application
+   NODE_ENV=development
+   PORT=3000
+   
+   # Database
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
+   DB_DATABASE=students_management
+   
+   # JWT
+   JWT_SECRET=your-secret-key
+   JWT_EXPIRES_IN=15m
+   JWT_REFRESH_SECRET=your-refresh-secret
+   JWT_REFRESH_EXPIRES_IN=7d
+   
+   # Email (optional)
+   SMTP_HOST=smtp.example.com
+   SMTP_PORT=587
+   SMTP_USER=your-email
+   SMTP_PASS=your-password
+   MAIL_FROM=noreply@example.com
+   
+   # Rate Limiting
+   THROTTLE_TTL=60000
+   THROTTLE_LIMIT=100
+   ```
+
+4. **Run database migrations**
+   ```bash
+   npm run migration:run
+   ```
+
+5. **Seed the database (optional)**
+   ```bash
+   npm run seed
+   ```
+
+## 🚀 Running the Application
 
 ```bash
-$ npm install
+# Development mode
+npm run start:dev
+
+# Production mode
+npm run build
+npm run start:prod
 ```
 
-## Compile and run the project
+The API will be available at `http://localhost:3000`
+
+## 📚 API Documentation
+
+Once the server is running, access the Swagger documentation at:
+- **Swagger UI:** `http://localhost:3000/api/docs`
+
+## 🔐 Authentication
+
+Most endpoints require JWT authentication. To authenticate:
+
+1. **Register or Login**
+   ```bash
+   POST /api/auth/login
+   {
+     "email": "admin@example.com",
+     "password": "password123"
+   }
+   ```
+
+2. **Use the token**
+   ```bash
+   Authorization: Bearer <your_jwt_token>
+   ```
+
+### Default Users (after seeding)
+| Role    | Email              | Password    |
+|---------|-------------------|-------------|
+| Admin   | admin@example.com | Admin123!   |
+| Teacher | teacher@example.com | Teacher123! |
+| Student | student@example.com | Student123! |
+
+## 📁 Project Structure
+
+```
+src/
+├── common/                  # Shared utilities
+│   ├── decorators/         # Custom decorators
+│   ├── dto/                # Shared DTOs
+│   ├── filters/            # Exception filters
+│   ├── guards/             # Auth guards
+│   ├── interceptors/       # Interceptors
+│   ├── pipes/              # Custom pipes
+│   ├── services/           # Shared services
+│   └── validators/         # Custom validators
+├── config/                  # Configuration
+├── database/
+│   ├── migrations/         # TypeORM migrations
+│   └── seeds/              # Database seeders
+├── modules/
+│   ├── academic-terms/     # Academic terms/semesters
+│   ├── attendance/         # Attendance tracking
+│   ├── audit/              # Audit logging
+│   ├── auth/               # Authentication
+│   ├── courses/            # Course management
+│   ├── departments/        # Department management
+│   ├── enrollments/        # Enrollment management
+│   ├── faculties/          # Faculty management
+│   ├── grades/             # Grade management
+│   ├── health/             # Health checks
+│   ├── scheduling/         # Course scheduling
+│   ├── students/           # Student management
+│   ├── teachers/           # Teacher management
+│   └── users/              # User management
+├── app.module.ts
+└── main.ts
+```
+
+## 🧪 Testing
 
 ```bash
-# development
-$ npm run start
+# Unit tests
+npm run test
 
-# watch mode
-$ npm run start:dev
+# E2E tests
+npm run test:e2e
 
-# production mode
-$ npm run start:prod
+# Test coverage
+npm run test:cov
 ```
 
-## Run tests
+## 📦 API Endpoints
 
-```bash
-# unit tests
-$ npm run test
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register new user |
+| POST | `/api/auth/login` | Login |
+| POST | `/api/auth/refresh-token` | Refresh access token |
+| POST | `/api/auth/forgot-password` | Request password reset |
+| POST | `/api/auth/reset-password` | Reset password |
+| POST | `/api/auth/verify-email` | Verify email |
+| GET | `/api/auth/me` | Get current user |
+| POST | `/api/auth/logout` | Logout |
 
-# e2e tests
-$ npm run test:e2e
+### Users (Admin only)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/users` | List all users |
+| POST | `/api/users` | Create user |
+| GET | `/api/users/:id` | Get user by ID |
+| PUT | `/api/users/:id` | Update user |
+| DELETE | `/api/users/:id` | Delete user |
 
-# test coverage
-$ npm run test:cov
-```
+### Students
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/students` | List students |
+| POST | `/api/students` | Create student |
+| GET | `/api/students/:id` | Get student |
+| PUT | `/api/students/:id` | Update student |
+| DELETE | `/api/students/:id` | Delete student |
+| GET | `/api/students/:id/grades` | Get student grades |
+| GET | `/api/students/:id/attendance` | Get student attendance |
 
-## Deployment
+### Courses
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/courses` | List courses |
+| POST | `/api/courses` | Create course |
+| GET | `/api/courses/:id` | Get course |
+| PUT | `/api/courses/:id` | Update course |
+| DELETE | `/api/courses/:id` | Delete course |
+| GET | `/api/courses/:id/students` | Get enrolled students |
+| GET | `/api/courses/:id/attendance` | Get course attendance |
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### Health Checks
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/health` | Full health check |
+| GET | `/api/health/liveness` | Liveness probe |
+| GET | `/api/health/readiness` | Readiness probe |
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## 🔒 Security
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
+- **Helmet:** Security headers
+- **Rate Limiting:** 100 requests per minute per IP
+- **CORS:** Configurable origin
+- **XSS Protection:** Input sanitization
+- **Password Hashing:** bcrypt with salt rounds
+- **JWT:** Short-lived access tokens with refresh token rotation
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 📝 Scripts
 
-## Resources
+| Command | Description |
+|---------|-------------|
+| `npm run start:dev` | Start in development mode |
+| `npm run start:prod` | Start in production mode |
+| `npm run build` | Build the application |
+| `npm run test` | Run unit tests |
+| `npm run test:e2e` | Run E2E tests |
+| `npm run migration:generate` | Generate migration |
+| `npm run migration:run` | Run migrations |
+| `npm run migration:revert` | Revert last migration |
+| `npm run seed` | Seed the database |
+| `npm run lint` | Run ESLint |
+| `npm run format` | Format code with Prettier |
 
-Check out a few resources that may come in handy when working with NestJS:
+## 🤝 Contributing
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## Support
+## 📄 License
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License.

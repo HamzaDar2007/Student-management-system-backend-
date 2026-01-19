@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -40,6 +42,21 @@ import { TeachersModule } from './modules/teachers/teachers.module';
         DB_PASSWORD: Joi.string().required(),
         DB_DATABASE: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
+        THROTTLE_TTL: Joi.number().default(60000),
+        THROTTLE_LIMIT: Joi.number().default(100),
+      }),
+    }),
+    // Rate limiting
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        throttlers: [
+          {
+            ttl: configService.get<number>('THROTTLE_TTL', 60000),
+            limit: configService.get<number>('THROTTLE_LIMIT', 100),
+          },
+        ],
       }),
     }),
     TypeOrmModule.forRootAsync({
@@ -77,6 +94,12 @@ import { TeachersModule } from './modules/teachers/teachers.module';
     TeachersModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule { }

@@ -1,12 +1,19 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, Logger } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import { XssPipe } from './common/pipes/xss.pipe';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
+  
   app.use(helmet());
+
+  // Global exception filter
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   // Global validation pipe
   app.useGlobalPipes(
@@ -27,8 +34,58 @@ async function bootstrap() {
     credentials: true,
   });
 
+  // Swagger API Documentation
+  const config = new DocumentBuilder()
+    .setTitle('Students Management System API')
+    .setDescription(`
+      RESTful API for managing students, courses, enrollments, grades, attendance, and academic administration.
+      
+      ## Authentication
+      Most endpoints require JWT Bearer token authentication. Use the /api/auth/login endpoint to obtain a token.
+      
+      ## Roles
+      - **ADMIN**: Full access to all resources
+      - **TEACHER**: Manage courses, grades, attendance for assigned courses
+      - **STUDENT**: View own data, enrollments, grades, and attendance
+    `)
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'JWT-auth',
+    )
+    .addTag('Auth', 'Authentication and authorization endpoints')
+    .addTag('Users', 'User management endpoints')
+    .addTag('Students', 'Student management endpoints')
+    .addTag('Teachers', 'Teacher management endpoints')
+    .addTag('Courses', 'Course management endpoints')
+    .addTag('Enrollments', 'Enrollment management endpoints')
+    .addTag('Grades', 'Grade management endpoints')
+    .addTag('Attendance', 'Attendance tracking endpoints')
+    .addTag('Faculties', 'Faculty management endpoints')
+    .addTag('Departments', 'Department management endpoints')
+    .addTag('Academic Terms', 'Academic term/semester management')
+    .addTag('Scheduling', 'Course scheduling and classroom management')
+    .addTag('Audit', 'Audit log endpoints')
+    .addTag('Health', 'Health check endpoints')
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  });
+
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
-  console.log(`Application running on http://localhost:${port}`);
+  logger.log(`Application running on http://localhost:${port}`);
+  logger.log(`Swagger documentation available at http://localhost:${port}/api/docs`);
 }
 bootstrap();
