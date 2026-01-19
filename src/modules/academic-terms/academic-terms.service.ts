@@ -1,26 +1,104 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { AcademicTerm } from './entities/academic-term.entity';
 import { CreateAcademicTermDto } from './dto/create-academic-term.dto';
 import { UpdateAcademicTermDto } from './dto/update-academic-term.dto';
 
 @Injectable()
 export class AcademicTermsService {
-  create(createAcademicTermDto: CreateAcademicTermDto) {
-    return 'This action adds a new academicTerm';
+  constructor(
+    @InjectRepository(AcademicTerm)
+    private readonly termRepo: Repository<AcademicTerm>,
+  ) {}
+
+  async create(dto: CreateAcademicTermDto) {
+    const existingName = await this.termRepo.findOne({ where: { name: dto.name } });
+    if (existingName) throw new ConflictException('Academic term name already exists');
+
+    const startDate = new Date(dto.start_date);
+    const endDate = new Date(dto.end_date);
+
+    if (startDate >= endDate) {
+      throw new BadRequestException('Start date must be before end date');
+    }
+
+    const term = this.termRepo.create({
+      name: dto.name,
+      startDate: startDate,
+      endDate: endDate,
+      isActive: dto.is_active ?? false,
+    });
+
+    // If setting this term as active, deactivate others
+    if (term.isActive) {
+      await this.termRepo.update({}, { isActive: false });
+    }
+
+    return this.termRepo.save(term);
   }
 
-  findAll() {
-    return `This action returns all academicTerms`;
+  async findAll(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const [items, total] = await this.termRepo.findAndCount({
+      order: { startDate: 'DESC' },
+      skip,
+      take: limit,
+    });
+    return { page, limit, total, items };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} academicTerm`;
+  async findOne(id: number) {
+    const term = await this.termRepo.findOne({ where: { id } });
+    if (!term) throw new NotFoundException('Academic term not found');
+    return term;
   }
 
-  update(id: number, updateAcademicTermDto: UpdateAcademicTermDto) {
-    return `This action updates a #${id} academicTerm`;
+  async findActive() {
+    const term = await this.termRepo.findOne({ where: { isActive: true } });
+    return term;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} academicTerm`;
+  async update(id: number, dto: UpdateAcademicTermDto) {
+    const term = await this.termRepo.findOne({ where: { id } });
+    if (!term) throw new NotFoundException('Academic term not found');
+
+    if (dto.name && dto.name !== term.name) {
+      const existing = await this.termRepo.findOne({ where: { name: dto.name } });
+      if (existing) throw new ConflictException('Academic term name already exists');
+    }
+
+    const startDate = dto.start_date ? new Date(dto.start_date) : term.startDate;
+    const endDate = dto.end_date ? new Date(dto.end_date) : term.endDate;
+
+    if (startDate >= endDate) {
+      throw new BadRequestException('Start date must be before end date');
+    }
+
+    // If setting this term as active, deactivate others
+    if (dto.is_active === true && !term.isActive) {
+      await this.termRepo.update({}, { isActive: false });
+    }
+
+    Object.assign(term, {
+      name: dto.name ?? term.name,
+      startDate: startDate,
+      endDate: endDate,
+      isActive: dto.is_active !== undefined ? dto.is_active : term.isActive,
+    });
+
+    return this.termRepo.save(term);
+  }
+
+  async remove(id: number) {
+    const term = await this.termRepo.findOne({ where: { id } });
+    if (!term) throw new NotFoundException('Academic term not found');
+
+    if (term.isActive) {
+      throw new ConflictException('Cannot delete an active academic term');
+    }
+
+    await this.termRepo.remove(term);
+    return { deleted: true };
   }
 }

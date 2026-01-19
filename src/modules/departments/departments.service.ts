@@ -1,26 +1,106 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Department } from './entities/department.entity';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
+import { Faculty } from '../faculties/entities/faculty.entity';
 
 @Injectable()
 export class DepartmentsService {
-  create(createDepartmentDto: CreateDepartmentDto) {
-    return 'This action adds a new department';
+  constructor(
+    @InjectRepository(Department)
+    private readonly departmentRepo: Repository<Department>,
+    @InjectRepository(Faculty)
+    private readonly facultyRepo: Repository<Faculty>,
+  ) {}
+
+  async create(dto: CreateDepartmentDto) {
+    const existingName = await this.departmentRepo.findOne({ where: { name: dto.name } });
+    if (existingName) throw new ConflictException('Department name already exists');
+
+    const existingCode = await this.departmentRepo.findOne({ where: { code: dto.code } });
+    if (existingCode) throw new ConflictException('Department code already exists');
+
+    let faculty: Faculty | null = null;
+    if (dto.faculty_id) {
+      faculty = await this.facultyRepo.findOne({ where: { id: dto.faculty_id } });
+      if (!faculty) throw new NotFoundException('Faculty not found');
+    }
+
+    const department = this.departmentRepo.create({
+      name: dto.name,
+      code: dto.code,
+      faculty: faculty ?? undefined,
+    });
+
+    return this.departmentRepo.save(department);
   }
 
-  findAll() {
-    return `This action returns all departments`;
+  async findAll(page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+    const [items, total] = await this.departmentRepo.findAndCount({
+      relations: ['faculty', 'students'],
+      order: { id: 'DESC' },
+      skip,
+      take: limit,
+    });
+    return { page, limit, total, items };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} department`;
+  async findOne(id: number) {
+    const department = await this.departmentRepo.findOne({
+      where: { id },
+      relations: ['faculty', 'students'],
+    });
+    if (!department) throw new NotFoundException('Department not found');
+    return department;
   }
 
-  update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
-    return `This action updates a #${id} department`;
+  async update(id: number, dto: UpdateDepartmentDto) {
+    const department = await this.departmentRepo.findOne({ where: { id } });
+    if (!department) throw new NotFoundException('Department not found');
+
+    if (dto.name && dto.name !== department.name) {
+      const existing = await this.departmentRepo.findOne({ where: { name: dto.name } });
+      if (existing) throw new ConflictException('Department name already exists');
+    }
+
+    if (dto.code && dto.code !== department.code) {
+      const existing = await this.departmentRepo.findOne({ where: { code: dto.code } });
+      if (existing) throw new ConflictException('Department code already exists');
+    }
+
+    if (dto.faculty_id !== undefined) {
+      if (dto.faculty_id === null) {
+        department.faculty = null as any;
+      } else {
+        const faculty = await this.facultyRepo.findOne({ where: { id: dto.faculty_id } });
+        if (!faculty) throw new NotFoundException('Faculty not found');
+        department.faculty = faculty;
+      }
+    }
+
+    Object.assign(department, {
+      name: dto.name ?? department.name,
+      code: dto.code ?? department.code,
+    });
+
+    return this.departmentRepo.save(department);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} department`;
+  async remove(id: number) {
+    const department = await this.departmentRepo.findOne({
+      where: { id },
+      relations: ['students'],
+    });
+    if (!department) throw new NotFoundException('Department not found');
+
+    if (department.students && department.students.length > 0) {
+      throw new ConflictException('Cannot delete department with existing students');
+    }
+
+    await this.departmentRepo.remove(department);
+    return { deleted: true };
   }
 }
