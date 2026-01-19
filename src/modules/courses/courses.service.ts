@@ -38,7 +38,7 @@ export class CoursesService {
       courseName: dto.course_name,
       description: dto.description ?? null,
       credits: dto.credits,
-      department: dto.department ?? null,
+      departmentId: dto.department_id ?? null,
       semester: dto.semester ?? null,
       maxStudents: dto.max_students ?? 50,
       isActive: dto.is_active ?? true,
@@ -72,8 +72,8 @@ export class CoursesService {
     if (query.semester) {
       qb.andWhere('course.semester = :semester', { semester: query.semester });
     }
-    if (query.department) {
-      qb.andWhere('course.department = :department', { department: query.department });
+    if (query.department_id) {
+      qb.andWhere('course.departmentId = :departmentId', { departmentId: query.department_id });
     }
     if (query.teacher_id) {
       qb.andWhere('teacher.id = :teacherId', { teacherId: query.teacher_id });
@@ -114,7 +114,7 @@ export class CoursesService {
       courseName: dto.course_name ?? course.courseName,
       description: dto.description !== undefined ? dto.description : course.description,
       credits: dto.credits ?? course.credits,
-      department: dto.department !== undefined ? dto.department : course.department,
+      departmentId: dto.department_id !== undefined ? dto.department_id : course.departmentId,
       semester: dto.semester !== undefined ? dto.semester : course.semester,
       maxStudents: dto.max_students !== undefined ? dto.max_students : course.maxStudents,
       isActive: dto.is_active !== undefined ? dto.is_active : course.isActive,

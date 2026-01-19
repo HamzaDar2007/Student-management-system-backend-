@@ -42,7 +42,7 @@ export class StudentsService {
         phone: dto.phone ?? null,
         emergencyContact: dto.emergency_contact ?? null,
         enrollmentDate: dto.enrollment_date,
-        department: dto.department ?? null,
+        departmentId: dto.department_id ?? null,
         semester: dto.semester ?? null,
       }),
     );
@@ -56,7 +56,7 @@ export class StudentsService {
     const skip = (page - 1) * limit;
 
     const where: any = {};
-    if (query.department) where.department = query.department;
+    if (query.department_id) where.departmentId = query.department_id;
     if (query.semester) where.semester = query.semester;
 
     const search = query.search?.trim();
@@ -64,7 +64,6 @@ export class StudentsService {
       const [items, total] = await this.studentRepo.findAndCount({
         where: [
           { ...where, studentId: ILike(`%${search}%`) },
-          { ...where, department: ILike(`%${search}%`) },
         ],
         relations: ['user'],
         order: { id: 'DESC' },
@@ -124,8 +123,8 @@ export class StudentsService {
           ? dto.emergency_contact
           : student.emergencyContact,
       enrollmentDate: dto.enrollment_date ?? student.enrollmentDate,
-      department:
-        dto.department !== undefined ? dto.department : student.department,
+      departmentId:
+        dto.department_id !== undefined ? dto.department_id : student.departmentId,
       semester: dto.semester !== undefined ? dto.semester : student.semester,
     });
 

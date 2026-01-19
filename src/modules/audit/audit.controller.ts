@@ -1,34 +1,37 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { AuditService } from './audit.service';
-import { CreateAuditDto } from './dto/create-audit.dto';
-import { UpdateAuditDto } from './dto/update-audit.dto';
+import { AuditQueryDto } from './dto/audit-query.dto';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { Roles } from '../../common/decorators/roles.decorator';
+import { UserRole } from '../users/entities/user.entity';
 
-@Controller('audit')
+@Controller('api/audit')
+@UseGuards(JwtAuthGuard, RolesGuard)
+@Roles(UserRole.ADMIN)
 export class AuditController {
   constructor(private readonly auditService: AuditService) {}
 
-  @Post()
-  create(@Body() createAuditDto: CreateAuditDto) {
-    return this.auditService.create(createAuditDto);
-  }
-
   @Get()
-  findAll() {
-    return this.auditService.findAll();
+  findAll(@Query() query: AuditQueryDto) {
+    return this.auditService.findAll(query);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.auditService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.auditService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuditDto: UpdateAuditDto) {
-    return this.auditService.update(+id, updateAuditDto);
+  @Get('resource/:resource/:resourceId')
+  findByResource(
+    @Param('resource') resource: string,
+    @Param('resourceId') resourceId: string,
+  ) {
+    return this.auditService.findByResource(resource, resourceId);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.auditService.remove(+id);
+  @Get('user/:userId')
+  findByUser(@Param('userId', ParseIntPipe) userId: number) {
+    return this.auditService.findByUser(userId);
   }
 }

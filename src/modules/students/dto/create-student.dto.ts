@@ -51,9 +51,8 @@ export class CreateStudentDto {
   enrollment_date: string;
 
   @IsOptional()
-  @IsString()
-  @Length(1, 100)
-  department?: string;
+  @IsInt()
+  department_id?: number;
 
   @IsOptional()
   @IsInt()

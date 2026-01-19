@@ -32,9 +32,8 @@ export class CreateCourseDto {
   credits: number;
 
   @IsOptional()
-  @IsString()
-  @Length(1, 100)
-  department?: string;
+  @IsInt()
+  department_id?: number;
 
   @IsOptional()
   @IsInt()

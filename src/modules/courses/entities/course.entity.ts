@@ -83,4 +83,16 @@ export class Course {
     inverseJoinColumn: { name: 'teacher_id', referencedColumnName: 'id' },
   })
   teachers?: User[];
+
+  // Self-referencing relationship for prerequisites
+  @ManyToMany(() => Course, (course) => course.dependentCourses)
+  @JoinTable({
+    name: 'course_prerequisites',
+    joinColumn: { name: 'course_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'prerequisite_id', referencedColumnName: 'id' },
+  })
+  prerequisites?: Course[];
+
+  @ManyToMany(() => Course, (course) => course.prerequisites)
+  dependentCourses?: Course[];
 }

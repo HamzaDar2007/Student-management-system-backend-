@@ -52,6 +52,18 @@ export class User {
   @Column({ name: 'refresh_token', type: 'varchar', length: 255, nullable: true })
   refreshToken?: string | null;
 
+  @Column({ name: 'email_verified', type: 'boolean', default: false })
+  emailVerified: boolean;
+
+  @Column({ name: 'email_verification_token', type: 'varchar', length: 255, nullable: true })
+  emailVerificationToken?: string | null;
+
+  @Column({ name: 'password_reset_token', type: 'varchar', length: 255, nullable: true })
+  passwordResetToken?: string | null;
+
+  @Column({ name: 'password_reset_expires', type: 'timestamptz', nullable: true })
+  passwordResetExpires?: Date | null;
+
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 

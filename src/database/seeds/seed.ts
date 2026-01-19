@@ -14,6 +14,8 @@ import {
   Attendance,
   AttendanceStatus,
 } from '../../modules/attendance/entities/attendance.entity';
+import { Department } from '../../modules/departments/entities/department.entity';
+import { Faculty } from '../../modules/faculties/entities/faculty.entity';
 
 function yyyyMmDd(date: Date): string {
   const yyyy = date.getFullYear();
@@ -31,6 +33,8 @@ async function runSeed() {
   const enrollmentRepo = dataSource.getRepository(Enrollment);
   const gradeRepo = dataSource.getRepository(Grade);
   const attendanceRepo = dataSource.getRepository(Attendance);
+  const departmentRepo = dataSource.getRepository(Department);
+  const facultyRepo = dataSource.getRepository(Faculty);
 
   console.log('✅ Connected. Seeding data...');
 
@@ -44,6 +48,8 @@ async function runSeed() {
   await courseRepo.delete({});
   await studentRepo.delete({});
   await userRepo.delete({});
+  await departmentRepo.delete({});
+  await facultyRepo.delete({});
 
   // -----------------------
   // 1) Password hashing
@@ -86,6 +92,40 @@ async function runSeed() {
   });
 
   await userRepo.save([admin, teacher1, teacher2]);
+
+  // -----------------------
+  // 2.1) Create Faculty and Departments
+  // -----------------------
+  const faculty = await facultyRepo.save(
+    facultyRepo.create({
+      name: 'Faculty of Computing',
+      code: 'FOC',
+    }),
+  );
+
+  const csDept = await departmentRepo.save(
+    departmentRepo.create({
+      name: 'Computer Science',
+      code: 'CS',
+      faculty: faculty,
+    }),
+  );
+
+  const seDept = await departmentRepo.save(
+    departmentRepo.create({
+      name: 'Software Engineering',
+      code: 'SE',
+      faculty: faculty,
+    }),
+  );
+
+  const itDept = await departmentRepo.save(
+    departmentRepo.create({
+      name: 'Information Technology',
+      code: 'IT',
+      faculty: faculty,
+    }),
+  );
 
   // -----------------------
   // 3) Create Student Users + Student Profiles
@@ -155,7 +195,7 @@ async function runSeed() {
         phone: '03000000001',
         emergencyContact: 'Father: 03000011111',
         enrollmentDate,
-        department: 'Computer Science',
+        departmentId: csDept.id,
         semester: 1,
       },
       {
@@ -167,7 +207,7 @@ async function runSeed() {
         phone: '03000000002',
         emergencyContact: 'Mother: 03000022222',
         enrollmentDate,
-        department: 'Computer Science',
+        departmentId: csDept.id,
         semester: 1,
       },
       {
@@ -179,7 +219,7 @@ async function runSeed() {
         phone: '03000000003',
         emergencyContact: 'Brother: 03000033333',
         enrollmentDate,
-        department: 'Software Engineering',
+        departmentId: seDept.id,
         semester: 2,
       },
       {
@@ -191,7 +231,7 @@ async function runSeed() {
         phone: '03000000004',
         emergencyContact: 'Father: 03000044444',
         enrollmentDate,
-        department: 'Information Technology',
+        departmentId: itDept.id,
         semester: 2,
       },
       {
@@ -203,7 +243,7 @@ async function runSeed() {
         phone: '03000000005',
         emergencyContact: 'Guardian: 03000055555',
         enrollmentDate,
-        department: 'Computer Science',
+        departmentId: csDept.id,
         semester: 1,
       },
     ]),
@@ -219,7 +259,7 @@ async function runSeed() {
         courseName: 'Introduction to Programming',
         description: 'Basic programming concepts',
         credits: 3,
-        department: 'Computer Science',
+        departmentId: csDept.id,
         semester: 1,
         maxStudents: 60,
         isActive: true,
@@ -231,7 +271,7 @@ async function runSeed() {
         courseName: 'Data Structures',
         description: 'Arrays, stacks, queues, linked lists, trees',
         credits: 3,
-        department: 'Computer Science',
+        departmentId: csDept.id,
         semester: 2,
         maxStudents: 60,
         isActive: true,
@@ -243,7 +283,7 @@ async function runSeed() {
         courseName: 'Software Engineering Fundamentals',
         description: 'Requirements, design, testing, agile',
         credits: 3,
-        department: 'Software Engineering',
+        departmentId: seDept.id,
         semester: 2,
         maxStudents: 50,
         isActive: true,
@@ -255,7 +295,7 @@ async function runSeed() {
         courseName: 'Networking Basics',
         description: 'Intro to networks, OSI, TCP/IP',
         credits: 2,
-        department: 'Information Technology',
+        departmentId: itDept.id,
         semester: 1,
         maxStudents: 50,
         isActive: true,

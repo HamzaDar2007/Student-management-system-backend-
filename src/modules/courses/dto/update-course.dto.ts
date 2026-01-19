@@ -35,9 +35,8 @@ export class UpdateCourseDto {
   credits?: number;
 
   @IsOptional()
-  @IsString()
-  @Length(1, 100)
-  department?: string | null;
+  @IsInt()
+  department_id?: number | null;
 
   @IsOptional()
   @IsInt()

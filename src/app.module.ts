@@ -20,6 +20,8 @@ import { AcademicTermsModule } from './modules/academic-terms/academic-terms.mod
 import { SchedulingModule } from './modules/scheduling/scheduling.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { CommonModule } from './common/common.module';
+import { HealthModule } from './modules/health/health.module';
+import { TeachersModule } from './modules/teachers/teachers.module';
 
 @Module({
   imports: [
@@ -71,6 +73,8 @@ import { CommonModule } from './common/common.module';
     SchedulingModule,
     AuditModule,
     CommonModule,
+    HealthModule,
+    TeachersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
