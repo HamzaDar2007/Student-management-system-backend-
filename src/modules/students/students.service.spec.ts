@@ -146,11 +146,7 @@ describe('StudentsService', () => {
 
   describe('create', () => {
     const createStudentDto = {
-      email: 'newstudent@example.com',
-      username: 'newstudent',
-      password: 'Password123!',
-      first_name: 'New',
-      last_name: 'Student',
+      student_id: 'STU002',
       date_of_birth: '2000-01-01',
       enrollment_date: '2023-09-01',
     };
@@ -179,15 +175,15 @@ describe('StudentsService', () => {
 
   describe('update', () => {
     const updateStudentDto = {
-      first_name: 'Updated',
-      last_name: 'Name',
+      address: 'New Address',
+      phone: '+1234567890',
     };
 
     it('should update a student', async () => {
       mockStudentRepository.findOne.mockResolvedValue(mockStudent);
       mockStudentRepository.save.mockResolvedValue({
         ...mockStudent,
-        user: { ...mockStudent.user, firstName: 'Updated' },
+        address: updateStudentDto.address,
       });
 
       const result = await service.update(1, updateStudentDto);

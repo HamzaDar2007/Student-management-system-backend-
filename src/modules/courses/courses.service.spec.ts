@@ -13,17 +13,13 @@ describe('CoursesService', () => {
 
   const mockCourse = {
     id: 1,
-    code: 'CS101',
-    name: 'Introduction to Computer Science',
+    courseCode: 'CS101',
+    courseName: 'Introduction to Computer Science',
     description: 'Basic concepts of computer science',
     credits: 3,
     maxStudents: 30,
     isActive: true,
-    teacher: {
-      id: 1,
-      firstName: 'John',
-      lastName: 'Teacher',
-    },
+    teachers: [],
     enrollments: [],
   };
 
@@ -138,27 +134,29 @@ describe('CoursesService', () => {
 
   describe('create', () => {
     const createCourseDto = {
-      code: 'CS102',
-      name: 'Data Structures',
+      course_code: 'CS102',
+      course_name: 'Data Structures',
       description: 'Introduction to data structures',
       credits: 4,
       max_students: 25,
-      teacher_id: 1,
     };
 
     it('should create a new course', async () => {
       mockCourseRepository.findOne.mockResolvedValue(null);
-      mockUserRepository.findOne.mockResolvedValue({ id: 1 });
-      mockCourseRepository.create.mockReturnValue(createCourseDto);
+      mockCourseRepository.create.mockReturnValue({
+        courseCode: createCourseDto.course_code,
+        courseName: createCourseDto.course_name,
+      });
       mockCourseRepository.save.mockResolvedValue({
         id: 2,
-        ...createCourseDto,
+        courseCode: createCourseDto.course_code,
+        courseName: createCourseDto.course_name,
       });
 
       const result = await service.create(createCourseDto);
 
       expect(result).toHaveProperty('id');
-      expect(result.code).toBe(createCourseDto.code);
+      expect(result.courseCode).toBe(createCourseDto.course_code);
     });
 
     it('should throw ConflictException if course code exists', async () => {
@@ -172,7 +170,7 @@ describe('CoursesService', () => {
 
   describe('update', () => {
     const updateCourseDto = {
-      name: 'Updated Course Name',
+      course_name: 'Updated Course Name',
       credits: 4,
     };
 
@@ -180,12 +178,12 @@ describe('CoursesService', () => {
       mockCourseRepository.findOne.mockResolvedValue(mockCourse);
       mockCourseRepository.save.mockResolvedValue({
         ...mockCourse,
-        ...updateCourseDto,
+        courseName: updateCourseDto.course_name,
       });
 
       const result = await service.update(1, updateCourseDto);
 
-      expect(result.name).toBe(updateCourseDto.name);
+      expect(result.courseName).toBe(updateCourseDto.course_name);
     });
 
     it('should throw NotFoundException if course not found', async () => {

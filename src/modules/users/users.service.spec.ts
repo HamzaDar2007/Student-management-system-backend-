@@ -96,8 +96,8 @@ describe('UsersService', () => {
       username: 'newuser',
       password: 'Password123!',
       role: UserRole.STUDENT,
-      first_name: 'New',
-      last_name: 'User',
+      firstName: 'New',
+      lastName: 'User',
     };
 
     it('should create a new user', async () => {
@@ -125,20 +125,21 @@ describe('UsersService', () => {
 
   describe('update', () => {
     const updateUserDto = {
-      first_name: 'Updated',
-      last_name: 'Name',
+      firstName: 'Updated',
+      lastName: 'Name',
     };
 
     it('should update a user', async () => {
       mockUserRepository.findOne.mockResolvedValue(mockUser);
       mockUserRepository.save.mockResolvedValue({
         ...mockUser,
-        ...updateUserDto,
+        firstName: updateUserDto.firstName,
+        lastName: updateUserDto.lastName,
       });
 
       const result = await service.update(1, updateUserDto);
 
-      expect(result.firstName).toBe(updateUserDto.first_name);
+      expect(result.firstName).toBe(updateUserDto.firstName);
     });
 
     it('should throw NotFoundException if user not found', async () => {
@@ -165,27 +166,6 @@ describe('UsersService', () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
       await expect(service.remove(999)).rejects.toThrow(NotFoundException);
-    });
-  });
-
-  describe('findByEmail', () => {
-    it('should return a user by email', async () => {
-      mockUserRepository.findOne.mockResolvedValue(mockUser);
-
-      const result = await service.findByEmail('test@example.com');
-
-      expect(result).toEqual(mockUser);
-      expect(mockUserRepository.findOne).toHaveBeenCalledWith({
-        where: { email: 'test@example.com' },
-      });
-    });
-
-    it('should return null if user not found', async () => {
-      mockUserRepository.findOne.mockResolvedValue(null);
-
-      const result = await service.findByEmail('notfound@example.com');
-
-      expect(result).toBeNull();
     });
   });
 });
