@@ -1,33 +1,37 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    Index,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity({ name: 'academic_terms' })
 export class AcademicTerm {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Index('idx_academic_terms_name')
-    @Column({ type: 'varchar', length: 50, unique: true })
-    name: string; // e.g., "Fall 2024"
+  @Index('idx_academic_terms_name')
+  @Column({ type: 'varchar', length: 50, unique: true })
+  name: string; // e.g., "Fall 2024"
 
-    @Column({ name: 'start_date', type: 'date' })
-    startDate: Date;
+  @Column({ name: 'start_date', type: 'date' })
+  startDate: Date;
 
-    @Column({ name: 'end_date', type: 'date' })
-    endDate: Date;
+  @Column({ name: 'end_date', type: 'date' })
+  endDate: Date;
 
-    @Column({ name: 'is_active', type: 'boolean', default: false })
-    isActive: boolean;
+  @Column({ name: 'is_active', type: 'boolean', default: false })
+  isActive: boolean;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
-    createdAt: Date;
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  createdAt: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
-    updatedAt: Date;
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  deletedAt?: Date | null;
 }

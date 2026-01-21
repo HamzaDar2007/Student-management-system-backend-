@@ -18,6 +18,8 @@ export class AddDepartmentIdToCourses1700000000012 implements MigrationInterface
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP INDEX IF EXISTS idx_courses_department_id;`);
-    await queryRunner.query(`ALTER TABLE courses DROP COLUMN IF EXISTS department_id;`);
+    await queryRunner.query(
+      `ALTER TABLE courses DROP COLUMN IF EXISTS department_id;`,
+    );
   }
 }

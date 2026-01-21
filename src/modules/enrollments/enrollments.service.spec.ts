@@ -76,7 +76,10 @@ describe('EnrollmentsService', () => {
 
   describe('findAll', () => {
     it('should return paginated enrollments', async () => {
-      mockEnrollmentRepository.findAndCount.mockResolvedValue([[mockEnrollment], 1]);
+      mockEnrollmentRepository.findAndCount.mockResolvedValue([
+        [mockEnrollment],
+        1,
+      ]);
 
       const result = await service.findAll({ page: 1, limit: 10 });
 
@@ -126,14 +129,18 @@ describe('EnrollmentsService', () => {
     it('should throw NotFoundException if student not found', async () => {
       mockStudentRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException if course not found', async () => {
       mockStudentRepository.findOne.mockResolvedValue(mockStudent);
       mockCourseRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ConflictException if enrollment already exists', async () => {
@@ -141,7 +148,9 @@ describe('EnrollmentsService', () => {
       mockCourseRepository.findOne.mockResolvedValue(mockCourse);
       mockEnrollmentRepository.findOne.mockResolvedValue(mockEnrollment);
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw ConflictException if course is full', async () => {
@@ -150,7 +159,9 @@ describe('EnrollmentsService', () => {
       mockEnrollmentRepository.findOne.mockResolvedValue(null);
       mockEnrollmentRepository.count.mockResolvedValue(30);
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 });

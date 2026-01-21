@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  NotFoundException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { AcademicTermsService } from './academic-terms.service';
 import { AcademicTerm } from './entities/academic-term.entity';
 
@@ -21,6 +25,8 @@ describe('AcademicTermsService', () => {
     save: jest.fn(),
     create: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
+    restore: jest.fn(),
     update: jest.fn(),
   };
 
@@ -111,7 +117,9 @@ describe('AcademicTermsService', () => {
     it('should throw ConflictException if name already exists', async () => {
       mockTermRepository.findOne.mockResolvedValue(mockTerm);
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw BadRequestException if start date is after end date', async () => {
@@ -128,13 +136,22 @@ describe('AcademicTermsService', () => {
 
     it('should deactivate other terms when creating an active term', async () => {
       mockTermRepository.findOne.mockResolvedValue(null);
-      mockTermRepository.create.mockReturnValue({ ...mockTerm, isActive: true });
+      mockTermRepository.create.mockReturnValue({
+        ...mockTerm,
+        isActive: true,
+      });
       mockTermRepository.update.mockResolvedValue({ affected: 1 });
-      mockTermRepository.save.mockResolvedValue({ ...mockTerm, isActive: true });
+      mockTermRepository.save.mockResolvedValue({
+        ...mockTerm,
+        isActive: true,
+      });
 
       await service.create({ ...createDto, is_active: true });
 
-      expect(mockTermRepository.update).toHaveBeenCalledWith({}, { isActive: false });
+      expect(mockTermRepository.update).toHaveBeenCalledWith(
+        {},
+        { isActive: false },
+      );
     });
   });
 
@@ -145,8 +162,8 @@ describe('AcademicTermsService', () => {
 
     it('should update an academic term', async () => {
       mockTermRepository.findOne
-        .mockResolvedValueOnce(mockTerm)  // First call to find the term
-        .mockResolvedValueOnce(null);     // Second call to check for duplicate name
+        .mockResolvedValueOnce(mockTerm) // First call to find the term
+        .mockResolvedValueOnce(null); // Second call to check for duplicate name
       mockTermRepository.save.mockResolvedValue({
         ...mockTerm,
         name: updateDto.name,
@@ -160,7 +177,9 @@ describe('AcademicTermsService', () => {
     it('should throw NotFoundException if term not found', async () => {
       mockTermRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update(999, updateDto)).rejects.toThrow(NotFoundException);
+      await expect(service.update(999, updateDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw BadRequestException if dates are invalid', async () => {
@@ -177,8 +196,14 @@ describe('AcademicTermsService', () => {
 
   describe('remove', () => {
     it('should delete an academic term', async () => {
-      mockTermRepository.findOne.mockResolvedValue({ ...mockTerm, isActive: false });
-      mockTermRepository.remove.mockResolvedValue({ ...mockTerm, isActive: false });
+      mockTermRepository.findOne.mockResolvedValue({
+        ...mockTerm,
+        isActive: false,
+      });
+      mockTermRepository.softRemove.mockResolvedValue({
+        ...mockTerm,
+        isActive: false,
+      });
 
       const result = await service.remove(1);
 
@@ -192,7 +217,10 @@ describe('AcademicTermsService', () => {
     });
 
     it('should throw ConflictException if term is active', async () => {
-      mockTermRepository.findOne.mockResolvedValue({ ...mockTerm, isActive: true });
+      mockTermRepository.findOne.mockResolvedValue({
+        ...mockTerm,
+        isActive: true,
+      });
 
       await expect(service.remove(1)).rejects.toThrow(ConflictException);
     });

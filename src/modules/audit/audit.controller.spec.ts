@@ -112,7 +112,10 @@ describe('AuditController', () => {
 
       const result = await controller.findByResource('Student', '123');
 
-      expect(auditService.findByResource).toHaveBeenCalledWith('Student', '123');
+      expect(auditService.findByResource).toHaveBeenCalledWith(
+        'Student',
+        '123',
+      );
       expect(result).toEqual(mockLogs);
     });
 

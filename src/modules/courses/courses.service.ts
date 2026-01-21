@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 
 import { Course } from './entities/course.entity';
 import { User, UserRole } from '../users/entities/user.entity';
@@ -49,7 +49,9 @@ export class CoursesService {
         where: { id: In(dto.teacher_ids), role: UserRole.TEACHER },
       });
       if (teachers.length !== dto.teacher_ids.length) {
-        throw new NotFoundException('Some teacher IDs not found or not teachers');
+        throw new NotFoundException(
+          'Some teacher IDs not found or not teachers',
+        );
       }
       course.teachers = teachers;
     }
@@ -73,7 +75,9 @@ export class CoursesService {
       qb.andWhere('course.semester = :semester', { semester: query.semester });
     }
     if (query.department_id) {
-      qb.andWhere('course.departmentId = :departmentId', { departmentId: query.department_id });
+      qb.andWhere('course.departmentId = :departmentId', {
+        departmentId: query.department_id,
+      });
     }
     if (query.teacher_id) {
       qb.andWhere('teacher.id = :teacherId', { teacherId: query.teacher_id });
@@ -112,11 +116,16 @@ export class CoursesService {
     Object.assign(course, {
       courseCode: dto.course_code ?? course.courseCode,
       courseName: dto.course_name ?? course.courseName,
-      description: dto.description !== undefined ? dto.description : course.description,
+      description:
+        dto.description !== undefined ? dto.description : course.description,
       credits: dto.credits ?? course.credits,
-      departmentId: dto.department_id !== undefined ? dto.department_id : course.departmentId,
+      departmentId:
+        dto.department_id !== undefined
+          ? dto.department_id
+          : course.departmentId,
       semester: dto.semester !== undefined ? dto.semester : course.semester,
-      maxStudents: dto.max_students !== undefined ? dto.max_students : course.maxStudents,
+      maxStudents:
+        dto.max_students !== undefined ? dto.max_students : course.maxStudents,
       isActive: dto.is_active !== undefined ? dto.is_active : course.isActive,
     });
 
@@ -128,7 +137,9 @@ export class CoursesService {
           where: { id: In(dto.teacher_ids), role: UserRole.TEACHER },
         });
         if (teachers.length !== dto.teacher_ids.length) {
-          throw new NotFoundException('Some teacher IDs not found or not teachers');
+          throw new NotFoundException(
+            'Some teacher IDs not found or not teachers',
+          );
         }
         course.teachers = teachers;
       }
@@ -140,8 +151,30 @@ export class CoursesService {
   async remove(id: number) {
     const course = await this.courseRepo.findOne({ where: { id } });
     if (!course) throw new NotFoundException('Course not found');
-    await this.courseRepo.remove(course);
+    await this.courseRepo.softRemove(course);
     return { deleted: true };
+  }
+
+  async restore(id: number) {
+    const course = await this.courseRepo.findOne({
+      where: { id },
+      withDeleted: true,
+    });
+    if (!course) throw new NotFoundException('Course not found');
+    if (!course.deletedAt) throw new ConflictException('Course is not deleted');
+    await this.courseRepo.restore(id);
+    return this.courseRepo.findOne({
+      where: { id },
+      relations: ['departmentEntity', 'createdByUser', 'teachers'],
+    });
+  }
+
+  async findDeleted() {
+    return this.courseRepo.find({
+      where: { deletedAt: Not(IsNull()) },
+      withDeleted: true,
+      relations: ['departmentEntity', 'createdByUser'],
+    });
   }
 
   async getStudents(courseId: number) {

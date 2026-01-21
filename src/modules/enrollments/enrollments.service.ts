@@ -56,7 +56,8 @@ export class EnrollmentsService {
       this.enrollmentRepo.create({
         studentId: dto.student_id,
         courseId: dto.course_id,
-        enrollmentDate: dto.enrollment_date ?? new Date().toISOString().slice(0, 10),
+        enrollmentDate:
+          dto.enrollment_date ?? new Date().toISOString().slice(0, 10),
         status: EnrollmentStatus.ACTIVE,
       }),
     );
@@ -98,7 +99,10 @@ export class EnrollmentsService {
     const enrollment = await this.enrollmentRepo.findOne({ where: { id } });
     if (!enrollment) throw new NotFoundException('Enrollment not found');
 
-    if (dto.student_id !== undefined && dto.student_id !== enrollment.studentId) {
+    if (
+      dto.student_id !== undefined &&
+      dto.student_id !== enrollment.studentId
+    ) {
       const student = await this.studentRepo.findOne({
         where: { id: dto.student_id },
       });
@@ -148,6 +152,9 @@ export class EnrollmentsService {
       }),
     );
 
-    return { enrollment: await this.enrollmentRepo.save(enrollment), grade: gradeRecord };
+    return {
+      enrollment: await this.enrollmentRepo.save(enrollment),
+      grade: gradeRecord,
+    };
   }
 }

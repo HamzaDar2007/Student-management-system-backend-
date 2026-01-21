@@ -22,7 +22,7 @@ describe('App (e2e)', () => {
         },
       }),
     );
-    
+
     await app.init();
   });
 
@@ -41,46 +41,36 @@ describe('App (e2e)', () => {
 
   describe('Authentication required endpoints', () => {
     it('should reject unauthenticated requests to /api/users', () => {
-      return request(app.getHttpServer())
-        .get('/api/users')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/v1/users').expect(401);
     });
 
     it('should reject unauthenticated requests to /api/students', () => {
-      return request(app.getHttpServer())
-        .get('/api/students')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/v1/students').expect(401);
     });
 
     it('should reject unauthenticated requests to /api/courses', () => {
-      return request(app.getHttpServer())
-        .get('/api/courses')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/v1/courses').expect(401);
     });
 
     it('should reject unauthenticated requests to /api/enrollments', () => {
       return request(app.getHttpServer())
-        .get('/api/enrollments')
+        .get('/api/v1/enrollments')
         .expect(401);
     });
 
     it('should reject unauthenticated requests to /api/grades', () => {
-      return request(app.getHttpServer())
-        .get('/api/grades')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/v1/grades').expect(401);
     });
 
     it('should reject unauthenticated requests to /api/attendance', () => {
-      return request(app.getHttpServer())
-        .get('/api/attendance')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/v1/attendance').expect(401);
     });
   });
 
   describe('Public endpoints', () => {
-    it('/api/auth/register should validate input', () => {
+    it('/api/v1/auth/register should validate input', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send({})
         .expect(400);
     });
@@ -89,13 +79,13 @@ describe('App (e2e)', () => {
   describe('Error handling', () => {
     it('should return 404 for non-existent routes', () => {
       return request(app.getHttpServer())
-        .get('/api/non-existent-endpoint')
+        .get('/api/v1/non-existent-endpoint')
         .expect(404);
     });
 
     it('should handle malformed JSON', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/login')
+        .post('/api/v1/auth/login')
         .set('Content-Type', 'application/json')
         .send('{ invalid json }')
         .expect(400);

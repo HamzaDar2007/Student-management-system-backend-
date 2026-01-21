@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -52,7 +53,12 @@ export class Student {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone?: string | null;
 
-  @Column({ name: 'emergency_contact', type: 'varchar', length: 100, nullable: true })
+  @Column({
+    name: 'emergency_contact',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
   emergencyContact?: string | null;
 
   @Index('idx_students_enrollment_date')
@@ -75,6 +81,9 @@ export class Student {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  deletedAt?: Date | null;
 
   // Relations
   @OneToMany(() => Enrollment, (e) => e.student)

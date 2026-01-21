@@ -4,7 +4,9 @@ import { DataSource } from 'typeorm';
  * Clean up all test data from the database
  * Order matters due to foreign key constraints
  */
-export async function cleanupAllTestData(dataSource: DataSource): Promise<void> {
+export async function cleanupAllTestData(
+  dataSource: DataSource,
+): Promise<void> {
   const queryRunner = dataSource.createQueryRunner();
   await queryRunner.connect();
 
@@ -50,81 +52,123 @@ export async function cleanupTestDataByPrefix(
     await queryRunner.query('SET CONSTRAINTS ALL DEFERRED');
 
     // Delete audit logs for test users
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM audit_logs 
       WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)
-    `, [`${prefix}_%@test.com`]);
+    `,
+      [`${prefix}_%@test.com`],
+    );
 
     // Delete schedules for test courses
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM schedules 
       WHERE course_id IN (SELECT id FROM courses WHERE course_code LIKE $1)
-    `, [`${prefix.toUpperCase().slice(0, 2)}%`]);
+    `,
+      [`${prefix.toUpperCase().slice(0, 2)}%`],
+    );
 
     // Delete attendance for test students
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM attendance 
       WHERE student_id IN (SELECT id FROM students WHERE address LIKE $1)
-    `, [`${prefix}%`]);
+    `,
+      [`${prefix}%`],
+    );
 
     // Delete grades for test students
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM grades 
       WHERE student_id IN (SELECT id FROM students WHERE address LIKE $1)
-    `, [`${prefix}%`]);
+    `,
+      [`${prefix}%`],
+    );
 
     // Delete enrollments for test students
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM enrollments 
       WHERE student_id IN (SELECT id FROM students WHERE address LIKE $1)
-    `, [`${prefix}%`]);
+    `,
+      [`${prefix}%`],
+    );
 
     // Delete course_teachers for test courses
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM course_teachers 
       WHERE course_id IN (SELECT id FROM courses WHERE course_code LIKE $1)
-    `, [`${prefix.toUpperCase().slice(0, 2)}%`]);
+    `,
+      [`${prefix.toUpperCase().slice(0, 2)}%`],
+    );
 
     // Delete test courses
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM courses WHERE course_code LIKE $1
-    `, [`${prefix.toUpperCase().slice(0, 2)}%`]);
+    `,
+      [`${prefix.toUpperCase().slice(0, 2)}%`],
+    );
 
     // Delete teacher profiles for test users
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM teacher_profiles 
       WHERE user_id IN (SELECT id FROM users WHERE email LIKE $1)
-    `, [`${prefix}_%@test.com`]);
+    `,
+      [`${prefix}_%@test.com`],
+    );
 
     // Delete test students
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM students WHERE address LIKE $1
-    `, [`${prefix}%`]);
+    `,
+      [`${prefix}%`],
+    );
 
     // Delete test classrooms
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM classrooms WHERE room_number LIKE $1
-    `, [`${prefix.toUpperCase().slice(0, 1)}%`]);
+    `,
+      [`${prefix.toUpperCase().slice(0, 1)}%`],
+    );
 
     // Delete test departments
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM departments WHERE code LIKE $1
-    `, [`${prefix.toUpperCase().slice(0, 2)}D%`]);
+    `,
+      [`${prefix.toUpperCase().slice(0, 2)}D%`],
+    );
 
     // Delete test faculties
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM faculties WHERE code LIKE $1
-    `, [`${prefix.toUpperCase().slice(0, 2)}%`]);
+    `,
+      [`${prefix.toUpperCase().slice(0, 2)}%`],
+    );
 
     // Delete test academic terms
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM academic_terms WHERE name LIKE $1
-    `, [`${prefix}%`]);
+    `,
+      [`${prefix}%`],
+    );
 
     // Delete test users
-    await queryRunner.query(`
+    await queryRunner.query(
+      `
       DELETE FROM users WHERE email LIKE $1
-    `, [`${prefix}_%@test.com`]);
+    `,
+      [`${prefix}_%@test.com`],
+    );
 
     await queryRunner.query('SET CONSTRAINTS ALL IMMEDIATE');
   } finally {
@@ -137,9 +181,19 @@ export async function cleanupTestDataByPrefix(
  */
 export async function resetSequences(dataSource: DataSource): Promise<void> {
   const tables = [
-    'users', 'students', 'teacher_profiles', 'courses', 'enrollments',
-    'grades', 'attendance', 'faculties', 'departments', 'academic_terms',
-    'classrooms', 'schedules', 'audit_logs',
+    'users',
+    'students',
+    'teacher_profiles',
+    'courses',
+    'enrollments',
+    'grades',
+    'attendance',
+    'faculties',
+    'departments',
+    'academic_terms',
+    'classrooms',
+    'schedules',
+    'audit_logs',
   ];
 
   for (const table of tables) {

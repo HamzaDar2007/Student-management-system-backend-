@@ -102,7 +102,10 @@ describe('DepartmentsController', () => {
   describe('update', () => {
     it('should update a department', async () => {
       const dto: UpdateDepartmentDto = { name: 'Updated Department' };
-      const updatedDepartment = { ...mockDepartment, name: 'Updated Department' };
+      const updatedDepartment = {
+        ...mockDepartment,
+        name: 'Updated Department',
+      };
       mockDepartmentsService.update.mockResolvedValue(updatedDepartment);
 
       const result = await controller.update('1', dto);

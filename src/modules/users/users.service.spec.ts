@@ -32,6 +32,8 @@ describe('UsersService', () => {
     create: jest.fn(),
     update: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
+    restore: jest.fn(),
     createQueryBuilder: jest.fn(() => ({
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
@@ -158,7 +160,7 @@ describe('UsersService', () => {
   describe('remove', () => {
     it('should delete a user', async () => {
       mockUserRepository.findOne.mockResolvedValue(mockUser);
-      mockUserRepository.remove.mockResolvedValue(mockUser);
+      mockUserRepository.softRemove.mockResolvedValue(mockUser);
 
       const result = await service.remove(1);
 
@@ -169,6 +171,54 @@ describe('UsersService', () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
       await expect(service.remove(999)).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('restore', () => {
+    it('should restore a soft-deleted user', async () => {
+      const deletedUser = { ...mockUser, deletedAt: new Date() };
+      mockUserRepository.findOne
+        .mockResolvedValueOnce(deletedUser)
+        .mockResolvedValueOnce(mockUser);
+      mockUserRepository.restore.mockResolvedValue({ affected: 1 });
+
+      const result = await service.restore(1);
+
+      expect(result).toBeDefined();
+      expect(mockUserRepository.restore).toHaveBeenCalledWith(1);
+    });
+
+    it('should throw NotFoundException if user not found', async () => {
+      mockUserRepository.findOne.mockResolvedValue(null);
+
+      await expect(service.restore(999)).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw ConflictException if user is not deleted', async () => {
+      mockUserRepository.findOne.mockResolvedValue({
+        ...mockUser,
+        deletedAt: null,
+      });
+
+      await expect(service.restore(1)).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('findDeleted', () => {
+    it('should return all soft-deleted users', async () => {
+      const deletedUsers = [
+        { ...mockUser, deletedAt: new Date() },
+        { ...mockUser, id: 2, deletedAt: new Date() },
+      ];
+      mockUserRepository.find.mockResolvedValue(deletedUsers);
+
+      const result = await service.findDeleted();
+
+      expect(result).toHaveLength(2);
+      expect(mockUserRepository.find).toHaveBeenCalledWith({
+        where: expect.any(Object),
+        withDeleted: true,
+      });
     });
   });
 });

@@ -75,7 +75,9 @@ describe('AuditController (e2e)', () => {
     await auditRepo
       .createQueryBuilder()
       .delete()
-      .where('user_id IN (:...ids)', { ids: [adminAuth.user.id, teacherAuth.user.id] })
+      .where('user_id IN (:...ids)', {
+        ids: [adminAuth.user.id, teacherAuth.user.id],
+      })
       .execute();
 
     await deleteTestUsers(dataSource, TEST_PREFIX);
@@ -83,7 +85,7 @@ describe('AuditController (e2e)', () => {
   });
 
   describe('GET /api/audit', () => {
-    const endpoint = '/api/audit';
+    const endpoint = '/api/v1/audit';
 
     it('admin should get audit logs', async () => {
       const response = await request(app.getHttpServer())
@@ -161,9 +163,7 @@ describe('AuditController (e2e)', () => {
     });
 
     it('unauthenticated should be rejected', async () => {
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .expect(401);
+      await request(app.getHttpServer()).get(endpoint).expect(401);
     });
   });
 
@@ -196,7 +196,7 @@ describe('AuditController (e2e)', () => {
 
     it('should return 404 for non-existent log', async () => {
       await request(app.getHttpServer())
-        .get('/api/audit/999999')
+        .get('/api/v1/audit/999999')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -230,7 +230,7 @@ describe('AuditController (e2e)', () => {
 
     it('should return logs for specific resource', async () => {
       const response = await request(app.getHttpServer())
-        .get('/api/audit/resource/SpecificResource/42')
+        .get('/api/v1/audit/resource/SpecificResource/42')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -243,7 +243,7 @@ describe('AuditController (e2e)', () => {
 
     it('non-admin should be rejected', async () => {
       await request(app.getHttpServer())
-        .get('/api/audit/resource/Student/1')
+        .get('/api/v1/audit/resource/Student/1')
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(403);
     });
@@ -264,7 +264,7 @@ describe('AuditController (e2e)', () => {
 
     it('should return empty array for user with no logs', async () => {
       const response = await request(app.getHttpServer())
-        .get('/api/audit/user/999999')
+        .get('/api/v1/audit/user/999999')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 

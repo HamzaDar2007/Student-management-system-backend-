@@ -6,9 +6,13 @@ import { Student } from './entities/student.entity';
 import { Grade } from '../grades/entities/grade.entity';
 import { Attendance } from '../attendance/entities/attendance.entity';
 import { Enrollment } from '../enrollments/entities/enrollment.entity';
+import { CommonModule } from '../../common/common.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Student, Enrollment, Grade, Attendance])],
+  imports: [
+    TypeOrmModule.forFeature([Student, Enrollment, Grade, Attendance]),
+    CommonModule,
+  ],
   controllers: [StudentsController],
   providers: [StudentsService],
   exports: [StudentsService],

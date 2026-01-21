@@ -12,7 +12,9 @@ import {
 import { Transform, Type } from 'class-transformer';
 
 export class CreateCourseDto {
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toUpperCase() : value))
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
   @IsString()
   @Length(2, 20)
   course_code: string;

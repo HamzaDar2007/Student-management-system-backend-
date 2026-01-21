@@ -24,6 +24,8 @@ describe('FacultiesService', () => {
     save: jest.fn(),
     create: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
+    restore: jest.fn(),
   };
 
   const mockUserRepository = {
@@ -100,7 +102,9 @@ describe('FacultiesService', () => {
     it('should throw ConflictException if name already exists', async () => {
       mockFacultyRepository.findOne.mockResolvedValueOnce(mockFaculty);
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw ConflictException if code already exists', async () => {
@@ -108,16 +112,18 @@ describe('FacultiesService', () => {
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(mockFaculty);
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw NotFoundException if dean not found', async () => {
       mockFacultyRepository.findOne.mockResolvedValue(null);
       mockUserRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create({ ...createDto, dean_id: 999 })).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        service.create({ ...createDto, dean_id: 999 }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -129,7 +135,7 @@ describe('FacultiesService', () => {
     it('should update a faculty', async () => {
       mockFacultyRepository.findOne
         .mockResolvedValueOnce(mockFaculty) // First call: find faculty by id
-        .mockResolvedValueOnce(null);       // Second call: check name uniqueness
+        .mockResolvedValueOnce(null); // Second call: check name uniqueness
       mockFacultyRepository.save.mockResolvedValue({
         ...mockFaculty,
         name: updateDto.name,
@@ -143,14 +149,22 @@ describe('FacultiesService', () => {
     it('should throw NotFoundException if faculty not found', async () => {
       mockFacultyRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update(999, updateDto)).rejects.toThrow(NotFoundException);
+      await expect(service.update(999, updateDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('remove', () => {
     it('should delete a faculty', async () => {
-      mockFacultyRepository.findOne.mockResolvedValue({ ...mockFaculty, departments: [] });
-      mockFacultyRepository.remove.mockResolvedValue({ ...mockFaculty, departments: [] });
+      mockFacultyRepository.findOne.mockResolvedValue({
+        ...mockFaculty,
+        departments: [],
+      });
+      mockFacultyRepository.softRemove.mockResolvedValue({
+        ...mockFaculty,
+        departments: [],
+      });
 
       const result = await service.remove(1);
 

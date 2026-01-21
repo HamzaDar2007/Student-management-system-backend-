@@ -1,12 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
 import { APP_GUARD } from '@nestjs/core';
 import * as Joi from 'joi';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { redisStore } from 'cache-manager-redis-yet';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import databaseConfig from './config/database.config';
+import cacheConfig from './config/cache.config';
 
 // Feature modules
 import { AuthModule } from './modules/auth/auth.module';
@@ -24,12 +27,13 @@ import { AuditModule } from './modules/audit/audit.module';
 import { CommonModule } from './common/common.module';
 import { HealthModule } from './modules/health/health.module';
 import { TeachersModule } from './modules/teachers/teachers.module';
+import { UploadsModule } from './modules/uploads/uploads.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig],
+      load: [databaseConfig, cacheConfig],
       envFilePath: '.env',
       validationSchema: Joi.object({
         NODE_ENV: Joi.string()
@@ -44,7 +48,42 @@ import { TeachersModule } from './modules/teachers/teachers.module';
         JWT_SECRET: Joi.string().required(),
         THROTTLE_TTL: Joi.number().default(60000),
         THROTTLE_LIMIT: Joi.number().default(100),
+        REDIS_HOST: Joi.string().default('localhost'),
+        REDIS_PORT: Joi.number().default(6379),
+        REDIS_PASSWORD: Joi.string().allow('').optional(),
+        CACHE_TTL: Joi.number().default(300000),
+        CACHE_MAX: Joi.number().default(100),
       }),
+    }),
+    // Redis Cache
+    CacheModule.registerAsync({
+      isGlobal: true,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => {
+        const isTest = configService.get('NODE_ENV') === 'test';
+
+        // Use in-memory cache for tests
+        if (isTest) {
+          return {
+            ttl: 300000,
+            max: 100,
+          };
+        }
+
+        // Use Redis for non-test environments
+        return {
+          store: await redisStore({
+            socket: {
+              host: configService.get('cache.host'),
+              port: configService.get('cache.port'),
+            },
+            password: configService.get('cache.password'),
+            ttl: configService.get('cache.ttl') * 1000, // Convert to milliseconds
+          }),
+          max: configService.get('cache.max'),
+        };
+      },
     }),
     // Rate limiting
     ThrottlerModule.forRootAsync({
@@ -92,6 +131,7 @@ import { TeachersModule } from './modules/teachers/teachers.module';
     CommonModule,
     HealthModule,
     TeachersModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -102,4 +142,4 @@ import { TeachersModule } from './modules/teachers/teachers.module';
     },
   ],
 })
-export class AppModule { }
+export class AppModule {}

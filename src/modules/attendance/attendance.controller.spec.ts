@@ -91,7 +91,10 @@ describe('AttendanceController', () => {
 
       const result = await controller.bulkCreate(dto, mockUser as User);
 
-      expect(attendanceService.bulkCreate).toHaveBeenCalledWith(dto, mockUser.id);
+      expect(attendanceService.bulkCreate).toHaveBeenCalledWith(
+        dto,
+        mockUser.id,
+      );
       expect(result).toEqual(expected);
     });
   });
@@ -125,7 +128,11 @@ describe('AttendanceController', () => {
 
       const result = await controller.report(1);
 
-      expect(attendanceService.getReport).toHaveBeenCalledWith(1, undefined, undefined);
+      expect(attendanceService.getReport).toHaveBeenCalledWith(
+        1,
+        undefined,
+        undefined,
+      );
       expect(result).toEqual(mockReport);
     });
 
@@ -139,7 +146,11 @@ describe('AttendanceController', () => {
 
       const result = await controller.report(1, '2024-01-01', '2024-01-15');
 
-      expect(attendanceService.getReport).toHaveBeenCalledWith(1, '2024-01-01', '2024-01-15');
+      expect(attendanceService.getReport).toHaveBeenCalledWith(
+        1,
+        '2024-01-01',
+        '2024-01-15',
+      );
       expect(result).toEqual(mockReport);
     });
   });
@@ -163,7 +174,11 @@ describe('AttendanceController', () => {
 
       const result = await controller.update(1, dto, mockUser as User);
 
-      expect(attendanceService.update).toHaveBeenCalledWith(1, dto, mockUser.id);
+      expect(attendanceService.update).toHaveBeenCalledWith(
+        1,
+        dto,
+        mockUser.id,
+      );
       expect(result).toEqual(updatedAttendance);
     });
   });

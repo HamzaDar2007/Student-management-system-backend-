@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
+import { ILike, IsNull, Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 
 import { User } from './entities/user.entity';
@@ -115,12 +115,32 @@ export class UsersService {
   async remove(id: number) {
     const user = await this.userRepo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
-    await this.userRepo.remove(user);
+    await this.userRepo.softRemove(user);
     return { deleted: true };
   }
 
+  async restore(id: number) {
+    const user = await this.userRepo.findOne({
+      where: { id },
+      withDeleted: true,
+    });
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.deletedAt) throw new ConflictException('User is not deleted');
+    await this.userRepo.restore(id);
+    const restored = await this.userRepo.findOne({ where: { id } });
+    return this.sanitize(restored!);
+  }
+
+  async findDeleted() {
+    const users = await this.userRepo.find({
+      where: { deletedAt: Not(IsNull()) },
+      withDeleted: true,
+    });
+    return users.map((u) => this.sanitize(u));
+  }
+
   private sanitize(user: User) {
-    const { passwordHash, ...rest } = user as any;
+    const { passwordHash: _passwordHash, ...rest } = user as any;
     return rest;
   }
 }

@@ -10,7 +10,14 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { GradesService } from './grades.service';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
@@ -23,7 +30,7 @@ import { GradeListQueryDto } from './dto/grade-list-query.dto';
 
 @ApiTags('Grades')
 @ApiBearerAuth('JWT-auth')
-@Controller('api/grades')
+@Controller('grades')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class GradesController {
   constructor(private readonly gradesService: GradesService) {}
@@ -50,7 +57,11 @@ export class GradesController {
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get all grades for a specific course' })
   @ApiParam({ name: 'courseId', type: 'number', description: 'Course ID' })
-  @ApiQuery({ name: 'assessment_type', required: false, description: 'Filter by assessment type' })
+  @ApiQuery({
+    name: 'assessment_type',
+    required: false,
+    description: 'Filter by assessment type',
+  })
   @ApiResponse({ status: 200, description: 'Returns course grades' })
   @ApiResponse({ status: 404, description: 'Course not found' })
   courseGrades(

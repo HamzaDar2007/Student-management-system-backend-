@@ -134,7 +134,11 @@ describe('EnrollmentsController', () => {
 
       const result = await controller.updateGrade(1, grade, mockUser as User);
 
-      expect(enrollmentsService.updateGrade).toHaveBeenCalledWith(1, grade, mockUser.id);
+      expect(enrollmentsService.updateGrade).toHaveBeenCalledWith(
+        1,
+        grade,
+        mockUser.id,
+      );
       expect(result).toEqual(updatedEnrollment);
     });
   });

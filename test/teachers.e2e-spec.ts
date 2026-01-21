@@ -51,10 +51,14 @@ describe('TeachersController (e2e)', () => {
   });
 
   describe('POST /api/teachers', () => {
-    const endpoint = '/api/teachers';
+    const endpoint = '/api/v1/teachers';
 
     it('admin should create teacher profile', async () => {
-      const teacherUser = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_newteacher`);
+      const teacherUser = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_newteacher`,
+      );
       const timestamp = Date.now();
 
       const response = await request(app.getHttpServer())
@@ -79,8 +83,16 @@ describe('TeachersController (e2e)', () => {
     });
 
     it('should validate employee_id uniqueness', async () => {
-      const teacherUser1 = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_emp1`);
-      const teacherUser2 = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_emp2`);
+      const teacherUser1 = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_emp1`,
+      );
+      const teacherUser2 = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_emp2`,
+      );
       const employeeId = `EMP${Date.now().toString().slice(-6)}`;
 
       // Create first profile
@@ -107,7 +119,11 @@ describe('TeachersController (e2e)', () => {
     });
 
     it('non-admin should be rejected', async () => {
-      const teacherUser = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_unauth`);
+      const teacherUser = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_unauth`,
+      );
 
       await request(app.getHttpServer())
         .post(endpoint)
@@ -121,7 +137,11 @@ describe('TeachersController (e2e)', () => {
     });
 
     it('should reject non-teacher user', async () => {
-      const studentUser = await createTestUser(dataSource, UserRole.STUDENT, `${TEST_PREFIX}_wrongrole`);
+      const studentUser = await createTestUser(
+        dataSource,
+        UserRole.STUDENT,
+        `${TEST_PREFIX}_wrongrole`,
+      );
 
       await request(app.getHttpServer())
         .post(endpoint)
@@ -136,12 +156,20 @@ describe('TeachersController (e2e)', () => {
   });
 
   describe('GET /api/teachers', () => {
-    const endpoint = '/api/teachers';
+    const endpoint = '/api/v1/teachers';
 
     beforeAll(async () => {
       // Create some teacher profiles
-      const teacher1 = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_list1`);
-      const teacher2 = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_list2`);
+      const teacher1 = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_list1`,
+      );
+      const teacher2 = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_list2`,
+      );
       await createTestTeacherProfile(dataSource, teacher1.id, TEST_PREFIX);
       await createTestTeacherProfile(dataSource, teacher2.id, TEST_PREFIX);
     });
@@ -180,8 +208,16 @@ describe('TeachersController (e2e)', () => {
     let testProfileId: number;
 
     beforeAll(async () => {
-      const teacher = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_getone`);
-      const profile = await createTestTeacherProfile(dataSource, teacher.id, TEST_PREFIX);
+      const teacher = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_getone`,
+      );
+      const profile = await createTestTeacherProfile(
+        dataSource,
+        teacher.id,
+        TEST_PREFIX,
+      );
       testProfileId = profile.id;
     });
 
@@ -197,7 +233,7 @@ describe('TeachersController (e2e)', () => {
 
     it('should return 404 for non-existent', async () => {
       await request(app.getHttpServer())
-        .get('/api/teachers/999999')
+        .get('/api/v1/teachers/999999')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -207,7 +243,11 @@ describe('TeachersController (e2e)', () => {
     let testUserId: number;
 
     beforeAll(async () => {
-      const teacher = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_byuser`);
+      const teacher = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_byuser`,
+      );
       await createTestTeacherProfile(dataSource, teacher.id, TEST_PREFIX);
       testUserId = teacher.id;
     });
@@ -222,7 +262,11 @@ describe('TeachersController (e2e)', () => {
     });
 
     it('should return 404 if no profile exists', async () => {
-      const userWithoutProfile = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_noprofile`);
+      const userWithoutProfile = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_noprofile`,
+      );
 
       await request(app.getHttpServer())
         .get(`/api/teachers/user/${userWithoutProfile.id}`)
@@ -235,8 +279,16 @@ describe('TeachersController (e2e)', () => {
     let testProfileId: number;
 
     beforeAll(async () => {
-      const teacher = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_update`);
-      const profile = await createTestTeacherProfile(dataSource, teacher.id, TEST_PREFIX);
+      const teacher = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_update`,
+      );
+      const profile = await createTestTeacherProfile(
+        dataSource,
+        teacher.id,
+        TEST_PREFIX,
+      );
       testProfileId = profile.id;
     });
 
@@ -267,8 +319,16 @@ describe('TeachersController (e2e)', () => {
 
   describe('DELETE /api/teachers/:id', () => {
     it('admin should delete teacher', async () => {
-      const teacher = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_delete`);
-      const profile = await createTestTeacherProfile(dataSource, teacher.id, TEST_PREFIX);
+      const teacher = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_delete`,
+      );
+      const profile = await createTestTeacherProfile(
+        dataSource,
+        teacher.id,
+        TEST_PREFIX,
+      );
 
       await request(app.getHttpServer())
         .delete(`/api/teachers/${profile.id}`)
@@ -283,8 +343,16 @@ describe('TeachersController (e2e)', () => {
     });
 
     it('non-admin should be rejected', async () => {
-      const teacher = await createTestUser(dataSource, UserRole.TEACHER, `${TEST_PREFIX}_nodelete`);
-      const profile = await createTestTeacherProfile(dataSource, teacher.id, TEST_PREFIX);
+      const teacher = await createTestUser(
+        dataSource,
+        UserRole.TEACHER,
+        `${TEST_PREFIX}_nodelete`,
+      );
+      const profile = await createTestTeacherProfile(
+        dataSource,
+        teacher.id,
+        TEST_PREFIX,
+      );
 
       await request(app.getHttpServer())
         .delete(`/api/teachers/${profile.id}`)

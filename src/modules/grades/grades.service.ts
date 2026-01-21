@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -104,9 +101,16 @@ export class GradesService {
     Object.assign(grade, {
       assessmentType: dto.assessment_type ?? grade.assessmentType,
       assessmentName: dto.assessment_name ?? grade.assessmentName,
-      maxScore: dto.max_score !== undefined ? dto.max_score.toFixed(2) : grade.maxScore,
-      scoreObtained: dto.score_obtained !== undefined ? dto.score_obtained.toFixed(2) : grade.scoreObtained,
-      weightage: dto.weightage !== undefined ? dto.weightage.toFixed(2) : grade.weightage,
+      maxScore:
+        dto.max_score !== undefined ? dto.max_score.toFixed(2) : grade.maxScore,
+      scoreObtained:
+        dto.score_obtained !== undefined
+          ? dto.score_obtained.toFixed(2)
+          : grade.scoreObtained,
+      weightage:
+        dto.weightage !== undefined
+          ? dto.weightage.toFixed(2)
+          : grade.weightage,
       gradedBy: gradedById,
       gradedAt: new Date(),
     });

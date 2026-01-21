@@ -43,7 +43,14 @@ describe('Students (e2e)', () => {
     const adminResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active) 
        VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id`,
-      ['e2e_students_admin@test.com', 'e2e_students_admin', passwordHash, UserRole.ADMIN, 'Admin', 'Test'],
+      [
+        'e2e_students_admin@test.com',
+        'e2e_students_admin',
+        passwordHash,
+        UserRole.ADMIN,
+        'Admin',
+        'Test',
+      ],
     );
     adminUserId = adminResult[0].id;
 
@@ -51,39 +58,62 @@ describe('Students (e2e)', () => {
     await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true) RETURNING id`,
-      ['e2e_students_teacher@test.com', 'e2e_students_teacher', passwordHash, UserRole.TEACHER],
+      [
+        'e2e_students_teacher@test.com',
+        'e2e_students_teacher',
+        passwordHash,
+        UserRole.TEACHER,
+      ],
     );
 
     // Create student user (for linking)
     const studentResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true) RETURNING id`,
-      ['e2e_students_student@test.com', 'e2e_students_student', passwordHash, UserRole.STUDENT],
+      [
+        'e2e_students_student@test.com',
+        'e2e_students_student',
+        passwordHash,
+        UserRole.STUDENT,
+      ],
     );
     studentUserId = studentResult[0].id;
 
     // Get tokens
     const adminLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_students_admin@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_students_admin@test.com',
+        password: 'TestPassword123!',
+      });
     adminToken = adminLogin.body.access_token;
 
     const teacherLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_students_teacher@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_students_teacher@test.com',
+        password: 'TestPassword123!',
+      });
     teacherToken = teacherLogin.body.access_token;
 
     const studentLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_students_student@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_students_student@test.com',
+        password: 'TestPassword123!',
+      });
     studentToken = studentLogin.body.access_token;
   });
 
   afterAll(async () => {
     try {
       // Clean up - delete student profiles first due to FK constraints
-      await dataSource.query(`DELETE FROM students WHERE student_id LIKE $1`, [`STU2024${uniqueId}%`]);
-      await dataSource.query('DELETE FROM users WHERE email LIKE $1', ['e2e_students_%@test.com']);
+      await dataSource.query(`DELETE FROM students WHERE student_id LIKE $1`, [
+        `STU2024${uniqueId}%`,
+      ]);
+      await dataSource.query('DELETE FROM users WHERE email LIKE $1', [
+        'e2e_students_%@test.com',
+      ]);
     } catch (e) {
       // Ignore cleanup errors
     }
@@ -94,7 +124,7 @@ describe('Students (e2e)', () => {
     it('should create a new student for admin', () => {
       // Student ID format must be: STU + 4-digit year + 3+ digit sequence (e.g., STU2024001)
       return request(app.getHttpServer())
-        .post('/api/students')
+        .post('/api/v1/students')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           user_id: studentUserId,
@@ -112,7 +142,7 @@ describe('Students (e2e)', () => {
 
     it('should reject creation by non-admin', () => {
       return request(app.getHttpServer())
-        .post('/api/students')
+        .post('/api/v1/students')
         .set('Authorization', `Bearer ${teacherToken}`)
         .send({
           student_id: 'STU2024999',
@@ -124,7 +154,7 @@ describe('Students (e2e)', () => {
 
     it('should reject invalid student_id format', () => {
       return request(app.getHttpServer())
-        .post('/api/students')
+        .post('/api/v1/students')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           student_id: 'invalid-format',
@@ -138,7 +168,7 @@ describe('Students (e2e)', () => {
   describe('GET /api/students', () => {
     it('should return paginated students for admin', () => {
       return request(app.getHttpServer())
-        .get('/api/students')
+        .get('/api/v1/students')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -152,21 +182,21 @@ describe('Students (e2e)', () => {
 
     it('should return paginated students for teacher', () => {
       return request(app.getHttpServer())
-        .get('/api/students')
+        .get('/api/v1/students')
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect(200);
     });
 
     it('should reject request from students', () => {
       return request(app.getHttpServer())
-        .get('/api/students')
+        .get('/api/v1/students')
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(403);
     });
 
     it('should support search by student ID', () => {
       return request(app.getHttpServer())
-        .get('/api/students')
+        .get('/api/v1/students')
         .query({ search: `STU2024${uniqueId}` })
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
@@ -174,7 +204,7 @@ describe('Students (e2e)', () => {
 
     it('should support pagination', () => {
       return request(app.getHttpServer())
-        .get('/api/students')
+        .get('/api/v1/students')
         .query({ page: 1, limit: 5 })
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
@@ -206,7 +236,7 @@ describe('Students (e2e)', () => {
 
     it('should return 404 for non-existent student', () => {
       return request(app.getHttpServer())
-        .get('/api/students/99999')
+        .get('/api/v1/students/99999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });

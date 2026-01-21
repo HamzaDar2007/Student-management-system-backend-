@@ -43,14 +43,24 @@ describe('Grades (e2e)', () => {
     const adminResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true) RETURNING id`,
-      ['e2e_grades_admin@test.com', 'e2e_grades_admin', passwordHash, UserRole.ADMIN],
+      [
+        'e2e_grades_admin@test.com',
+        'e2e_grades_admin',
+        passwordHash,
+        UserRole.ADMIN,
+      ],
     );
 
     // Create teacher user
     const teacherResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true) RETURNING id`,
-      ['e2e_grades_teacher@test.com', 'e2e_grades_teacher', passwordHash, UserRole.TEACHER],
+      [
+        'e2e_grades_teacher@test.com',
+        'e2e_grades_teacher',
+        passwordHash,
+        UserRole.TEACHER,
+      ],
     );
     const teacherUserId = teacherResult[0].id;
 
@@ -58,7 +68,12 @@ describe('Grades (e2e)', () => {
     const studentUserResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true) RETURNING id`,
-      ['e2e_grades_student@test.com', 'e2e_grades_student', passwordHash, UserRole.STUDENT],
+      [
+        'e2e_grades_student@test.com',
+        'e2e_grades_student',
+        passwordHash,
+        UserRole.STUDENT,
+      ],
     );
     const studentUserId = studentUserResult[0].id;
 
@@ -88,28 +103,47 @@ describe('Grades (e2e)', () => {
 
     // Get tokens
     const adminLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_grades_admin@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_grades_admin@test.com',
+        password: 'TestPassword123!',
+      });
     adminToken = adminLogin.body.access_token;
 
     const teacherLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_grades_teacher@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_grades_teacher@test.com',
+        password: 'TestPassword123!',
+      });
     teacherToken = teacherLogin.body.access_token;
 
     const studentLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_grades_student@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_grades_student@test.com',
+        password: 'TestPassword123!',
+      });
     studentToken = studentLogin.body.access_token;
   });
 
   afterAll(async () => {
     try {
-      await dataSource.query('DELETE FROM grades WHERE student_id = $1', [testStudentId]);
-      await dataSource.query('DELETE FROM enrollments WHERE student_id = $1', [testStudentId]);
-      await dataSource.query('DELETE FROM students WHERE student_id = $1', ['STU-E2E-GRADES']);
-      await dataSource.query('DELETE FROM courses WHERE course_code LIKE $1', ['E2EGRD%']);
-      await dataSource.query('DELETE FROM users WHERE email LIKE $1', ['e2e_grades_%@test.com']);
+      await dataSource.query('DELETE FROM grades WHERE student_id = $1', [
+        testStudentId,
+      ]);
+      await dataSource.query('DELETE FROM enrollments WHERE student_id = $1', [
+        testStudentId,
+      ]);
+      await dataSource.query('DELETE FROM students WHERE student_id = $1', [
+        'STU-E2E-GRADES',
+      ]);
+      await dataSource.query('DELETE FROM courses WHERE course_code LIKE $1', [
+        'E2EGRD%',
+      ]);
+      await dataSource.query('DELETE FROM users WHERE email LIKE $1', [
+        'e2e_grades_%@test.com',
+      ]);
     } catch (e) {
       // Ignore cleanup errors
     }
@@ -119,7 +153,7 @@ describe('Grades (e2e)', () => {
   describe('POST /api/grades', () => {
     it('should create a new grade for admin', () => {
       return request(app.getHttpServer())
-        .post('/api/grades')
+        .post('/api/v1/grades')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           student_id: testStudentId,
@@ -140,7 +174,7 @@ describe('Grades (e2e)', () => {
 
     it('should create a grade for teacher', () => {
       return request(app.getHttpServer())
-        .post('/api/grades')
+        .post('/api/v1/grades')
         .set('Authorization', `Bearer ${teacherToken}`)
         .send({
           student_id: testStudentId,
@@ -157,7 +191,7 @@ describe('Grades (e2e)', () => {
 
     it('should reject grade creation by student', () => {
       return request(app.getHttpServer())
-        .post('/api/grades')
+        .post('/api/v1/grades')
         .set('Authorization', `Bearer ${studentToken}`)
         .send({
           student_id: testStudentId,
@@ -174,7 +208,7 @@ describe('Grades (e2e)', () => {
   describe('GET /api/grades', () => {
     it('should return grades for admin', () => {
       return request(app.getHttpServer())
-        .get('/api/grades')
+        .get('/api/v1/grades')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -185,7 +219,7 @@ describe('Grades (e2e)', () => {
 
     it('should return grades for teacher', () => {
       return request(app.getHttpServer())
-        .get('/api/grades')
+        .get('/api/v1/grades')
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect(200);
     });
@@ -207,7 +241,7 @@ describe('Grades (e2e)', () => {
 
     it('should return 404 for non-existent grade', () => {
       return request(app.getHttpServer())
-        .get('/api/grades/99999')
+        .get('/api/v1/grades/99999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });

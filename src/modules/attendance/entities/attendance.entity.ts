@@ -53,7 +53,10 @@ export class Attendance {
   @Column({ name: 'recorded_by', type: 'int', nullable: true })
   recordedBy?: number | null;
 
-  @ManyToOne(() => User, (u) => u.recordedAttendance, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => User, (u) => u.recordedAttendance, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'recorded_by' })
   recordedByUser?: User | null;
 

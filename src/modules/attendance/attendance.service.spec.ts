@@ -67,7 +67,10 @@ describe('AttendanceService', () => {
 
   describe('findAll', () => {
     it('should return paginated attendance records', async () => {
-      mockAttendanceRepository.findAndCount.mockResolvedValue([[mockAttendance], 1]);
+      mockAttendanceRepository.findAndCount.mockResolvedValue([
+        [mockAttendance],
+        1,
+      ]);
 
       const result = await service.findAll({ page: 1, limit: 10 });
 
@@ -117,14 +120,18 @@ describe('AttendanceService', () => {
     it('should throw NotFoundException if student not found', async () => {
       mockStudentRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto, 1)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto, 1)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException if course not found', async () => {
       mockStudentRepository.findOne.mockResolvedValue(mockStudent);
       mockCourseRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto, 1)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto, 1)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ConflictException if attendance already exists', async () => {
@@ -132,7 +139,9 @@ describe('AttendanceService', () => {
       mockCourseRepository.findOne.mockResolvedValue(mockCourse);
       mockAttendanceRepository.findOne.mockResolvedValue(mockAttendance);
 
-      await expect(service.create(createDto, 1)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto, 1)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -156,7 +165,9 @@ describe('AttendanceService', () => {
     it('should throw NotFoundException if attendance not found', async () => {
       mockAttendanceRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update(999, updateDto, 1)).rejects.toThrow(NotFoundException);
+      await expect(service.update(999, updateDto, 1)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -204,7 +215,9 @@ describe('AttendanceService', () => {
     it('should throw NotFoundException if course not found', async () => {
       mockCourseRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.bulkCreate(bulkDto, 1)).rejects.toThrow(NotFoundException);
+      await expect(service.bulkCreate(bulkDto, 1)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

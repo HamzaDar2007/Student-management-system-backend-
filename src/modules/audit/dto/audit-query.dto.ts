@@ -1,10 +1,18 @@
-import { IsDateString, IsInt, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsDateString,
+  IsInt,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 export class AuditQueryDto extends PaginationDto {
   @IsOptional()
-  @Transform(({ value }) => (value === undefined ? undefined : parseInt(value, 10)))
+  @Transform(({ value }) =>
+    value === undefined ? undefined : parseInt(value, 10),
+  )
   @IsInt()
   user_id?: number;
 

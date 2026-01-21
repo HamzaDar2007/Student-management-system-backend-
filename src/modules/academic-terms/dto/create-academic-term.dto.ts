@@ -1,20 +1,27 @@
-import { IsNotEmpty, IsString, MaxLength, IsDateString, IsOptional, IsBoolean } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+  IsDateString,
+  IsOptional,
+  IsBoolean,
+} from 'class-validator';
 
 export class CreateAcademicTermDto {
-    @IsNotEmpty()
-    @IsString()
-    @MaxLength(50)
-    name: string;
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50)
+  name: string;
 
-    @IsNotEmpty()
-    @IsDateString()
-    start_date: string;
+  @IsNotEmpty()
+  @IsDateString()
+  start_date: string;
 
-    @IsNotEmpty()
-    @IsDateString()
-    end_date: string;
+  @IsNotEmpty()
+  @IsDateString()
+  end_date: string;
 
-    @IsOptional()
-    @IsBoolean()
-    is_active?: boolean;
+  @IsOptional()
+  @IsBoolean()
+  is_active?: boolean;
 }

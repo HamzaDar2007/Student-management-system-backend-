@@ -29,7 +29,7 @@ describe('Health (e2e)', () => {
   describe('GET /api/health', () => {
     it('should return health status (may be 200 or 503 depending on thresholds)', () => {
       return request(app.getHttpServer())
-        .get('/api/health')
+        .get('/api/v1/health')
         .expect((res) => {
           // Accept both 200 (ok) and 503 (service unavailable due to memory thresholds)
           expect([200, 503]).toContain(res.status);
@@ -42,7 +42,7 @@ describe('Health (e2e)', () => {
   describe('GET /api/health/liveness', () => {
     it('should return liveness status', () => {
       return request(app.getHttpServer())
-        .get('/api/health/liveness')
+        .get('/api/v1/health/liveness')
         .expect(200)
         .expect((res) => {
           expect(res.body).toHaveProperty('status', 'ok');
@@ -54,7 +54,7 @@ describe('Health (e2e)', () => {
   describe('GET /api/health/readiness', () => {
     it('should return readiness status (may be 200 or 503)', () => {
       return request(app.getHttpServer())
-        .get('/api/health/readiness')
+        .get('/api/v1/health/readiness')
         .expect((res) => {
           expect([200, 503]).toContain(res.status);
           expect(res.body).toHaveProperty('status');

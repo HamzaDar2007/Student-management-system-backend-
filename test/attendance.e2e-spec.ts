@@ -50,7 +50,12 @@ describe('Attendance (e2e)', () => {
     const teacherResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true) RETURNING id`,
-      ['e2e_att_teacher@test.com', 'e2e_att_teacher', passwordHash, UserRole.TEACHER],
+      [
+        'e2e_att_teacher@test.com',
+        'e2e_att_teacher',
+        passwordHash,
+        UserRole.TEACHER,
+      ],
     );
     const teacherUserId = teacherResult[0].id;
 
@@ -58,7 +63,12 @@ describe('Attendance (e2e)', () => {
     const studentUserResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true) RETURNING id`,
-      ['e2e_att_student@test.com', 'e2e_att_student', passwordHash, UserRole.STUDENT],
+      [
+        'e2e_att_student@test.com',
+        'e2e_att_student',
+        passwordHash,
+        UserRole.STUDENT,
+      ],
     );
     const studentUserId = studentUserResult[0].id;
 
@@ -88,28 +98,44 @@ describe('Attendance (e2e)', () => {
 
     // Get tokens
     const adminLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
+      .post('/api/v1/auth/login')
       .send({ email: 'e2e_att_admin@test.com', password: 'TestPassword123!' });
     adminToken = adminLogin.body.access_token;
 
     const teacherLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_att_teacher@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_att_teacher@test.com',
+        password: 'TestPassword123!',
+      });
     teacherToken = teacherLogin.body.access_token;
 
     const studentLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_att_student@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_att_student@test.com',
+        password: 'TestPassword123!',
+      });
     studentToken = studentLogin.body.access_token;
   });
 
   afterAll(async () => {
     try {
-      await dataSource.query('DELETE FROM attendance WHERE student_id = $1', [testStudentId]);
-      await dataSource.query('DELETE FROM enrollments WHERE student_id = $1', [testStudentId]);
-      await dataSource.query('DELETE FROM students WHERE student_id = $1', ['STU-E2E-ATT']);
-      await dataSource.query('DELETE FROM courses WHERE course_code LIKE $1', ['E2EATT%']);
-      await dataSource.query('DELETE FROM users WHERE email LIKE $1', ['e2e_att_%@test.com']);
+      await dataSource.query('DELETE FROM attendance WHERE student_id = $1', [
+        testStudentId,
+      ]);
+      await dataSource.query('DELETE FROM enrollments WHERE student_id = $1', [
+        testStudentId,
+      ]);
+      await dataSource.query('DELETE FROM students WHERE student_id = $1', [
+        'STU-E2E-ATT',
+      ]);
+      await dataSource.query('DELETE FROM courses WHERE course_code LIKE $1', [
+        'E2EATT%',
+      ]);
+      await dataSource.query('DELETE FROM users WHERE email LIKE $1', [
+        'e2e_att_%@test.com',
+      ]);
     } catch (e) {
       // Ignore cleanup errors
     }
@@ -119,7 +145,7 @@ describe('Attendance (e2e)', () => {
   describe('POST /api/attendance', () => {
     it('should create attendance for admin', () => {
       return request(app.getHttpServer())
-        .post('/api/attendance')
+        .post('/api/v1/attendance')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           student_id: testStudentId,
@@ -138,7 +164,7 @@ describe('Attendance (e2e)', () => {
 
     it('should create attendance for teacher', () => {
       return request(app.getHttpServer())
-        .post('/api/attendance')
+        .post('/api/v1/attendance')
         .set('Authorization', `Bearer ${teacherToken}`)
         .send({
           student_id: testStudentId,
@@ -153,7 +179,7 @@ describe('Attendance (e2e)', () => {
 
     it('should reject attendance creation by student', () => {
       return request(app.getHttpServer())
-        .post('/api/attendance')
+        .post('/api/v1/attendance')
         .set('Authorization', `Bearer ${studentToken}`)
         .send({
           student_id: testStudentId,
@@ -168,7 +194,7 @@ describe('Attendance (e2e)', () => {
   describe('GET /api/attendance', () => {
     it('should return attendance records for admin', () => {
       return request(app.getHttpServer())
-        .get('/api/attendance')
+        .get('/api/v1/attendance')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -179,7 +205,7 @@ describe('Attendance (e2e)', () => {
 
     it('should return attendance for teacher', () => {
       return request(app.getHttpServer())
-        .get('/api/attendance')
+        .get('/api/v1/attendance')
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect(200);
     });
@@ -201,7 +227,7 @@ describe('Attendance (e2e)', () => {
 
     it('should return 404 for non-existent attendance', () => {
       return request(app.getHttpServer())
-        .get('/api/attendance/99999')
+        .get('/api/v1/attendance/99999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });

@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -19,19 +20,25 @@ import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
 import { MailService } from '../../common/services/mail.service';
 
+// Account lockout configuration
+const MAX_FAILED_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MINUTES = 15;
+const FAILED_ATTEMPT_RESET_MINUTES = 30;
+
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly userRepo: Repository<User>,
     private readonly jwtService: JwtService,
     private readonly mailService: MailService,
-  ) { }
+  ) {}
 
   async register(dto: RegisterDto) {
     const existing = await this.userRepo.findOne({
       where: [{ email: dto.email }, { username: dto.username }],
     });
-    if (existing) throw new ConflictException('Email or username already exists');
+    if (existing)
+      throw new ConflictException('Email or username already exists');
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
@@ -65,10 +72,67 @@ export class AuthService {
     const user = await this.userRepo.findOne({ where: { email: dto.email } });
     if (!user) throw new UnauthorizedException('Invalid credentials');
 
+    // Check if account is locked
+    if (user.lockedUntil && user.lockedUntil > new Date()) {
+      const remainingMinutes = Math.ceil(
+        (user.lockedUntil.getTime() - Date.now()) / 60000,
+      );
+      throw new ForbiddenException(
+        `Account is locked. Try again in ${remainingMinutes} minute(s).`,
+      );
+    }
+
+    // Reset failed attempts if lockout has expired or enough time has passed
+    if (
+      user.failedLoginAttempts > 0 &&
+      user.lastFailedLogin &&
+      new Date().getTime() - user.lastFailedLogin.getTime() >
+        FAILED_ATTEMPT_RESET_MINUTES * 60 * 1000
+    ) {
+      await this.userRepo.update(user.id, {
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+      });
+      user.failedLoginAttempts = 0;
+    }
+
     const ok = await bcrypt.compare(dto.password, user.passwordHash);
-    if (!ok) throw new UnauthorizedException('Invalid credentials');
+    if (!ok) {
+      // Increment failed login attempts
+      const newFailedAttempts = user.failedLoginAttempts + 1;
+      const updateData: Partial<User> = {
+        failedLoginAttempts: newFailedAttempts,
+        lastFailedLogin: new Date(),
+      };
+
+      // Lock account if max attempts reached
+      if (newFailedAttempts >= MAX_FAILED_ATTEMPTS) {
+        updateData.lockedUntil = new Date(
+          Date.now() + LOCKOUT_DURATION_MINUTES * 60 * 1000,
+        );
+      }
+
+      await this.userRepo.update(user.id, updateData);
+
+      if (newFailedAttempts >= MAX_FAILED_ATTEMPTS) {
+        throw new ForbiddenException(
+          `Account locked due to too many failed attempts. Try again in ${LOCKOUT_DURATION_MINUTES} minutes.`,
+        );
+      }
+
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     if (!user.isActive) throw new UnauthorizedException('Account disabled');
+
+    // Reset failed login attempts on successful login
+    if (user.failedLoginAttempts > 0) {
+      await this.userRepo.update(user.id, {
+        failedLoginAttempts: 0,
+        lockedUntil: null,
+        lastFailedLogin: null,
+      });
+    }
 
     const tokens = await this.getTokens(user.id, user.email, user.role);
     await this.updateRefreshToken(user.id, tokens.refresh_token);
@@ -127,7 +191,9 @@ export class AuthService {
     const user = await this.userRepo.findOne({ where: { email: dto.email } });
     if (!user) {
       // Return success even if user not found (security best practice)
-      return { message: 'If account exists, password reset email has been sent' };
+      return {
+        message: 'If account exists, password reset email has been sent',
+      };
     }
 
     const resetToken = crypto.randomBytes(32).toString('hex');
@@ -151,8 +217,15 @@ export class AuthService {
     let validUser: User | null = null;
     for (const user of users) {
       if (user.passwordResetToken) {
-        const isValid = await bcrypt.compare(dto.token, user.passwordResetToken);
-        if (isValid && user.passwordResetExpires && user.passwordResetExpires > new Date()) {
+        const isValid = await bcrypt.compare(
+          dto.token,
+          user.passwordResetToken,
+        );
+        if (
+          isValid &&
+          user.passwordResetExpires &&
+          user.passwordResetExpires > new Date()
+        ) {
           validUser = user;
           break;
         }

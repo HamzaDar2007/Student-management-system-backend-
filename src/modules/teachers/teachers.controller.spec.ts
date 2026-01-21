@@ -129,7 +129,10 @@ describe('TeachersController', () => {
   describe('update', () => {
     it('should update a teacher profile', async () => {
       const dto: UpdateTeacherProfileDto = { designation: 'Senior Professor' };
-      const updatedTeacher = { ...mockTeacher, designation: 'Senior Professor' };
+      const updatedTeacher = {
+        ...mockTeacher,
+        designation: 'Senior Professor',
+      };
       mockTeachersService.update.mockResolvedValue(updatedTeacher);
 
       const result = await controller.update(1, dto);

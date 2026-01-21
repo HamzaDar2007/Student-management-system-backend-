@@ -1,6 +1,13 @@
-import { registerDecorator, ValidationArguments, ValidationOptions } from 'class-validator';
+import {
+  registerDecorator,
+  ValidationArguments,
+  ValidationOptions,
+} from 'class-validator';
 
-export function MinAge(minYears: number, validationOptions?: ValidationOptions) {
+export function MinAge(
+  minYears: number,
+  validationOptions?: ValidationOptions,
+) {
   return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'minAge',
@@ -16,7 +23,11 @@ export function MinAge(minYears: number, validationOptions?: ValidationOptions) 
 
           const [min] = args.constraints as number[];
           const today = new Date();
-          const cutoff = new Date(today.getFullYear() - min, today.getMonth(), today.getDate());
+          const cutoff = new Date(
+            today.getFullYear() - min,
+            today.getMonth(),
+            today.getDate(),
+          );
           return date <= cutoff;
         },
         defaultMessage(args: ValidationArguments) {

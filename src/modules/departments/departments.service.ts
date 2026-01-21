@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Department } from './entities/department.entity';
@@ -16,15 +20,23 @@ export class DepartmentsService {
   ) {}
 
   async create(dto: CreateDepartmentDto) {
-    const existingName = await this.departmentRepo.findOne({ where: { name: dto.name } });
-    if (existingName) throw new ConflictException('Department name already exists');
+    const existingName = await this.departmentRepo.findOne({
+      where: { name: dto.name },
+    });
+    if (existingName)
+      throw new ConflictException('Department name already exists');
 
-    const existingCode = await this.departmentRepo.findOne({ where: { code: dto.code } });
-    if (existingCode) throw new ConflictException('Department code already exists');
+    const existingCode = await this.departmentRepo.findOne({
+      where: { code: dto.code },
+    });
+    if (existingCode)
+      throw new ConflictException('Department code already exists');
 
     let faculty: Faculty | null = null;
     if (dto.faculty_id) {
-      faculty = await this.facultyRepo.findOne({ where: { id: dto.faculty_id } });
+      faculty = await this.facultyRepo.findOne({
+        where: { id: dto.faculty_id },
+      });
       if (!faculty) throw new NotFoundException('Faculty not found');
     }
 
@@ -62,20 +74,28 @@ export class DepartmentsService {
     if (!department) throw new NotFoundException('Department not found');
 
     if (dto.name && dto.name !== department.name) {
-      const existing = await this.departmentRepo.findOne({ where: { name: dto.name } });
-      if (existing) throw new ConflictException('Department name already exists');
+      const existing = await this.departmentRepo.findOne({
+        where: { name: dto.name },
+      });
+      if (existing)
+        throw new ConflictException('Department name already exists');
     }
 
     if (dto.code && dto.code !== department.code) {
-      const existing = await this.departmentRepo.findOne({ where: { code: dto.code } });
-      if (existing) throw new ConflictException('Department code already exists');
+      const existing = await this.departmentRepo.findOne({
+        where: { code: dto.code },
+      });
+      if (existing)
+        throw new ConflictException('Department code already exists');
     }
 
     if (dto.faculty_id !== undefined) {
       if (dto.faculty_id === null) {
         department.faculty = null as any;
       } else {
-        const faculty = await this.facultyRepo.findOne({ where: { id: dto.faculty_id } });
+        const faculty = await this.facultyRepo.findOne({
+          where: { id: dto.faculty_id },
+        });
         if (!faculty) throw new NotFoundException('Faculty not found');
         department.faculty = faculty;
       }
@@ -97,10 +117,12 @@ export class DepartmentsService {
     if (!department) throw new NotFoundException('Department not found');
 
     if (department.students && department.students.length > 0) {
-      throw new ConflictException('Cannot delete department with existing students');
+      throw new ConflictException(
+        'Cannot delete department with existing students',
+      );
     }
 
-    await this.departmentRepo.remove(department);
+    await this.departmentRepo.softRemove(department);
     return { deleted: true };
   }
 }

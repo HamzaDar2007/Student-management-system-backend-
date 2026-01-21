@@ -24,6 +24,8 @@ describe('DepartmentsService', () => {
     save: jest.fn(),
     create: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
+    restore: jest.fn(),
   };
 
   const mockFacultyRepository = {
@@ -54,7 +56,10 @@ describe('DepartmentsService', () => {
 
   describe('findAll', () => {
     it('should return paginated departments', async () => {
-      mockDepartmentRepository.findAndCount.mockResolvedValue([[mockDepartment], 1]);
+      mockDepartmentRepository.findAndCount.mockResolvedValue([
+        [mockDepartment],
+        1,
+      ]);
 
       const result = await service.findAll(1, 10);
 
@@ -100,7 +105,9 @@ describe('DepartmentsService', () => {
     it('should throw ConflictException if name already exists', async () => {
       mockDepartmentRepository.findOne.mockResolvedValueOnce(mockDepartment);
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw ConflictException if code already exists', async () => {
@@ -108,16 +115,18 @@ describe('DepartmentsService', () => {
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(mockDepartment);
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw NotFoundException if faculty not found', async () => {
       mockDepartmentRepository.findOne.mockResolvedValue(null);
       mockFacultyRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create({ ...createDto, faculty_id: 999 })).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        service.create({ ...createDto, faculty_id: 999 }),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -129,7 +138,7 @@ describe('DepartmentsService', () => {
     it('should update a department', async () => {
       mockDepartmentRepository.findOne
         .mockResolvedValueOnce(mockDepartment) // First call: find department by id
-        .mockResolvedValueOnce(null);          // Second call: check name uniqueness
+        .mockResolvedValueOnce(null); // Second call: check name uniqueness
       mockDepartmentRepository.save.mockResolvedValue({
         ...mockDepartment,
         name: updateDto.name,
@@ -143,14 +152,22 @@ describe('DepartmentsService', () => {
     it('should throw NotFoundException if department not found', async () => {
       mockDepartmentRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update(999, updateDto)).rejects.toThrow(NotFoundException);
+      await expect(service.update(999, updateDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('remove', () => {
     it('should delete a department', async () => {
-      mockDepartmentRepository.findOne.mockResolvedValue({ ...mockDepartment, students: [] });
-      mockDepartmentRepository.remove.mockResolvedValue({ ...mockDepartment, students: [] });
+      mockDepartmentRepository.findOne.mockResolvedValue({
+        ...mockDepartment,
+        students: [],
+      });
+      mockDepartmentRepository.softRemove.mockResolvedValue({
+        ...mockDepartment,
+        students: [],
+      });
 
       const result = await service.remove(1);
 

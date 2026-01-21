@@ -54,52 +54,58 @@ A comprehensive RESTful API for managing students, courses, enrollments, grades,
 ## 🔧 Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone <repository-url>
    cd students-management/backend
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Configure environment variables**
+
    ```bash
    cp .env.example .env
    ```
+
    Edit `.env` with your configuration:
+
    ```env
    # Application
    NODE_ENV=development
    PORT=3000
-   
+
    # Database
    DB_HOST=localhost
    DB_PORT=5432
    DB_USERNAME=your_username
    DB_PASSWORD=your_password
    DB_DATABASE=students_management
-   
+
    # JWT
    JWT_SECRET=your-secret-key
    JWT_EXPIRES_IN=15m
    JWT_REFRESH_SECRET=your-refresh-secret
    JWT_REFRESH_EXPIRES_IN=7d
-   
+
    # Email (optional)
    SMTP_HOST=smtp.example.com
    SMTP_PORT=587
    SMTP_USER=your-email
    SMTP_PASS=your-password
    MAIL_FROM=noreply@example.com
-   
+
    # Rate Limiting
    THROTTLE_TTL=60000
    THROTTLE_LIMIT=100
    ```
 
 4. **Run database migrations**
+
    ```bash
    npm run migration:run
    ```
@@ -125,13 +131,42 @@ The API will be available at `http://localhost:3000`
 ## 📚 API Documentation
 
 Once the server is running, access the Swagger documentation at:
+
 - **Swagger UI:** `http://localhost:3000/api/docs`
+
+## � API Versioning
+
+All API endpoints use URI versioning with the format `/api/v1/...`
+
+**Examples:**
+
+- `GET /api/v1/students` - List all students
+- `POST /api/v1/auth/login` - Login
+- `GET /api/v1/courses/:id` - Get course by ID
+- `POST /api/v1/uploads` - Upload a file
+
+## 📤 File Uploads
+
+The system supports file uploads with the following endpoints:
+
+| Method | Endpoint                                   | Description                    | Access         |
+| ------ | ------------------------------------------ | ------------------------------ | -------------- |
+| POST   | `/api/v1/uploads`                          | Upload single file             | Admin, Teacher |
+| POST   | `/api/v1/uploads/multiple`                 | Upload multiple files (max 10) | Admin, Teacher |
+| GET    | `/api/v1/uploads/:folder/:filename`        | Download/view a file           | Public         |
+| DELETE | `/api/v1/uploads/:folder/:filename`        | Delete a file                  | Admin only     |
+| GET    | `/api/v1/uploads/exists/:folder/:filename` | Check if file exists           | Public         |
+
+**Supported file types:** Images (JPEG, PNG, GIF, WebP), Documents (PDF, DOC, DOCX, XLS, XLSX, TXT)
+
+**File size limit:** 10MB per file
 
 ## 🔐 Authentication
 
 Most endpoints require JWT authentication. To authenticate:
 
 1. **Register or Login**
+
    ```bash
    POST /api/auth/login
    {
@@ -146,9 +181,10 @@ Most endpoints require JWT authentication. To authenticate:
    ```
 
 ### Default Users (after seeding)
-| Role    | Email              | Password    |
-|---------|-------------------|-------------|
-| Admin   | admin@example.com | Admin123!   |
+
+| Role    | Email               | Password    |
+| ------- | ------------------- | ----------- |
+| Admin   | admin@example.com   | Admin123!   |
 | Teacher | teacher@example.com | Teacher123! |
 | Student | student@example.com | Student123! |
 
@@ -183,6 +219,7 @@ src/
 │   ├── scheduling/         # Course scheduling
 │   ├── students/           # Student management
 │   ├── teachers/           # Teacher management
+│   ├── uploads/            # File upload management
 │   └── users/              # User management
 ├── app.module.ts
 └── main.ts
@@ -204,54 +241,59 @@ npm run test:cov
 ## 📦 API Endpoints
 
 ### Authentication
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/auth/register` | Register new user |
-| POST | `/api/auth/login` | Login |
-| POST | `/api/auth/refresh-token` | Refresh access token |
-| POST | `/api/auth/forgot-password` | Request password reset |
-| POST | `/api/auth/reset-password` | Reset password |
-| POST | `/api/auth/verify-email` | Verify email |
-| GET | `/api/auth/me` | Get current user |
-| POST | `/api/auth/logout` | Logout |
+
+| Method | Endpoint                       | Description            |
+| ------ | ------------------------------ | ---------------------- |
+| POST   | `/api/v1/auth/register`        | Register new user      |
+| POST   | `/api/v1/auth/login`           | Login                  |
+| POST   | `/api/v1/auth/refresh-token`   | Refresh access token   |
+| POST   | `/api/v1/auth/forgot-password` | Request password reset |
+| POST   | `/api/v1/auth/reset-password`  | Reset password         |
+| POST   | `/api/v1/auth/verify-email`    | Verify email           |
+| GET    | `/api/v1/auth/me`              | Get current user       |
+| POST   | `/api/v1/auth/logout`          | Logout                 |
 
 ### Users (Admin only)
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/users` | List all users |
-| POST | `/api/users` | Create user |
-| GET | `/api/users/:id` | Get user by ID |
-| PUT | `/api/users/:id` | Update user |
-| DELETE | `/api/users/:id` | Delete user |
+
+| Method | Endpoint            | Description    |
+| ------ | ------------------- | -------------- |
+| GET    | `/api/v1/users`     | List all users |
+| POST   | `/api/v1/users`     | Create user    |
+| GET    | `/api/v1/users/:id` | Get user by ID |
+| PUT    | `/api/v1/users/:id` | Update user    |
+| DELETE | `/api/v1/users/:id` | Delete user    |
 
 ### Students
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/students` | List students |
-| POST | `/api/students` | Create student |
-| GET | `/api/students/:id` | Get student |
-| PUT | `/api/students/:id` | Update student |
-| DELETE | `/api/students/:id` | Delete student |
-| GET | `/api/students/:id/grades` | Get student grades |
-| GET | `/api/students/:id/attendance` | Get student attendance |
+
+| Method | Endpoint                          | Description            |
+| ------ | --------------------------------- | ---------------------- |
+| GET    | `/api/v1/students`                | List students          |
+| POST   | `/api/v1/students`                | Create student         |
+| GET    | `/api/v1/students/:id`            | Get student            |
+| PUT    | `/api/v1/students/:id`            | Update student         |
+| DELETE | `/api/v1/students/:id`            | Delete student         |
+| GET    | `/api/v1/students/:id/grades`     | Get student grades     |
+| GET    | `/api/v1/students/:id/attendance` | Get student attendance |
 
 ### Courses
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/courses` | List courses |
-| POST | `/api/courses` | Create course |
-| GET | `/api/courses/:id` | Get course |
-| PUT | `/api/courses/:id` | Update course |
-| DELETE | `/api/courses/:id` | Delete course |
-| GET | `/api/courses/:id/students` | Get enrolled students |
-| GET | `/api/courses/:id/attendance` | Get course attendance |
+
+| Method | Endpoint                         | Description           |
+| ------ | -------------------------------- | --------------------- |
+| GET    | `/api/v1/courses`                | List courses          |
+| POST   | `/api/v1/courses`                | Create course         |
+| GET    | `/api/v1/courses/:id`            | Get course            |
+| PUT    | `/api/v1/courses/:id`            | Update course         |
+| DELETE | `/api/v1/courses/:id`            | Delete course         |
+| GET    | `/api/v1/courses/:id/students`   | Get enrolled students |
+| GET    | `/api/v1/courses/:id/attendance` | Get course attendance |
 
 ### Health Checks
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/health` | Full health check |
-| GET | `/api/health/liveness` | Liveness probe |
-| GET | `/api/health/readiness` | Readiness probe |
+
+| Method | Endpoint                   | Description       |
+| ------ | -------------------------- | ----------------- |
+| GET    | `/api/v1/health`           | Full health check |
+| GET    | `/api/v1/health/liveness`  | Liveness probe    |
+| GET    | `/api/v1/health/readiness` | Readiness probe   |
 
 ## 🔒 Security
 
@@ -264,19 +306,19 @@ npm run test:cov
 
 ## 📝 Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run start:dev` | Start in development mode |
-| `npm run start:prod` | Start in production mode |
-| `npm run build` | Build the application |
-| `npm run test` | Run unit tests |
-| `npm run test:e2e` | Run E2E tests |
-| `npm run migration:generate` | Generate migration |
-| `npm run migration:run` | Run migrations |
-| `npm run migration:revert` | Revert last migration |
-| `npm run seed` | Seed the database |
-| `npm run lint` | Run ESLint |
-| `npm run format` | Format code with Prettier |
+| Command                      | Description               |
+| ---------------------------- | ------------------------- |
+| `npm run start:dev`          | Start in development mode |
+| `npm run start:prod`         | Start in production mode  |
+| `npm run build`              | Build the application     |
+| `npm run test`               | Run unit tests            |
+| `npm run test:e2e`           | Run E2E tests             |
+| `npm run migration:generate` | Generate migration        |
+| `npm run migration:run`      | Run migrations            |
+| `npm run migration:revert`   | Revert last migration     |
+| `npm run seed`               | Seed the database         |
+| `npm run lint`               | Run ESLint                |
+| `npm run format`             | Format code with Prettier |
 
 ## 🤝 Contributing
 

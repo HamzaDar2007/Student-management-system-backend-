@@ -1,15 +1,30 @@
 import { DataSource } from 'typeorm';
 import { User, UserRole } from '../../src/modules/users/entities/user.entity';
-import { Student, Gender } from '../../src/modules/students/entities/student.entity';
-import { TeacherProfile, AcademicRank } from '../../src/modules/teachers/entities/teacher-profile.entity';
+import {
+  Student,
+  Gender,
+} from '../../src/modules/students/entities/student.entity';
+import {
+  TeacherProfile,
+  AcademicRank,
+} from '../../src/modules/teachers/entities/teacher-profile.entity';
 import { Course } from '../../src/modules/courses/entities/course.entity';
-import { Enrollment, EnrollmentStatus } from '../../src/modules/enrollments/entities/enrollment.entity';
+import {
+  Enrollment,
+  EnrollmentStatus,
+} from '../../src/modules/enrollments/entities/enrollment.entity';
 import { Grade } from '../../src/modules/grades/entities/grade.entity';
-import { Attendance, AttendanceStatus } from '../../src/modules/attendance/entities/attendance.entity';
+import {
+  Attendance,
+  AttendanceStatus,
+} from '../../src/modules/attendance/entities/attendance.entity';
 import { Faculty } from '../../src/modules/faculties/entities/faculty.entity';
 import { Department } from '../../src/modules/departments/entities/department.entity';
 import { AcademicTerm } from '../../src/modules/academic-terms/entities/academic-term.entity';
-import { Classroom, ClassroomType } from '../../src/modules/scheduling/entities/classroom.entity';
+import {
+  Classroom,
+  ClassroomType,
+} from '../../src/modules/scheduling/entities/classroom.entity';
 import { Schedule } from '../../src/modules/scheduling/entities/schedule.entity';
 
 /**
@@ -92,9 +107,7 @@ export async function createTestCourse(
   });
 
   if (teacherIds.length > 0) {
-    course.teachers = await userRepo.findBy(
-      teacherIds.map((id) => ({ id })),
-    );
+    course.teachers = await userRepo.findBy(teacherIds.map((id) => ({ id })));
   }
 
   return courseRepo.save(course);

@@ -44,6 +44,8 @@ describe('SchedulingService', () => {
     save: jest.fn(),
     create: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
+    restore: jest.fn(),
     createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
   };
 
@@ -53,6 +55,8 @@ describe('SchedulingService', () => {
     save: jest.fn(),
     create: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
+    restore: jest.fn(),
   };
 
   const mockCourseRepository = {
@@ -87,7 +91,10 @@ describe('SchedulingService', () => {
 
   describe('findAll', () => {
     it('should return paginated schedules', async () => {
-      mockScheduleRepository.findAndCount.mockResolvedValue([[mockSchedule], 1]);
+      mockScheduleRepository.findAndCount.mockResolvedValue([
+        [mockSchedule],
+        1,
+      ]);
 
       const result = await service.findAll(1, 10);
 
@@ -138,20 +145,27 @@ describe('SchedulingService', () => {
     it('should throw NotFoundException if course not found', async () => {
       mockCourseRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException if classroom not found', async () => {
       mockCourseRepository.findOne.mockResolvedValue(mockCourse);
       mockClassroomRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('findAllClassrooms', () => {
     it('should return paginated classrooms', async () => {
-      mockClassroomRepository.findAndCount.mockResolvedValue([[mockClassroom], 1]);
+      mockClassroomRepository.findAndCount.mockResolvedValue([
+        [mockClassroom],
+        1,
+      ]);
 
       const result = await service.findAllClassrooms(1, 10);
 
@@ -174,7 +188,9 @@ describe('SchedulingService', () => {
     it('should throw NotFoundException if classroom not found', async () => {
       mockClassroomRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findOneClassroom(999)).rejects.toThrow(NotFoundException);
+      await expect(service.findOneClassroom(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -198,14 +214,16 @@ describe('SchedulingService', () => {
     it('should throw ConflictException if room number already exists', async () => {
       mockClassroomRepository.findOne.mockResolvedValue(mockClassroom);
 
-      await expect(service.createClassroom(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.createClassroom(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
   describe('remove', () => {
     it('should delete a schedule', async () => {
       mockScheduleRepository.findOne.mockResolvedValue(mockSchedule);
-      mockScheduleRepository.remove.mockResolvedValue(mockSchedule);
+      mockScheduleRepository.softRemove.mockResolvedValue(mockSchedule);
 
       const result = await service.remove(1);
 
@@ -223,7 +241,7 @@ describe('SchedulingService', () => {
     it('should delete a classroom', async () => {
       mockClassroomRepository.findOne.mockResolvedValue(mockClassroom);
       mockScheduleRepository.find.mockResolvedValue([]);
-      mockClassroomRepository.remove.mockResolvedValue(mockClassroom);
+      mockClassroomRepository.softRemove.mockResolvedValue(mockClassroom);
 
       const result = await service.removeClassroom(1);
 
@@ -233,14 +251,18 @@ describe('SchedulingService', () => {
     it('should throw NotFoundException if classroom not found', async () => {
       mockClassroomRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.removeClassroom(999)).rejects.toThrow(NotFoundException);
+      await expect(service.removeClassroom(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ConflictException if classroom has schedules', async () => {
       mockClassroomRepository.findOne.mockResolvedValue(mockClassroom);
       mockScheduleRepository.find.mockResolvedValue([mockSchedule]);
 
-      await expect(service.removeClassroom(1)).rejects.toThrow(ConflictException);
+      await expect(service.removeClassroom(1)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 

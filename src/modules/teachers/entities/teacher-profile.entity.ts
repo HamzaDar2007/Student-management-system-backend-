@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   JoinColumn,
@@ -40,7 +41,12 @@ export class TeacherProfile {
   @Column({ type: 'varchar', length: 100, nullable: true })
   specialization?: string | null;
 
-  @Column({ name: 'office_location', type: 'varchar', length: 100, nullable: true })
+  @Column({
+    name: 'office_location',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
   officeLocation?: string | null;
 
   @Column({ name: 'office_hours', type: 'text', nullable: true })
@@ -63,4 +69,7 @@ export class TeacherProfile {
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  deletedAt?: Date | null;
 }

@@ -50,7 +50,9 @@ describe('FacultiesController (e2e)', () => {
     await facultyRepo
       .createQueryBuilder()
       .delete()
-      .where('code LIKE :pattern', { pattern: `${TEST_PREFIX.toUpperCase().slice(0, 2)}%` })
+      .where('code LIKE :pattern', {
+        pattern: `${TEST_PREFIX.toUpperCase().slice(0, 2)}%`,
+      })
       .execute();
 
     await deleteTestUsers(dataSource, TEST_PREFIX);
@@ -183,9 +185,7 @@ describe('FacultiesController (e2e)', () => {
     });
 
     it('unauthenticated should be rejected', async () => {
-      await request(app.getHttpServer())
-        .get(endpoint)
-        .expect(401);
+      await request(app.getHttpServer()).get(endpoint).expect(401);
     });
   });
 

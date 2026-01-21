@@ -9,7 +9,7 @@ import {
 } from '@nestjs/terminus';
 
 @ApiTags('Health')
-@Controller('api/health')
+@Controller('health')
 export class HealthController {
   constructor(
     private health: HealthCheckService,
@@ -49,9 +49,14 @@ export class HealthController {
 
   @Get('readiness')
   @HealthCheck()
-  @ApiOperation({ summary: 'Readiness probe - check if application can handle requests' })
+  @ApiOperation({
+    summary: 'Readiness probe - check if application can handle requests',
+  })
   @ApiResponse({ status: 200, description: 'Application is ready' })
-  @ApiResponse({ status: 503, description: 'Application is not ready (database unavailable)' })
+  @ApiResponse({
+    status: 503,
+    description: 'Application is not ready (database unavailable)',
+  })
   readiness() {
     return this.health.check([() => this.db.pingCheck('database')]);
   }

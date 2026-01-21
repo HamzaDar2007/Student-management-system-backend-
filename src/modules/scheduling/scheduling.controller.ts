@@ -1,5 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseIntPipe,
+  Query,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+  ApiQuery,
+} from '@nestjs/swagger';
 import { SchedulingService } from './scheduling.service';
 import { CreateSchedulingDto } from './dto/create-scheduling.dto';
 import { UpdateSchedulingDto } from './dto/update-scheduling.dto';
@@ -26,7 +44,10 @@ export class SchedulingController {
   @ApiOperation({ summary: 'Create a new schedule (Admin only)' })
   @ApiResponse({ status: 201, description: 'Schedule created successfully' })
   @ApiResponse({ status: 400, description: 'Validation error' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   @ApiResponse({ status: 409, description: 'Schedule conflict detected' })
   create(@Body() createSchedulingDto: CreateSchedulingDto) {
     return this.schedulingService.create(createSchedulingDto);
@@ -35,9 +56,22 @@ export class SchedulingController {
   @Get()
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get all schedules with pagination' })
-  @ApiQuery({ name: 'page', required: false, type: 'number', description: 'Page number' })
-  @ApiQuery({ name: 'limit', required: false, type: 'number', description: 'Items per page' })
-  @ApiResponse({ status: 200, description: 'Returns paginated list of schedules' })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: 'number',
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: 'number',
+    description: 'Items per page',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns paginated list of schedules',
+  })
   findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
     return this.schedulingService.findAll(page || 1, limit || 10);
   }
@@ -51,8 +85,14 @@ export class SchedulingController {
   @ApiOperation({ summary: 'Create a new classroom (Admin only)' })
   @ApiResponse({ status: 201, description: 'Classroom created successfully' })
   @ApiResponse({ status: 400, description: 'Validation error' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  @ApiResponse({ status: 409, description: 'Classroom with this room number already exists' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Classroom with this room number already exists',
+  })
   createClassroom(@Body() dto: CreateClassroomDto) {
     return this.schedulingService.createClassroom(dto);
   }
@@ -60,10 +100,26 @@ export class SchedulingController {
   @Get('classrooms')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get all classrooms with pagination' })
-  @ApiQuery({ name: 'page', required: false, type: 'number', description: 'Page number' })
-  @ApiQuery({ name: 'limit', required: false, type: 'number', description: 'Items per page' })
-  @ApiResponse({ status: 200, description: 'Returns paginated list of classrooms' })
-  findAllClassrooms(@Query('page') page?: number, @Query('limit') limit?: number) {
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: 'number',
+    description: 'Page number',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: 'number',
+    description: 'Items per page',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns paginated list of classrooms',
+  })
+  findAllClassrooms(
+    @Query('page') page?: number,
+    @Query('limit') limit?: number,
+  ) {
     return this.schedulingService.findAllClassrooms(page || 1, limit || 10);
   }
 
@@ -92,9 +148,15 @@ export class SchedulingController {
   @ApiOperation({ summary: 'Update classroom by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'number', description: 'Classroom ID' })
   @ApiResponse({ status: 200, description: 'Classroom updated successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   @ApiResponse({ status: 404, description: 'Classroom not found' })
-  updateClassroom(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateClassroomDto) {
+  updateClassroom(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateClassroomDto,
+  ) {
     return this.schedulingService.updateClassroom(id, dto);
   }
 
@@ -103,9 +165,15 @@ export class SchedulingController {
   @ApiOperation({ summary: 'Delete classroom by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'number', description: 'Classroom ID' })
   @ApiResponse({ status: 200, description: 'Classroom deleted successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   @ApiResponse({ status: 404, description: 'Classroom not found' })
-  @ApiResponse({ status: 409, description: 'Cannot delete classroom with existing schedules' })
+  @ApiResponse({
+    status: 409,
+    description: 'Cannot delete classroom with existing schedules',
+  })
   removeClassroom(@Param('id', ParseIntPipe) id: number) {
     return this.schedulingService.removeClassroom(id);
   }
@@ -139,10 +207,16 @@ export class SchedulingController {
   @ApiOperation({ summary: 'Update schedule by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
   @ApiResponse({ status: 200, description: 'Schedule updated successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   @ApiResponse({ status: 404, description: 'Schedule not found' })
   @ApiResponse({ status: 409, description: 'Schedule conflict detected' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateSchedulingDto: UpdateSchedulingDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateSchedulingDto: UpdateSchedulingDto,
+  ) {
     return this.schedulingService.update(id, updateSchedulingDto);
   }
 
@@ -151,7 +225,10 @@ export class SchedulingController {
   @ApiOperation({ summary: 'Delete schedule by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
   @ApiResponse({ status: 200, description: 'Schedule deleted successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   @ApiResponse({ status: 404, description: 'Schedule not found' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.schedulingService.remove(id);

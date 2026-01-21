@@ -151,9 +151,7 @@ describe('StudentsController', () => {
 
   describe('attendance', () => {
     it('should return student attendance records', async () => {
-      const mockAttendance = [
-        { id: 1, date: new Date(), status: 'present' },
-      ];
+      const mockAttendance = [{ id: 1, date: new Date(), status: 'present' }];
       mockStudentsService.getAttendance.mockResolvedValue(mockAttendance);
 
       const result = await controller.attendance(1);

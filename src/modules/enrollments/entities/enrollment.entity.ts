@@ -40,17 +40,31 @@ export class Enrollment {
   course: Course;
 
   @Index('idx_enrollments_enrollment_date')
-  @Column({ name: 'enrollment_date', type: 'date', default: () => 'CURRENT_DATE' })
+  @Column({
+    name: 'enrollment_date',
+    type: 'date',
+    default: () => 'CURRENT_DATE',
+  })
   enrollmentDate: string;
 
   @Index('idx_enrollments_status')
-  @Column({ type: 'enum', enum: EnrollmentStatus, default: EnrollmentStatus.ACTIVE })
+  @Column({
+    type: 'enum',
+    enum: EnrollmentStatus,
+    default: EnrollmentStatus.ACTIVE,
+  })
   status: EnrollmentStatus;
 
   @Column({ type: 'varchar', length: 2, nullable: true })
   grade?: string | null;
 
-  @Column({ name: 'grade_points', type: 'decimal', precision: 3, scale: 2, nullable: true })
+  @Column({
+    name: 'grade_points',
+    type: 'decimal',
+    precision: 3,
+    scale: 2,
+    nullable: true,
+  })
   gradePoints?: string | null;
 
   @Column({

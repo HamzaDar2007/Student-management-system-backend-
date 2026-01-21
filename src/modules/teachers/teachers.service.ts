@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TeacherProfile } from './entities/teacher-profile.entity';
@@ -25,12 +29,16 @@ export class TeachersService {
     const existingByUser = await this.profileRepo.findOne({
       where: { userId: dto.user_id },
     });
-    if (existingByUser) throw new ConflictException('Teacher profile already exists for this user');
+    if (existingByUser)
+      throw new ConflictException(
+        'Teacher profile already exists for this user',
+      );
 
     const existingByEmpId = await this.profileRepo.findOne({
       where: { employeeId: dto.employee_id },
     });
-    if (existingByEmpId) throw new ConflictException('Employee ID already exists');
+    if (existingByEmpId)
+      throw new ConflictException('Employee ID already exists');
 
     const profile = await this.profileRepo.save(
       this.profileRepo.create({
@@ -92,9 +100,16 @@ export class TeachersService {
     Object.assign(profile, {
       employeeId: dto.employee_id ?? profile.employeeId,
       rank: dto.rank ?? profile.rank,
-      specialization: dto.specialization !== undefined ? dto.specialization : profile.specialization,
-      officeLocation: dto.office_location !== undefined ? dto.office_location : profile.officeLocation,
-      officeHours: dto.office_hours !== undefined ? dto.office_hours : profile.officeHours,
+      specialization:
+        dto.specialization !== undefined
+          ? dto.specialization
+          : profile.specialization,
+      officeLocation:
+        dto.office_location !== undefined
+          ? dto.office_location
+          : profile.officeLocation,
+      officeHours:
+        dto.office_hours !== undefined ? dto.office_hours : profile.officeHours,
       phone: dto.phone !== undefined ? dto.phone : profile.phone,
       bio: dto.bio !== undefined ? dto.bio : profile.bio,
       hireDate: dto.hire_date !== undefined ? dto.hire_date : profile.hireDate,
@@ -107,7 +122,7 @@ export class TeachersService {
   async remove(id: number) {
     const profile = await this.profileRepo.findOne({ where: { id } });
     if (!profile) throw new NotFoundException('Teacher profile not found');
-    await this.profileRepo.remove(profile);
+    await this.profileRepo.softRemove(profile);
     return { deleted: true };
   }
 }

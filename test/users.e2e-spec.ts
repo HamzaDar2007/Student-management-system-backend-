@@ -44,7 +44,14 @@ describe('Users (e2e)', () => {
     const adminResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active) 
        VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id`,
-      ['e2e_admin@test.com', 'e2e_admin', passwordHash, UserRole.ADMIN, 'Admin', 'Test'],
+      [
+        'e2e_admin@test.com',
+        'e2e_admin',
+        passwordHash,
+        UserRole.ADMIN,
+        'Admin',
+        'Test',
+      ],
     );
     adminUserId = adminResult[0].id;
 
@@ -52,7 +59,14 @@ describe('Users (e2e)', () => {
     const teacherResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active) 
        VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id`,
-      ['e2e_teacher@test.com', 'e2e_teacher', passwordHash, UserRole.TEACHER, 'Teacher', 'Test'],
+      [
+        'e2e_teacher@test.com',
+        'e2e_teacher',
+        passwordHash,
+        UserRole.TEACHER,
+        'Teacher',
+        'Test',
+      ],
     );
     teacherUserId = teacherResult[0].id;
 
@@ -60,23 +74,30 @@ describe('Users (e2e)', () => {
     const studentResult = await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active) 
        VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id`,
-      ['e2e_student@test.com', 'e2e_student', passwordHash, UserRole.STUDENT, 'Student', 'Test'],
+      [
+        'e2e_student@test.com',
+        'e2e_student',
+        passwordHash,
+        UserRole.STUDENT,
+        'Student',
+        'Test',
+      ],
     );
     studentUserId = studentResult[0].id;
 
     // Login to get tokens
     const adminLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
+      .post('/api/v1/auth/login')
       .send({ email: 'e2e_admin@test.com', password: 'TestPassword123!' });
     adminToken = adminLogin.body.access_token;
 
     const teacherLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
+      .post('/api/v1/auth/login')
       .send({ email: 'e2e_teacher@test.com', password: 'TestPassword123!' });
     teacherToken = teacherLogin.body.access_token;
 
     const studentLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
+      .post('/api/v1/auth/login')
       .send({ email: 'e2e_student@test.com', password: 'TestPassword123!' });
     studentToken = studentLogin.body.access_token;
   });
@@ -85,9 +106,13 @@ describe('Users (e2e)', () => {
     // Clean up test users
     try {
       if (createdUserId) {
-        await dataSource.query('DELETE FROM users WHERE id = $1', [createdUserId]);
+        await dataSource.query('DELETE FROM users WHERE id = $1', [
+          createdUserId,
+        ]);
       }
-      await dataSource.query('DELETE FROM users WHERE email LIKE $1', ['e2e_%@test.com']);
+      await dataSource.query('DELETE FROM users WHERE email LIKE $1', [
+        'e2e_%@test.com',
+      ]);
     } catch (e) {
       // Ignore cleanup errors
     }
@@ -97,7 +122,7 @@ describe('Users (e2e)', () => {
   describe('GET /api/users', () => {
     it('should return paginated users for admin', () => {
       return request(app.getHttpServer())
-        .get('/api/users')
+        .get('/api/v1/users')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -111,7 +136,7 @@ describe('Users (e2e)', () => {
 
     it('should filter users by role', () => {
       return request(app.getHttpServer())
-        .get('/api/users')
+        .get('/api/v1/users')
         .query({ role: UserRole.ADMIN })
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
@@ -124,7 +149,7 @@ describe('Users (e2e)', () => {
 
     it('should support pagination', () => {
       return request(app.getHttpServer())
-        .get('/api/users')
+        .get('/api/v1/users')
         .query({ page: 1, limit: 5 })
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
@@ -137,15 +162,13 @@ describe('Users (e2e)', () => {
 
     it('should reject request from non-admin users', () => {
       return request(app.getHttpServer())
-        .get('/api/users')
+        .get('/api/v1/users')
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(403);
     });
 
     it('should reject unauthenticated request', () => {
-      return request(app.getHttpServer())
-        .get('/api/users')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/v1/users').expect(401);
     });
   });
 
@@ -164,7 +187,7 @@ describe('Users (e2e)', () => {
 
     it('should return 404 for non-existent user', () => {
       return request(app.getHttpServer())
-        .get('/api/users/99999')
+        .get('/api/v1/users/99999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });
@@ -173,7 +196,7 @@ describe('Users (e2e)', () => {
   describe('POST /api/users', () => {
     it('should create a new user for admin', () => {
       return request(app.getHttpServer())
-        .post('/api/users')
+        .post('/api/v1/users')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           email: 'e2e_newuser@test.com',
@@ -193,7 +216,7 @@ describe('Users (e2e)', () => {
 
     it('should reject duplicate email', () => {
       return request(app.getHttpServer())
-        .post('/api/users')
+        .post('/api/v1/users')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           email: 'e2e_admin@test.com',
@@ -206,7 +229,7 @@ describe('Users (e2e)', () => {
 
     it('should reject creation by non-admin', () => {
       return request(app.getHttpServer())
-        .post('/api/users')
+        .post('/api/v1/users')
         .set('Authorization', `Bearer ${teacherToken}`)
         .send({
           email: 'another@test.com',
@@ -236,7 +259,7 @@ describe('Users (e2e)', () => {
 
     it('should return 404 for non-existent user', () => {
       return request(app.getHttpServer())
-        .put('/api/users/99999')
+        .put('/api/v1/users/99999')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({ firstName: 'Test' })
         .expect(404);
@@ -251,7 +274,12 @@ describe('Users (e2e)', () => {
       const result = await dataSource.query(
         `INSERT INTO users (email, username, password_hash, role, is_active) 
          VALUES ($1, $2, $3, $4, true) RETURNING id`,
-        ['e2e_todelete@test.com', 'e2e_todelete', passwordHash, UserRole.STUDENT],
+        [
+          'e2e_todelete@test.com',
+          'e2e_todelete',
+          passwordHash,
+          UserRole.STUDENT,
+        ],
       );
       deleteUserId = result[0].id;
     });
@@ -268,7 +296,7 @@ describe('Users (e2e)', () => {
 
     it('should return 404 for non-existent user', () => {
       return request(app.getHttpServer())
-        .delete('/api/users/99999')
+        .delete('/api/v1/users/99999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });

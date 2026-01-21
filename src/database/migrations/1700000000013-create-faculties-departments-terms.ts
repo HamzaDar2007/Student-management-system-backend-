@@ -1,9 +1,9 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationInterface {
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // Create faculties table
-        await queryRunner.query(`
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    // Create faculties table
+    await queryRunner.query(`
             CREATE TABLE "faculties" (
                 "id" SERIAL PRIMARY KEY,
                 "name" VARCHAR(100) NOT NULL UNIQUE,
@@ -14,8 +14,8 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             )
         `);
 
-        // Create departments table
-        await queryRunner.query(`
+    // Create departments table
+    await queryRunner.query(`
             CREATE TABLE "departments" (
                 "id" SERIAL PRIMARY KEY,
                 "name" VARCHAR(100) NOT NULL UNIQUE,
@@ -26,8 +26,8 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             )
         `);
 
-        // Create academic_terms table
-        await queryRunner.query(`
+    // Create academic_terms table
+    await queryRunner.query(`
             CREATE TABLE "academic_terms" (
                 "id" SERIAL PRIMARY KEY,
                 "name" VARCHAR(100) NOT NULL UNIQUE,
@@ -39,8 +39,8 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             )
         `);
 
-        // Create teacher_profiles_rank_enum type
-        await queryRunner.query(`
+    // Create teacher_profiles_rank_enum type
+    await queryRunner.query(`
             DO $$ BEGIN
                 CREATE TYPE "teacher_profiles_rank_enum" AS ENUM (
                     'professor', 'associate_professor', 'assistant_professor', 'lecturer', 'teaching_assistant'
@@ -50,8 +50,8 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             END $$
         `);
 
-        // Create teacher_profiles table
-        await queryRunner.query(`
+    // Create teacher_profiles table
+    await queryRunner.query(`
             CREATE TABLE "teacher_profiles" (
                 "id" SERIAL PRIMARY KEY,
                 "user_id" INT NOT NULL UNIQUE REFERENCES "users"("id") ON DELETE CASCADE,
@@ -69,8 +69,8 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             )
         `);
 
-        // Create classrooms_type_enum type
-        await queryRunner.query(`
+    // Create classrooms_type_enum type
+    await queryRunner.query(`
             DO $$ BEGIN
                 CREATE TYPE "classrooms_type_enum" AS ENUM ('lecture', 'lab', 'seminar', 'virtual');
             EXCEPTION
@@ -78,8 +78,8 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             END $$
         `);
 
-        // Create classrooms table
-        await queryRunner.query(`
+    // Create classrooms table
+    await queryRunner.query(`
             CREATE TABLE "classrooms" (
                 "id" SERIAL PRIMARY KEY,
                 "room_number" VARCHAR(20) NOT NULL UNIQUE,
@@ -91,8 +91,8 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             )
         `);
 
-        // Create schedules table
-        await queryRunner.query(`
+    // Create schedules table
+    await queryRunner.query(`
             CREATE TABLE "schedules" (
                 "id" SERIAL PRIMARY KEY,
                 "course_id" INT NOT NULL REFERENCES "courses"("id") ON DELETE CASCADE,
@@ -105,8 +105,8 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             )
         `);
 
-        // Create audit_logs table
-        await queryRunner.query(`
+    // Create audit_logs table
+    await queryRunner.query(`
             CREATE TABLE "audit_logs" (
                 "id" SERIAL PRIMARY KEY,
                 "user_id" INT REFERENCES "users"("id") ON DELETE SET NULL,
@@ -118,8 +118,8 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             )
         `);
 
-        // Create course_prerequisites table
-        await queryRunner.query(`
+    // Create course_prerequisites table
+    await queryRunner.query(`
             CREATE TABLE "course_prerequisites" (
                 "course_id" INT NOT NULL REFERENCES "courses"("id") ON DELETE CASCADE,
                 "prerequisite_id" INT NOT NULL REFERENCES "courses"("id") ON DELETE CASCADE,
@@ -127,30 +127,52 @@ export class CreateFacultiesDepartmentsTerms1700000000013 implements MigrationIn
             )
         `);
 
-        // Add indexes
-        await queryRunner.query(`CREATE INDEX "idx_faculties_name" ON "faculties"("name")`);
-        await queryRunner.query(`CREATE INDEX "idx_faculties_code" ON "faculties"("code")`);
-        await queryRunner.query(`CREATE INDEX "idx_departments_name" ON "departments"("name")`);
-        await queryRunner.query(`CREATE INDEX "idx_departments_code" ON "departments"("code")`);
-        await queryRunner.query(`CREATE INDEX "idx_departments_faculty_id" ON "departments"("facultyId")`);
-        await queryRunner.query(`CREATE INDEX "idx_teacher_profiles_user_id" ON "teacher_profiles"("user_id")`);
-        await queryRunner.query(`CREATE INDEX "idx_schedules_course_id" ON "schedules"("course_id")`);
-        await queryRunner.query(`CREATE INDEX "idx_schedules_classroom_id" ON "schedules"("classroom_id")`);
-        await queryRunner.query(`CREATE INDEX "idx_audit_logs_user_id" ON "audit_logs"("user_id")`);
-        await queryRunner.query(`CREATE INDEX "idx_audit_logs_resource" ON "audit_logs"("resource", "resource_id")`);
-        await queryRunner.query(`CREATE INDEX "idx_audit_logs_created_at" ON "audit_logs"("created_at")`);
-    }
+    // Add indexes
+    await queryRunner.query(
+      `CREATE INDEX "idx_faculties_name" ON "faculties"("name")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_faculties_code" ON "faculties"("code")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_departments_name" ON "departments"("name")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_departments_code" ON "departments"("code")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_departments_faculty_id" ON "departments"("facultyId")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_teacher_profiles_user_id" ON "teacher_profiles"("user_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_schedules_course_id" ON "schedules"("course_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_schedules_classroom_id" ON "schedules"("classroom_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_audit_logs_user_id" ON "audit_logs"("user_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_audit_logs_resource" ON "audit_logs"("resource", "resource_id")`,
+    );
+    await queryRunner.query(
+      `CREATE INDEX "idx_audit_logs_created_at" ON "audit_logs"("created_at")`,
+    );
+  }
 
-    public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`DROP TABLE IF EXISTS "course_prerequisites"`);
-        await queryRunner.query(`DROP TABLE IF EXISTS "audit_logs"`);
-        await queryRunner.query(`DROP TABLE IF EXISTS "schedules"`);
-        await queryRunner.query(`DROP TABLE IF EXISTS "classrooms"`);
-        await queryRunner.query(`DROP TABLE IF EXISTS "teacher_profiles"`);
-        await queryRunner.query(`DROP TABLE IF EXISTS "academic_terms"`);
-        await queryRunner.query(`DROP TABLE IF EXISTS "departments"`);
-        await queryRunner.query(`DROP TABLE IF EXISTS "faculties"`);
-        await queryRunner.query(`DROP TYPE IF EXISTS "classrooms_type_enum"`);
-        await queryRunner.query(`DROP TYPE IF EXISTS "teacher_profiles_rank_enum"`);
-    }
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE IF EXISTS "course_prerequisites"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "audit_logs"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "schedules"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "classrooms"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "teacher_profiles"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "academic_terms"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "departments"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "faculties"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "classrooms_type_enum"`);
+    await queryRunner.query(`DROP TYPE IF EXISTS "teacher_profiles_rank_enum"`);
+  }
 }

@@ -19,7 +19,9 @@ export class UpdateStudentDto {
   user_id?: number | null;
 
   @IsOptional()
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toUpperCase() : value))
+  @Transform(({ value }) =>
+    typeof value === 'string' ? value.trim().toUpperCase() : value,
+  )
   @IsString()
   @Length(7, 20)
   @IsStudentId()

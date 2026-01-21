@@ -55,7 +55,9 @@ describe('DepartmentsController (e2e)', () => {
     await deptRepo
       .createQueryBuilder()
       .delete()
-      .where('code LIKE :pattern', { pattern: `${TEST_PREFIX.toUpperCase().slice(0, 2)}D%` })
+      .where('code LIKE :pattern', {
+        pattern: `${TEST_PREFIX.toUpperCase().slice(0, 2)}D%`,
+      })
       .execute();
 
     // Clean up test faculties
@@ -63,7 +65,9 @@ describe('DepartmentsController (e2e)', () => {
     await facultyRepo
       .createQueryBuilder()
       .delete()
-      .where('code LIKE :pattern', { pattern: `${TEST_PREFIX.toUpperCase().slice(0, 2)}%` })
+      .where('code LIKE :pattern', {
+        pattern: `${TEST_PREFIX.toUpperCase().slice(0, 2)}%`,
+      })
       .execute();
 
     await deleteTestUsers(dataSource, TEST_PREFIX);
@@ -186,7 +190,11 @@ describe('DepartmentsController (e2e)', () => {
     let testDeptId: number;
 
     beforeAll(async () => {
-      const dept = await createTestDepartment(dataSource, testFaculty, TEST_PREFIX);
+      const dept = await createTestDepartment(
+        dataSource,
+        testFaculty,
+        TEST_PREFIX,
+      );
       testDeptId = dept.id;
     });
 
@@ -213,7 +221,11 @@ describe('DepartmentsController (e2e)', () => {
     let testDeptId: number;
 
     beforeAll(async () => {
-      const dept = await createTestDepartment(dataSource, testFaculty, TEST_PREFIX);
+      const dept = await createTestDepartment(
+        dataSource,
+        testFaculty,
+        TEST_PREFIX,
+      );
       testDeptId = dept.id;
     });
 
@@ -240,7 +252,11 @@ describe('DepartmentsController (e2e)', () => {
 
   describe('DELETE /departments/:id', () => {
     it('admin should delete department', async () => {
-      const dept = await createTestDepartment(dataSource, testFaculty, TEST_PREFIX);
+      const dept = await createTestDepartment(
+        dataSource,
+        testFaculty,
+        TEST_PREFIX,
+      );
 
       await request(app.getHttpServer())
         .delete(`/departments/${dept.id}`)
@@ -255,7 +271,11 @@ describe('DepartmentsController (e2e)', () => {
     });
 
     it('non-admin should be rejected', async () => {
-      const dept = await createTestDepartment(dataSource, testFaculty, TEST_PREFIX);
+      const dept = await createTestDepartment(
+        dataSource,
+        testFaculty,
+        TEST_PREFIX,
+      );
 
       await request(app.getHttpServer())
         .delete(`/departments/${dept.id}`)

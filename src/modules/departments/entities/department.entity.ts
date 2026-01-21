@@ -1,38 +1,42 @@
 import {
-    Column,
-    CreateDateColumn,
-    Entity,
-    Index,
-    ManyToOne,
-    OneToMany,
-    PrimaryGeneratedColumn,
-    UpdateDateColumn,
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Faculty } from '../../faculties/entities/faculty.entity';
 import { Student } from '../../students/entities/student.entity';
 
 @Entity({ name: 'departments' })
 export class Department {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Index('idx_departments_name')
-    @Column({ type: 'varchar', length: 100, unique: true })
-    name: string;
+  @Index('idx_departments_name')
+  @Column({ type: 'varchar', length: 100, unique: true })
+  name: string;
 
-    @Index('idx_departments_code')
-    @Column({ type: 'varchar', length: 20, unique: true })
-    code: string;
+  @Index('idx_departments_code')
+  @Column({ type: 'varchar', length: 20, unique: true })
+  code: string;
 
-    @ManyToOne(() => Faculty, (faculty) => faculty.departments)
-    faculty: Faculty;
+  @ManyToOne(() => Faculty, (faculty) => faculty.departments)
+  faculty: Faculty;
 
-    @OneToMany(() => Student, (student) => student.departmentEntity)
-    students: Student[];
+  @OneToMany(() => Student, (student) => student.departmentEntity)
+  students: Student[];
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
-    createdAt: Date;
+  @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
+  createdAt: Date;
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
-    updatedAt: Date;
+  @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  deletedAt?: Date | null;
 }

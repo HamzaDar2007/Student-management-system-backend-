@@ -1,21 +1,35 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, Logger } from '@nestjs/common';
+import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { WinstonModule, WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import compression from 'compression';
 import { XssPipe } from './common/pipes/xss.pipe';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import winstonConfig from './config/logger.config';
 
 async function bootstrap() {
+  // Create app with Winston logger
   const app = await NestFactory.create(AppModule, {
-    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+    logger: WinstonModule.createLogger(winstonConfig),
   });
-  const logger = new Logger('Bootstrap');
-  
+
+  // Get logger instance for bootstrap messages
+  const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
+
+  // Set global prefix for all routes
+  app.setGlobalPrefix('api');
+
+  // Enable API versioning (URI versioning: /api/v1/...)
+  app.enableVersioning({
+    type: VersioningType.URI,
+    defaultVersion: '1',
+  });
+
   // Security middleware
   app.use(helmet());
-  
+
   // Compression middleware for response compression
   app.use(compression());
 
@@ -44,17 +58,22 @@ async function bootstrap() {
   // Swagger API Documentation
   const config = new DocumentBuilder()
     .setTitle('Students Management System API')
-    .setDescription(`
+    .setDescription(
+      `
       RESTful API for managing students, courses, enrollments, grades, attendance, and academic administration.
       
+      ## Base URL
+      All API endpoints are prefixed with \`/api/v1/\`
+      
       ## Authentication
-      Most endpoints require JWT Bearer token authentication. Use the /api/auth/login endpoint to obtain a token.
+      Most endpoints require JWT Bearer token authentication. Use the /api/v1/auth/login endpoint to obtain a token.
       
       ## Roles
       - **ADMIN**: Full access to all resources
       - **TEACHER**: Manage courses, grades, attendance for assigned courses
       - **STUDENT**: View own data, enrollments, grades, and attendance
-    `)
+    `,
+    )
     .setVersion('1.0')
     .addBearerAuth(
       {
@@ -92,7 +111,10 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
-  logger.log(`Application running on http://localhost:${port}`);
-  logger.log(`Swagger documentation available at http://localhost:${port}/api/docs`);
+  logger.log(`Application running on http://localhost:${port}`, 'Bootstrap');
+  logger.log(
+    `Swagger documentation available at http://localhost:${port}/api/docs`,
+    'Bootstrap',
+  );
 }
 bootstrap();

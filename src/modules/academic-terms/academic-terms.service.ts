@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AcademicTerm } from './entities/academic-term.entity';
@@ -13,8 +18,11 @@ export class AcademicTermsService {
   ) {}
 
   async create(dto: CreateAcademicTermDto) {
-    const existingName = await this.termRepo.findOne({ where: { name: dto.name } });
-    if (existingName) throw new ConflictException('Academic term name already exists');
+    const existingName = await this.termRepo.findOne({
+      where: { name: dto.name },
+    });
+    if (existingName)
+      throw new ConflictException('Academic term name already exists');
 
     const startDate = new Date(dto.start_date);
     const endDate = new Date(dto.end_date);
@@ -64,11 +72,16 @@ export class AcademicTermsService {
     if (!term) throw new NotFoundException('Academic term not found');
 
     if (dto.name && dto.name !== term.name) {
-      const existing = await this.termRepo.findOne({ where: { name: dto.name } });
-      if (existing) throw new ConflictException('Academic term name already exists');
+      const existing = await this.termRepo.findOne({
+        where: { name: dto.name },
+      });
+      if (existing)
+        throw new ConflictException('Academic term name already exists');
     }
 
-    const startDate = dto.start_date ? new Date(dto.start_date) : term.startDate;
+    const startDate = dto.start_date
+      ? new Date(dto.start_date)
+      : term.startDate;
     const endDate = dto.end_date ? new Date(dto.end_date) : term.endDate;
 
     if (startDate >= endDate) {
@@ -103,7 +116,7 @@ export class AcademicTermsService {
       throw new ConflictException('Cannot delete an active academic term');
     }
 
-    await this.termRepo.remove(term);
+    await this.termRepo.softRemove(term);
     return { deleted: true };
   }
 }

@@ -10,7 +10,11 @@ import {
   deleteTestUsers,
   AuthTokens,
 } from './helpers';
-import { createTestCourse, createTestClassroom, createTestSchedule } from './helpers/data.helper';
+import {
+  createTestCourse,
+  createTestClassroom,
+  createTestSchedule,
+} from './helpers/data.helper';
 import { Classroom } from '../src/modules/scheduling/entities/classroom.entity';
 import { Schedule } from '../src/modules/scheduling/entities/schedule.entity';
 
@@ -55,7 +59,9 @@ describe('SchedulingController (e2e)', () => {
     await classroomRepo
       .createQueryBuilder()
       .delete()
-      .where('room_number LIKE :pattern', { pattern: `${TEST_PREFIX.toUpperCase().slice(0, 1)}%` })
+      .where('room_number LIKE :pattern', {
+        pattern: `${TEST_PREFIX.toUpperCase().slice(0, 1)}%`,
+      })
       .execute();
 
     await deleteTestUsers(dataSource, TEST_PREFIX);
@@ -264,7 +270,12 @@ describe('SchedulingController (e2e)', () => {
     let testClassroomId: number;
 
     beforeAll(async () => {
-      const course = await createTestCourse(dataSource, adminAuth.user.id, [], TEST_PREFIX);
+      const course = await createTestCourse(
+        dataSource,
+        adminAuth.user.id,
+        [],
+        TEST_PREFIX,
+      );
       testCourseId = course.id;
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
       testClassroomId = classroom.id;
@@ -335,7 +346,12 @@ describe('SchedulingController (e2e)', () => {
     const endpoint = '/scheduling';
 
     beforeAll(async () => {
-      const course = await createTestCourse(dataSource, adminAuth.user.id, [], TEST_PREFIX);
+      const course = await createTestCourse(
+        dataSource,
+        adminAuth.user.id,
+        [],
+        TEST_PREFIX,
+      );
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
       await createTestSchedule(dataSource, course.id, classroom.id);
     });
@@ -375,9 +391,18 @@ describe('SchedulingController (e2e)', () => {
     let testScheduleId: number;
 
     beforeAll(async () => {
-      const course = await createTestCourse(dataSource, adminAuth.user.id, [], TEST_PREFIX);
+      const course = await createTestCourse(
+        dataSource,
+        adminAuth.user.id,
+        [],
+        TEST_PREFIX,
+      );
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
-      const schedule = await createTestSchedule(dataSource, course.id, classroom.id);
+      const schedule = await createTestSchedule(
+        dataSource,
+        course.id,
+        classroom.id,
+      );
       testScheduleId = schedule.id;
     });
 
@@ -405,7 +430,12 @@ describe('SchedulingController (e2e)', () => {
     let testCourseId: number;
 
     beforeAll(async () => {
-      const course = await createTestCourse(dataSource, adminAuth.user.id, [], TEST_PREFIX);
+      const course = await createTestCourse(
+        dataSource,
+        adminAuth.user.id,
+        [],
+        TEST_PREFIX,
+      );
       testCourseId = course.id;
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
       await createTestSchedule(dataSource, course.id, classroom.id);
@@ -429,7 +459,12 @@ describe('SchedulingController (e2e)', () => {
     let testClassroomId: number;
 
     beforeAll(async () => {
-      const course = await createTestCourse(dataSource, adminAuth.user.id, [], TEST_PREFIX);
+      const course = await createTestCourse(
+        dataSource,
+        adminAuth.user.id,
+        [],
+        TEST_PREFIX,
+      );
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
       testClassroomId = classroom.id;
       await createTestSchedule(dataSource, course.id, classroom.id);
@@ -453,9 +488,18 @@ describe('SchedulingController (e2e)', () => {
     let testScheduleId: number;
 
     beforeAll(async () => {
-      const course = await createTestCourse(dataSource, adminAuth.user.id, [], TEST_PREFIX);
+      const course = await createTestCourse(
+        dataSource,
+        adminAuth.user.id,
+        [],
+        TEST_PREFIX,
+      );
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
-      const schedule = await createTestSchedule(dataSource, course.id, classroom.id);
+      const schedule = await createTestSchedule(
+        dataSource,
+        course.id,
+        classroom.id,
+      );
       testScheduleId = schedule.id;
     });
 
@@ -486,9 +530,18 @@ describe('SchedulingController (e2e)', () => {
 
   describe('DELETE /scheduling/:id', () => {
     it('admin should delete schedule', async () => {
-      const course = await createTestCourse(dataSource, adminAuth.user.id, [], TEST_PREFIX);
+      const course = await createTestCourse(
+        dataSource,
+        adminAuth.user.id,
+        [],
+        TEST_PREFIX,
+      );
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
-      const schedule = await createTestSchedule(dataSource, course.id, classroom.id);
+      const schedule = await createTestSchedule(
+        dataSource,
+        course.id,
+        classroom.id,
+      );
 
       await request(app.getHttpServer())
         .delete(`/scheduling/${schedule.id}`)
@@ -503,9 +556,18 @@ describe('SchedulingController (e2e)', () => {
     });
 
     it('non-admin should be rejected', async () => {
-      const course = await createTestCourse(dataSource, adminAuth.user.id, [], TEST_PREFIX);
+      const course = await createTestCourse(
+        dataSource,
+        adminAuth.user.id,
+        [],
+        TEST_PREFIX,
+      );
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
-      const schedule = await createTestSchedule(dataSource, course.id, classroom.id);
+      const schedule = await createTestSchedule(
+        dataSource,
+        course.id,
+        classroom.id,
+      );
 
       await request(app.getHttpServer())
         .delete(`/scheduling/${schedule.id}`)

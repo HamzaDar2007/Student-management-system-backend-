@@ -1,5 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiParam } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+} from '@nestjs/swagger';
 import { DepartmentsService } from './departments.service';
 import { CreateDepartmentDto } from './dto/create-department.dto';
 import { UpdateDepartmentDto } from './dto/update-department.dto';
@@ -20,9 +35,15 @@ export class DepartmentsController {
   @ApiOperation({ summary: 'Create a new department (Admin only)' })
   @ApiResponse({ status: 201, description: 'Department created successfully' })
   @ApiResponse({ status: 400, description: 'Validation error' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   @ApiResponse({ status: 404, description: 'Faculty not found' })
-  @ApiResponse({ status: 409, description: 'Department with this code already exists' })
+  @ApiResponse({
+    status: 409,
+    description: 'Department with this code already exists',
+  })
   create(@Body() createDepartmentDto: CreateDepartmentDto) {
     return this.departmentsService.create(createDepartmentDto);
   }
@@ -50,9 +71,15 @@ export class DepartmentsController {
   @ApiOperation({ summary: 'Update department by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'number', description: 'Department ID' })
   @ApiResponse({ status: 200, description: 'Department updated successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   @ApiResponse({ status: 404, description: 'Department not found' })
-  update(@Param('id') id: string, @Body() updateDepartmentDto: UpdateDepartmentDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateDepartmentDto: UpdateDepartmentDto,
+  ) {
     return this.departmentsService.update(+id, updateDepartmentDto);
   }
 
@@ -61,9 +88,15 @@ export class DepartmentsController {
   @ApiOperation({ summary: 'Delete department by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'number', description: 'Department ID' })
   @ApiResponse({ status: 200, description: 'Department deleted successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
   @ApiResponse({ status: 404, description: 'Department not found' })
-  @ApiResponse({ status: 409, description: 'Cannot delete department with existing students' })
+  @ApiResponse({
+    status: 409,
+    description: 'Cannot delete department with existing students',
+  })
   remove(@Param('id') id: string) {
     return this.departmentsService.remove(+id);
   }

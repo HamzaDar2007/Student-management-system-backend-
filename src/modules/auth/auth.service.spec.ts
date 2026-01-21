@@ -175,7 +175,7 @@ describe('AuthService', () => {
     it('should successfully refresh tokens', async () => {
       const refreshToken = 'valid_refresh_token';
       const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
-      
+
       mockUserRepository.findOne.mockResolvedValue({
         ...mockUser,
         refreshToken: hashedRefreshToken,
@@ -193,9 +193,9 @@ describe('AuthService', () => {
     it('should throw UnauthorizedException if user not found', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
-      await expect(
-        service.refreshToken(999, 'invalid_token'),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.refreshToken(999, 'invalid_token')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should throw UnauthorizedException if refresh token is invalid', async () => {
@@ -217,10 +217,9 @@ describe('AuthService', () => {
       const result = await service.logout(mockUser.id);
 
       expect(result).toEqual({ message: 'Logged out successfully' });
-      expect(mockUserRepository.update).toHaveBeenCalledWith(
-        mockUser.id,
-        { refreshToken: null },
-      );
+      expect(mockUserRepository.update).toHaveBeenCalledWith(mockUser.id, {
+        refreshToken: null,
+      });
     });
   });
 

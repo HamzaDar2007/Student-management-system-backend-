@@ -30,6 +30,8 @@ describe('CoursesService', () => {
     save: jest.fn(),
     create: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
+    restore: jest.fn(),
     createQueryBuilder: jest.fn(() => ({
       leftJoinAndSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
@@ -198,7 +200,7 @@ describe('CoursesService', () => {
   describe('remove', () => {
     it('should delete a course', async () => {
       mockCourseRepository.findOne.mockResolvedValue(mockCourse);
-      mockCourseRepository.remove.mockResolvedValue(mockCourse);
+      mockCourseRepository.softRemove.mockResolvedValue(mockCourse);
 
       const result = await service.remove(1);
 
@@ -244,7 +246,9 @@ describe('CoursesService', () => {
     it('should throw NotFoundException if course not found', async () => {
       mockCourseRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.getAttendance(999)).rejects.toThrow(NotFoundException);
+      await expect(service.getAttendance(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

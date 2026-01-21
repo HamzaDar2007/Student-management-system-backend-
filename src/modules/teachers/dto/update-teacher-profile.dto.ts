@@ -1,4 +1,11 @@
-import { IsBoolean, IsDateString, IsEnum, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsBoolean,
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 import { AcademicRank } from '../entities/teacher-profile.entity';
 
 export class UpdateTeacherProfileDto {

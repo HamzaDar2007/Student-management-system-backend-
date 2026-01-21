@@ -49,7 +49,10 @@ export class Grade {
   @Column({ name: 'graded_by', type: 'int', nullable: true })
   gradedBy?: number | null;
 
-  @ManyToOne(() => User, (u) => u.gradedItems, { nullable: true, onDelete: 'SET NULL' })
+  @ManyToOne(() => User, (u) => u.gradedItems, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
   @JoinColumn({ name: 'graded_by' })
   gradedByUser?: User | null;
 

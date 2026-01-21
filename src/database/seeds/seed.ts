@@ -3,7 +3,10 @@ import * as bcrypt from 'bcryptjs';
 import dataSource from '../../config/data-source';
 
 import { User, UserRole } from '../../modules/users/entities/user.entity';
-import { Student, Gender } from '../../modules/students/entities/student.entity';
+import {
+  Student,
+  Gender,
+} from '../../modules/students/entities/student.entity';
 import { Course } from '../../modules/courses/entities/course.entity';
 import {
   Enrollment,

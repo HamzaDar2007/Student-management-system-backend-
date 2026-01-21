@@ -33,10 +33,11 @@ export class HttpExceptionFilter implements ExceptionFilter {
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const exceptionResponse = exception.getResponse();
-      
+
       if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
         const responseObj = exceptionResponse as Record<string, unknown>;
-        message = (responseObj.message as string | string[]) || exception.message;
+        message =
+          (responseObj.message as string | string[]) || exception.message;
         error = responseObj.error as string | undefined;
       } else {
         message = exception.message;
@@ -45,7 +46,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       status = HttpStatus.INTERNAL_SERVER_ERROR;
       message = 'Internal server error';
       error = exception.message;
-      
+
       // Log the full error for debugging
       this.logger.error(
         `Unhandled exception: ${exception.message}`,

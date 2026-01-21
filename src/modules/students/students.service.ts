@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
+import { ILike, IsNull, Not, Repository } from 'typeorm';
 
 import { Student } from './entities/student.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
@@ -13,6 +13,13 @@ import { StudentListQueryDto } from './dto/student-list-query.dto';
 import { Enrollment } from '../enrollments/entities/enrollment.entity';
 import { Grade } from '../grades/entities/grade.entity';
 import { Attendance } from '../attendance/entities/attendance.entity';
+import { CacheService, CacheKeys } from '../../common/services/cache.service';
+
+// Cache TTL values in milliseconds
+const CACHE_TTL = {
+  STUDENT: 300000, // 5 minutes
+  STUDENTS_LIST: 60000, // 1 minute (shorter for lists)
+};
 
 @Injectable()
 export class StudentsService {
@@ -24,6 +31,7 @@ export class StudentsService {
     @InjectRepository(Grade) private readonly gradeRepo: Repository<Grade>,
     @InjectRepository(Attendance)
     private readonly attendanceRepo: Repository<Attendance>,
+    private readonly cacheService: CacheService,
   ) {}
 
   async create(dto: CreateStudentDto) {
@@ -55,16 +63,14 @@ export class StudentsService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: { departmentId?: number; semester?: number } = {};
     if (query.department_id) where.departmentId = query.department_id;
     if (query.semester) where.semester = query.semester;
 
     const search = query.search?.trim();
     if (search) {
       const [items, total] = await this.studentRepo.findAndCount({
-        where: [
-          { ...where, studentId: ILike(`%${search}%`) },
-        ],
+        where: [{ ...where, studentId: ILike(`%${search}%`) }],
         relations: ['user'],
         order: { id: 'DESC' },
         skip,
@@ -85,19 +91,27 @@ export class StudentsService {
   }
 
   async findOne(id: number) {
-    const student = await this.studentRepo.findOne({
-      where: { id },
-      relations: ['user'],
-    });
-    if (!student) throw new NotFoundException('Student not found');
+    const cacheKey = CacheKeys.student(id);
 
-    const enrollments = await this.enrollmentRepo.find({
-      where: { studentId: id },
-      relations: ['course'],
-      order: { id: 'DESC' },
-    });
+    return this.cacheService.getOrSet(
+      cacheKey,
+      async () => {
+        const student = await this.studentRepo.findOne({
+          where: { id },
+          relations: ['user'],
+        });
+        if (!student) throw new NotFoundException('Student not found');
 
-    return { ...student, enrollments };
+        const enrollments = await this.enrollmentRepo.find({
+          where: { studentId: id },
+          relations: ['course'],
+          order: { id: 'DESC' },
+        });
+
+        return { ...student, enrollments };
+      },
+      CACHE_TTL.STUDENT,
+    );
   }
 
   async update(id: number, dto: UpdateStudentDto) {
@@ -115,7 +129,7 @@ export class StudentsService {
       userId: dto.user_id !== undefined ? dto.user_id : student.userId,
       studentId: dto.student_id ?? student.studentId,
       dateOfBirth: dto.date_of_birth ?? student.dateOfBirth,
-      gender: dto.gender !== undefined ? (dto.gender as any) : student.gender,
+      gender: dto.gender !== undefined ? dto.gender : student.gender,
       address: dto.address !== undefined ? dto.address : student.address,
       phone: dto.phone !== undefined ? dto.phone : student.phone,
       emergencyContact:
@@ -124,18 +138,52 @@ export class StudentsService {
           : student.emergencyContact,
       enrollmentDate: dto.enrollment_date ?? student.enrollmentDate,
       departmentId:
-        dto.department_id !== undefined ? dto.department_id : student.departmentId,
+        dto.department_id !== undefined
+          ? dto.department_id
+          : student.departmentId,
       semester: dto.semester !== undefined ? dto.semester : student.semester,
     });
 
-    return this.studentRepo.save(student);
+    const updated = await this.studentRepo.save(student);
+
+    // Invalidate cache
+    await this.cacheService.delete(CacheKeys.student(id));
+
+    return updated;
   }
 
   async remove(id: number) {
     const student = await this.studentRepo.findOne({ where: { id } });
     if (!student) throw new NotFoundException('Student not found');
-    await this.studentRepo.remove(student);
+    await this.studentRepo.softRemove(student);
+
+    // Invalidate cache
+    await this.cacheService.delete(CacheKeys.student(id));
+
     return { deleted: true };
+  }
+
+  async restore(id: number) {
+    const student = await this.studentRepo.findOne({
+      where: { id },
+      withDeleted: true,
+    });
+    if (!student) throw new NotFoundException('Student not found');
+    if (!student.deletedAt)
+      throw new ConflictException('Student is not deleted');
+    await this.studentRepo.restore(id);
+    return this.studentRepo.findOne({
+      where: { id },
+      relations: ['user', 'departmentEntity'],
+    });
+  }
+
+  async findDeleted() {
+    return this.studentRepo.find({
+      where: { deletedAt: Not(IsNull()) },
+      withDeleted: true,
+      relations: ['user', 'departmentEntity'],
+    });
   }
 
   async getGrades(studentId: number) {

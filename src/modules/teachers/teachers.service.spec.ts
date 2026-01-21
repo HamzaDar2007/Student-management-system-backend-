@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, ConflictException } from '@nestjs/common';
 import { TeachersService } from './teachers.service';
-import { TeacherProfile, AcademicRank } from './entities/teacher-profile.entity';
+import {
+  TeacherProfile,
+  AcademicRank,
+} from './entities/teacher-profile.entity';
 import { User, UserRole } from '../users/entities/user.entity';
 
 describe('TeachersService', () => {
@@ -41,6 +44,8 @@ describe('TeachersService', () => {
     save: jest.fn(),
     create: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
+    restore: jest.fn(),
   };
 
   const mockUserRepository = {
@@ -112,7 +117,9 @@ describe('TeachersService', () => {
     it('should throw NotFoundException if teacher not found', async () => {
       mockTeacherRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.findByUserId(999)).rejects.toThrow(NotFoundException);
+      await expect(service.findByUserId(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -138,20 +145,29 @@ describe('TeachersService', () => {
     it('should throw NotFoundException if user not found', async () => {
       mockUserRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ConflictException if user is not a teacher', async () => {
-      mockUserRepository.findOne.mockResolvedValue({ ...mockUser, role: UserRole.STUDENT });
+      mockUserRepository.findOne.mockResolvedValue({
+        ...mockUser,
+        role: UserRole.STUDENT,
+      });
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw ConflictException if profile already exists for user', async () => {
       mockUserRepository.findOne.mockResolvedValue(mockUser);
       mockTeacherRepository.findOne.mockResolvedValueOnce(mockTeacher);
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should throw ConflictException if employee ID already exists', async () => {
@@ -160,7 +176,9 @@ describe('TeachersService', () => {
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(mockTeacher);
 
-      await expect(service.create(createDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -184,7 +202,9 @@ describe('TeachersService', () => {
     it('should throw NotFoundException if teacher not found', async () => {
       mockTeacherRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update(999, updateDto)).rejects.toThrow(NotFoundException);
+      await expect(service.update(999, updateDto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ConflictException if employee ID already exists', async () => {
@@ -201,7 +221,7 @@ describe('TeachersService', () => {
   describe('remove', () => {
     it('should delete a teacher profile', async () => {
       mockTeacherRepository.findOne.mockResolvedValue(mockTeacher);
-      mockTeacherRepository.remove.mockResolvedValue(mockTeacher);
+      mockTeacherRepository.softRemove.mockResolvedValue(mockTeacher);
 
       const result = await service.remove(1);
 

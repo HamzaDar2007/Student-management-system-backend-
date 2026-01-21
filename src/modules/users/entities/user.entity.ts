@@ -1,6 +1,7 @@
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
   ManyToMany,
@@ -49,26 +50,58 @@ export class User {
   @Column({ name: 'is_active', type: 'boolean', default: true })
   isActive: boolean;
 
-  @Column({ name: 'refresh_token', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'refresh_token',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   refreshToken?: string | null;
 
   @Column({ name: 'email_verified', type: 'boolean', default: false })
   emailVerified: boolean;
 
-  @Column({ name: 'email_verification_token', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'email_verification_token',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   emailVerificationToken?: string | null;
 
-  @Column({ name: 'password_reset_token', type: 'varchar', length: 255, nullable: true })
+  @Column({
+    name: 'password_reset_token',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+  })
   passwordResetToken?: string | null;
 
-  @Column({ name: 'password_reset_expires', type: 'timestamptz', nullable: true })
+  @Column({
+    name: 'password_reset_expires',
+    type: 'timestamptz',
+    nullable: true,
+  })
   passwordResetExpires?: Date | null;
+
+  // Account lockout fields for brute-force protection
+  @Column({ name: 'failed_login_attempts', type: 'int', default: 0 })
+  failedLoginAttempts: number;
+
+  @Column({ name: 'locked_until', type: 'timestamptz', nullable: true })
+  lockedUntil?: Date | null;
+
+  @Column({ name: 'last_failed_login', type: 'timestamptz', nullable: true })
+  lastFailedLogin?: Date | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
 
   @UpdateDateColumn({ name: 'updated_at', type: 'timestamptz' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', type: 'timestamptz', nullable: true })
+  deletedAt?: Date | null;
 
   // Relations
   @OneToOne(() => Student, (student) => student.user)

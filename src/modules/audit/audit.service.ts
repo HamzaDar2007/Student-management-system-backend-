@@ -34,7 +34,10 @@ export class AuditService {
     if (query.resource) where.resource = query.resource;
     if (query.resource_id) where.resourceId = query.resource_id;
     if (query.start_date && query.end_date) {
-      where.createdAt = Between(new Date(query.start_date), new Date(query.end_date));
+      where.createdAt = Between(
+        new Date(query.start_date),
+        new Date(query.end_date),
+      );
     }
 
     const [items, total] = await this.auditRepo.findAndCount({

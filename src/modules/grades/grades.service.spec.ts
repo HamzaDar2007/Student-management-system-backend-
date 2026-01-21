@@ -121,14 +121,18 @@ describe('GradesService', () => {
     it('should throw NotFoundException if student not found', async () => {
       mockStudentRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto, 1)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto, 1)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException if course not found', async () => {
       mockStudentRepository.findOne.mockResolvedValue(mockStudent);
       mockCourseRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.create(createDto, 1)).rejects.toThrow(NotFoundException);
+      await expect(service.create(createDto, 1)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -152,7 +156,9 @@ describe('GradesService', () => {
     it('should throw NotFoundException if grade not found', async () => {
       mockGradeRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.update(999, updateDto, 1)).rejects.toThrow(NotFoundException);
+      await expect(service.update(999, updateDto, 1)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 

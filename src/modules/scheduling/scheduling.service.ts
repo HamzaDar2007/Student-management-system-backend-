@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Schedule } from './entities/schedule.entity';
@@ -22,10 +26,14 @@ export class SchedulingService {
 
   // Schedule methods
   async create(dto: CreateSchedulingDto) {
-    const course = await this.courseRepo.findOne({ where: { id: dto.course_id } });
+    const course = await this.courseRepo.findOne({
+      where: { id: dto.course_id },
+    });
     if (!course) throw new NotFoundException('Course not found');
 
-    const classroom = await this.classroomRepo.findOne({ where: { id: dto.classroom_id } });
+    const classroom = await this.classroomRepo.findOne({
+      where: { id: dto.classroom_id },
+    });
     if (!classroom) throw new NotFoundException('Classroom not found');
 
     // Check for time conflicts in the same classroom
@@ -36,7 +44,9 @@ export class SchedulingService {
       dto.end_time,
     );
     if (conflict) {
-      throw new ConflictException('Schedule conflict: classroom is already booked at this time');
+      throw new ConflictException(
+        'Schedule conflict: classroom is already booked at this time',
+      );
     }
 
     const schedule = this.scheduleRepo.create({
@@ -91,12 +101,16 @@ export class SchedulingService {
     if (!schedule) throw new NotFoundException('Schedule not found');
 
     if (dto.course_id && dto.course_id !== schedule.courseId) {
-      const course = await this.courseRepo.findOne({ where: { id: dto.course_id } });
+      const course = await this.courseRepo.findOne({
+        where: { id: dto.course_id },
+      });
       if (!course) throw new NotFoundException('Course not found');
     }
 
     if (dto.classroom_id && dto.classroom_id !== schedule.classroomId) {
-      const classroom = await this.classroomRepo.findOne({ where: { id: dto.classroom_id } });
+      const classroom = await this.classroomRepo.findOne({
+        where: { id: dto.classroom_id },
+      });
       if (!classroom) throw new NotFoundException('Classroom not found');
     }
 
@@ -106,9 +120,17 @@ export class SchedulingService {
     const startTime = dto.start_time ?? schedule.startTime;
     const endTime = dto.end_time ?? schedule.endTime;
 
-    const conflict = await this.checkScheduleConflict(classroomId, dayOfWeek, startTime, endTime, id);
+    const conflict = await this.checkScheduleConflict(
+      classroomId,
+      dayOfWeek,
+      startTime,
+      endTime,
+      id,
+    );
     if (conflict) {
-      throw new ConflictException('Schedule conflict: classroom is already booked at this time');
+      throw new ConflictException(
+        'Schedule conflict: classroom is already booked at this time',
+      );
     }
 
     Object.assign(schedule, {
@@ -125,13 +147,15 @@ export class SchedulingService {
   async remove(id: number) {
     const schedule = await this.scheduleRepo.findOne({ where: { id } });
     if (!schedule) throw new NotFoundException('Schedule not found');
-    await this.scheduleRepo.remove(schedule);
+    await this.scheduleRepo.softRemove(schedule);
     return { deleted: true };
   }
 
   // Classroom methods
   async createClassroom(dto: CreateClassroomDto) {
-    const existing = await this.classroomRepo.findOne({ where: { roomNumber: dto.room_number } });
+    const existing = await this.classroomRepo.findOne({
+      where: { roomNumber: dto.room_number },
+    });
     if (existing) throw new ConflictException('Room number already exists');
 
     const classroom = this.classroomRepo.create({
@@ -165,7 +189,9 @@ export class SchedulingService {
     if (!classroom) throw new NotFoundException('Classroom not found');
 
     if (dto.room_number && dto.room_number !== classroom.roomNumber) {
-      const existing = await this.classroomRepo.findOne({ where: { roomNumber: dto.room_number } });
+      const existing = await this.classroomRepo.findOne({
+        where: { roomNumber: dto.room_number },
+      });
       if (existing) throw new ConflictException('Room number already exists');
     }
 
@@ -184,12 +210,16 @@ export class SchedulingService {
     if (!classroom) throw new NotFoundException('Classroom not found');
 
     // Check if classroom has schedules
-    const schedules = await this.scheduleRepo.find({ where: { classroomId: id } });
+    const schedules = await this.scheduleRepo.find({
+      where: { classroomId: id },
+    });
     if (schedules.length > 0) {
-      throw new ConflictException('Cannot delete classroom with existing schedules');
+      throw new ConflictException(
+        'Cannot delete classroom with existing schedules',
+      );
     }
 
-    await this.classroomRepo.remove(classroom);
+    await this.classroomRepo.softRemove(classroom);
     return { deleted: true };
   }
 

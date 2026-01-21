@@ -42,7 +42,9 @@ describe('Auth (e2e)', () => {
 
     // Clean up any existing test user from previous runs
     try {
-      await dataSource.query('DELETE FROM users WHERE email = $1', [testUser.email]);
+      await dataSource.query('DELETE FROM users WHERE email = $1', [
+        testUser.email,
+      ]);
     } catch (e) {
       // Ignore cleanup errors
     }
@@ -63,7 +65,7 @@ describe('Auth (e2e)', () => {
   describe('POST /api/auth/register', () => {
     it('should register a new user successfully', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send(testUser)
         .expect(201)
         .expect((res) => {
@@ -71,7 +73,10 @@ describe('Auth (e2e)', () => {
           expect(res.body).toHaveProperty('refresh_token');
           expect(res.body).toHaveProperty('user');
           expect(res.body.user).toHaveProperty('id');
-          expect(res.body.user).toHaveProperty('email', testUser.email.toLowerCase());
+          expect(res.body.user).toHaveProperty(
+            'email',
+            testUser.email.toLowerCase(),
+          );
           expect(res.body.user).toHaveProperty('username', testUser.username);
           testUserId = res.body.user.id;
           // Store tokens for later tests
@@ -82,7 +87,7 @@ describe('Auth (e2e)', () => {
 
     it('should reject registration with existing email', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send(testUser)
         .expect(409)
         .expect((res) => {
@@ -92,7 +97,7 @@ describe('Auth (e2e)', () => {
 
     it('should reject registration with invalid email', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send({
           ...testUser,
           email: 'invalid-email',
@@ -103,7 +108,7 @@ describe('Auth (e2e)', () => {
 
     it('should reject registration with weak password', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send({
           email: 'weak@example.com',
           username: 'weakpassuser',
@@ -114,7 +119,7 @@ describe('Auth (e2e)', () => {
 
     it('should reject registration with short username', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/register')
+        .post('/api/v1/auth/register')
         .send({
           email: 'short@example.com',
           username: 'ab',
@@ -127,7 +132,7 @@ describe('Auth (e2e)', () => {
   describe('POST /api/auth/login', () => {
     it('should login with valid credentials', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           email: testUser.email,
           password: testUser.password,
@@ -145,7 +150,7 @@ describe('Auth (e2e)', () => {
 
     it('should reject login with wrong password', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           email: testUser.email,
           password: 'WrongPassword123!',
@@ -155,7 +160,7 @@ describe('Auth (e2e)', () => {
 
     it('should reject login with non-existent email', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           email: 'nonexistent@example.com',
           password: 'SomePassword123!',
@@ -165,7 +170,7 @@ describe('Auth (e2e)', () => {
 
     it('should reject login with missing credentials', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/login')
+        .post('/api/v1/auth/login')
         .send({
           email: testUser.email,
         })
@@ -176,7 +181,7 @@ describe('Auth (e2e)', () => {
   describe('GET /api/auth/me', () => {
     it('should return current user with valid token', () => {
       return request(app.getHttpServer())
-        .get('/api/auth/me')
+        .get('/api/v1/auth/me')
         .set('Authorization', `Bearer ${accessToken}`)
         .expect(200)
         .expect((res) => {
@@ -187,14 +192,12 @@ describe('Auth (e2e)', () => {
     });
 
     it('should reject request without token', () => {
-      return request(app.getHttpServer())
-        .get('/api/auth/me')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/v1/auth/me').expect(401);
     });
 
     it('should reject request with invalid token', () => {
       return request(app.getHttpServer())
-        .get('/api/auth/me')
+        .get('/api/v1/auth/me')
         .set('Authorization', 'Bearer invalid-token')
         .expect(401);
     });
@@ -203,7 +206,7 @@ describe('Auth (e2e)', () => {
   describe('POST /api/auth/refresh-token', () => {
     it('should refresh access token with valid refresh token', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/refresh-token')
+        .post('/api/v1/auth/refresh-token')
         .send({
           user_id: testUserId,
           refresh_token: refreshToken,
@@ -218,7 +221,7 @@ describe('Auth (e2e)', () => {
 
     it('should reject with invalid refresh token', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/refresh-token')
+        .post('/api/v1/auth/refresh-token')
         .send({
           user_id: testUserId,
           refresh_token: 'invalid-refresh-token',
@@ -230,7 +233,7 @@ describe('Auth (e2e)', () => {
   describe('POST /api/auth/forgot-password', () => {
     it('should accept or handle forgot password request for existing email', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/forgot-password')
+        .post('/api/v1/auth/forgot-password')
         .send({
           email: testUser.email,
         })
@@ -242,7 +245,7 @@ describe('Auth (e2e)', () => {
 
     it('should not reveal if email exists (security)', () => {
       return request(app.getHttpServer())
-        .post('/api/auth/forgot-password')
+        .post('/api/v1/auth/forgot-password')
         .send({
           email: 'nonexistent@example.com',
         })

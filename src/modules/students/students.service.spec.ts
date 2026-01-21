@@ -6,12 +6,14 @@ import { Student } from './entities/student.entity';
 import { Enrollment } from '../enrollments/entities/enrollment.entity';
 import { Grade } from '../grades/entities/grade.entity';
 import { Attendance } from '../attendance/entities/attendance.entity';
+import { CacheService } from '../../common/services/cache.service';
 
 describe('StudentsService', () => {
   let service: StudentsService;
   let studentRepository: any;
   let gradeRepository: any;
   let attendanceRepository: any;
+  let cacheService: CacheService;
 
   const mockStudent = {
     id: 1,
@@ -36,6 +38,8 @@ describe('StudentsService', () => {
     save: jest.fn(),
     create: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
+    restore: jest.fn(),
     createQueryBuilder: jest.fn(() => ({
       leftJoinAndSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
@@ -73,6 +77,15 @@ describe('StudentsService', () => {
     })),
   };
 
+  const mockCacheService = {
+    get: jest.fn(),
+    set: jest.fn(),
+    delete: jest.fn(),
+    invalidateByPrefix: jest.fn(),
+    reset: jest.fn(),
+    getOrSet: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -93,6 +106,10 @@ describe('StudentsService', () => {
           provide: getRepositoryToken(Attendance),
           useValue: mockAttendanceRepository,
         },
+        {
+          provide: CacheService,
+          useValue: mockCacheService,
+        },
       ],
     }).compile();
 
@@ -100,10 +117,15 @@ describe('StudentsService', () => {
     studentRepository = module.get(getRepositoryToken(Student));
     gradeRepository = module.get(getRepositoryToken(Grade));
     attendanceRepository = module.get(getRepositoryToken(Attendance));
-  });
+    cacheService = module.get<CacheService>(CacheService);
 
-  afterEach(() => {
+    // Reset all mocks before each test
     jest.clearAllMocks();
+
+    // Setup default cache behavior - execute the factory function
+    mockCacheService.getOrSet.mockImplementation(async (key, factory) => {
+      return await factory();
+    });
   });
 
   describe('findAll', () => {
@@ -184,6 +206,7 @@ describe('StudentsService', () => {
       const result = await service.update(1, updateStudentDto);
 
       expect(result).toBeDefined();
+      expect(mockCacheService.delete).toHaveBeenCalledWith('student:1');
     });
 
     it('should throw NotFoundException if student not found', async () => {
@@ -198,11 +221,12 @@ describe('StudentsService', () => {
   describe('remove', () => {
     it('should delete a student', async () => {
       mockStudentRepository.findOne.mockResolvedValue(mockStudent);
-      mockStudentRepository.remove.mockResolvedValue(mockStudent);
+      mockStudentRepository.softRemove.mockResolvedValue(mockStudent);
 
       const result = await service.remove(1);
 
       expect(result).toEqual({ deleted: true });
+      expect(mockCacheService.delete).toHaveBeenCalledWith('student:1');
     });
 
     it('should throw NotFoundException if student not found', async () => {
@@ -244,7 +268,9 @@ describe('StudentsService', () => {
     it('should throw NotFoundException if student not found', async () => {
       mockStudentRepository.findOne.mockResolvedValue(null);
 
-      await expect(service.getAttendance(999)).rejects.toThrow(NotFoundException);
+      await expect(service.getAttendance(999)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

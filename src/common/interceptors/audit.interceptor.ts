@@ -8,7 +8,13 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuditService } from '../../modules/audit/audit.service';
 
-const AUDITED_RESOURCES = ['students', 'grades', 'enrollments', 'users', 'courses'];
+const AUDITED_RESOURCES = [
+  'students',
+  'grades',
+  'enrollments',
+  'users',
+  'courses',
+];
 
 @Injectable()
 export class AuditInterceptor implements NestInterceptor {

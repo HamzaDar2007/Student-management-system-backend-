@@ -40,42 +40,70 @@ describe('Courses (e2e)', () => {
     await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true)`,
-      ['e2e_courses_admin@test.com', 'e2e_courses_admin', passwordHash, UserRole.ADMIN],
+      [
+        'e2e_courses_admin@test.com',
+        'e2e_courses_admin',
+        passwordHash,
+        UserRole.ADMIN,
+      ],
     );
 
     await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true)`,
-      ['e2e_courses_teacher@test.com', 'e2e_courses_teacher', passwordHash, UserRole.TEACHER],
+      [
+        'e2e_courses_teacher@test.com',
+        'e2e_courses_teacher',
+        passwordHash,
+        UserRole.TEACHER,
+      ],
     );
 
     await dataSource.query(
       `INSERT INTO users (email, username, password_hash, role, is_active) 
        VALUES ($1, $2, $3, $4, true)`,
-      ['e2e_courses_student@test.com', 'e2e_courses_student', passwordHash, UserRole.STUDENT],
+      [
+        'e2e_courses_student@test.com',
+        'e2e_courses_student',
+        passwordHash,
+        UserRole.STUDENT,
+      ],
     );
 
     // Get tokens
     const adminLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_courses_admin@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_courses_admin@test.com',
+        password: 'TestPassword123!',
+      });
     adminToken = adminLogin.body.access_token;
 
     const teacherLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_courses_teacher@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_courses_teacher@test.com',
+        password: 'TestPassword123!',
+      });
     teacherToken = teacherLogin.body.access_token;
 
     const studentLogin = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({ email: 'e2e_courses_student@test.com', password: 'TestPassword123!' });
+      .post('/api/v1/auth/login')
+      .send({
+        email: 'e2e_courses_student@test.com',
+        password: 'TestPassword123!',
+      });
     studentToken = studentLogin.body.access_token;
   });
 
   afterAll(async () => {
     try {
-      await dataSource.query('DELETE FROM courses WHERE course_code LIKE $1', ['E2ECRS%']);
-      await dataSource.query('DELETE FROM users WHERE email LIKE $1', ['e2e_courses_%@test.com']);
+      await dataSource.query('DELETE FROM courses WHERE course_code LIKE $1', [
+        'E2ECRS%',
+      ]);
+      await dataSource.query('DELETE FROM users WHERE email LIKE $1', [
+        'e2e_courses_%@test.com',
+      ]);
     } catch (e) {
       // Ignore cleanup errors
     }
@@ -85,7 +113,7 @@ describe('Courses (e2e)', () => {
   describe('POST /api/courses', () => {
     it('should create a new course for admin', () => {
       return request(app.getHttpServer())
-        .post('/api/courses')
+        .post('/api/v1/courses')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           course_code: 'E2ECRS101',
@@ -105,7 +133,7 @@ describe('Courses (e2e)', () => {
 
     it('should reject duplicate course code', () => {
       return request(app.getHttpServer())
-        .post('/api/courses')
+        .post('/api/v1/courses')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           course_code: 'E2ECRS101',
@@ -117,7 +145,7 @@ describe('Courses (e2e)', () => {
 
     it('should reject creation by teacher', () => {
       return request(app.getHttpServer())
-        .post('/api/courses')
+        .post('/api/v1/courses')
         .set('Authorization', `Bearer ${teacherToken}`)
         .send({
           course_code: 'E2ECRS102',
@@ -129,7 +157,7 @@ describe('Courses (e2e)', () => {
 
     it('should reject creation by student', () => {
       return request(app.getHttpServer())
-        .post('/api/courses')
+        .post('/api/v1/courses')
         .set('Authorization', `Bearer ${studentToken}`)
         .send({
           course_code: 'E2ECRS103',
@@ -141,7 +169,7 @@ describe('Courses (e2e)', () => {
 
     it('should validate required fields', () => {
       return request(app.getHttpServer())
-        .post('/api/courses')
+        .post('/api/v1/courses')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           course_name: 'Missing Code Course',
@@ -153,7 +181,7 @@ describe('Courses (e2e)', () => {
   describe('GET /api/courses', () => {
     it('should return paginated courses for admin', () => {
       return request(app.getHttpServer())
-        .get('/api/courses')
+        .get('/api/v1/courses')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -166,35 +194,37 @@ describe('Courses (e2e)', () => {
 
     it('should return paginated courses for teacher', () => {
       return request(app.getHttpServer())
-        .get('/api/courses')
+        .get('/api/v1/courses')
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect(200);
     });
 
     it('should return paginated courses for student', () => {
       return request(app.getHttpServer())
-        .get('/api/courses')
+        .get('/api/v1/courses')
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(200);
     });
 
     it('should filter courses by is_active', () => {
       return request(app.getHttpServer())
-        .get('/api/courses')
+        .get('/api/v1/courses')
         .query({ is_active: true })
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
           // All returned courses should be active
           if (res.body.items && res.body.items.length > 0) {
-            expect(res.body.items.every((c: any) => c.isActive === true)).toBe(true);
+            expect(res.body.items.every((c: any) => c.isActive === true)).toBe(
+              true,
+            );
           }
         });
     });
 
     it('should support pagination', () => {
       return request(app.getHttpServer())
-        .get('/api/courses')
+        .get('/api/v1/courses')
         .query({ page: 1, limit: 2 })
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
@@ -206,9 +236,7 @@ describe('Courses (e2e)', () => {
     });
 
     it('should reject unauthenticated request', () => {
-      return request(app.getHttpServer())
-        .get('/api/courses')
-        .expect(401);
+      return request(app.getHttpServer()).get('/api/v1/courses').expect(401);
     });
   });
 
@@ -226,7 +254,7 @@ describe('Courses (e2e)', () => {
 
     it('should return 404 for non-existent course', () => {
       return request(app.getHttpServer())
-        .get('/api/courses/99999')
+        .get('/api/v1/courses/99999')
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });
@@ -258,7 +286,7 @@ describe('Courses (e2e)', () => {
 
     it('should return 404 for non-existent course', () => {
       return request(app.getHttpServer())
-        .put('/api/courses/99999')
+        .put('/api/v1/courses/99999')
         .set('Authorization', `Bearer ${adminToken}`)
         .send({ course_name: 'Test' })
         .expect(404);
@@ -334,7 +362,9 @@ describe('Courses (e2e)', () => {
       // If 500, it should be due to missing course_prerequisites table
       if (res.status === 500) {
         // Clean up directly if API failed
-        await dataSource.query(`DELETE FROM courses WHERE id = $1`, [deleteCourseId]);
+        await dataSource.query(`DELETE FROM courses WHERE id = $1`, [
+          deleteCourseId,
+        ]);
       } else {
         expect(res.body).toHaveProperty('deleted', true);
       }

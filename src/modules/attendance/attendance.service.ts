@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 
-import { Attendance, AttendanceStatus } from './entities/attendance.entity';
+import { Attendance } from './entities/attendance.entity';
 import { Student } from '../students/entities/student.entity';
 import { Course } from '../courses/entities/course.entity';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
@@ -43,7 +43,10 @@ export class AttendanceService {
         date: dto.date,
       },
     });
-    if (existing) throw new ConflictException('Attendance record already exists for this date');
+    if (existing)
+      throw new ConflictException(
+        'Attendance record already exists for this date',
+      );
 
     const attendance = await this.attendanceRepo.save(
       this.attendanceRepo.create({
