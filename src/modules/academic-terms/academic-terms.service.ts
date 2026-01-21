@@ -77,7 +77,12 @@ export class AcademicTermsService {
 
     // If setting this term as active, deactivate others
     if (dto.is_active === true && !term.isActive) {
-      await this.termRepo.update({}, { isActive: false });
+      await this.termRepo
+        .createQueryBuilder()
+        .update()
+        .set({ isActive: false })
+        .where('id != :id', { id })
+        .execute();
     }
 
     Object.assign(term, {

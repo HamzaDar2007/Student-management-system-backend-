@@ -17,7 +17,10 @@ import { UserRole } from '../users/entities/user.entity';
 export class SchedulingController {
   constructor(private readonly schedulingService: SchedulingService) {}
 
-  // Schedule endpoints
+  // ========================================
+  // Schedule endpoints - Static routes first
+  // ========================================
+
   @Post()
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Create a new schedule (Admin only)' })
@@ -39,50 +42,10 @@ export class SchedulingController {
     return this.schedulingService.findAll(page || 1, limit || 10);
   }
 
-  @Get('course/:courseId')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
-  @ApiOperation({ summary: 'Get all schedules for a specific course' })
-  @ApiParam({ name: 'courseId', type: 'number', description: 'Course ID' })
-  @ApiResponse({ status: 200, description: 'Returns course schedules' })
-  @ApiResponse({ status: 404, description: 'Course not found' })
-  findByCourse(@Param('courseId', ParseIntPipe) courseId: number) {
-    return this.schedulingService.findByCourse(courseId);
-  }
+  // ========================================
+  // Classroom endpoints - Must be before :id routes
+  // ========================================
 
-  @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
-  @ApiOperation({ summary: 'Get schedule by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
-  @ApiResponse({ status: 200, description: 'Returns schedule data' })
-  @ApiResponse({ status: 404, description: 'Schedule not found' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.schedulingService.findOne(id);
-  }
-
-  @Patch(':id')
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Update schedule by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
-  @ApiResponse({ status: 200, description: 'Schedule updated successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  @ApiResponse({ status: 404, description: 'Schedule not found' })
-  @ApiResponse({ status: 409, description: 'Schedule conflict detected' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() updateSchedulingDto: UpdateSchedulingDto) {
-    return this.schedulingService.update(id, updateSchedulingDto);
-  }
-
-  @Delete(':id')
-  @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Delete schedule by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
-  @ApiResponse({ status: 200, description: 'Schedule deleted successfully' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
-  @ApiResponse({ status: 404, description: 'Schedule not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
-    return this.schedulingService.remove(id);
-  }
-
-  // Classroom endpoints
   @Post('classrooms')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Create a new classroom (Admin only)' })
@@ -145,5 +108,52 @@ export class SchedulingController {
   @ApiResponse({ status: 409, description: 'Cannot delete classroom with existing schedules' })
   removeClassroom(@Param('id', ParseIntPipe) id: number) {
     return this.schedulingService.removeClassroom(id);
+  }
+
+  // ========================================
+  // Schedule parameter routes - Must be after static routes
+  // ========================================
+
+  @Get('course/:courseId')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
+  @ApiOperation({ summary: 'Get all schedules for a specific course' })
+  @ApiParam({ name: 'courseId', type: 'number', description: 'Course ID' })
+  @ApiResponse({ status: 200, description: 'Returns course schedules' })
+  @ApiResponse({ status: 404, description: 'Course not found' })
+  findByCourse(@Param('courseId', ParseIntPipe) courseId: number) {
+    return this.schedulingService.findByCourse(courseId);
+  }
+
+  @Get(':id')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
+  @ApiOperation({ summary: 'Get schedule by ID' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
+  @ApiResponse({ status: 200, description: 'Returns schedule data' })
+  @ApiResponse({ status: 404, description: 'Schedule not found' })
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.schedulingService.findOne(id);
+  }
+
+  @Patch(':id')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Update schedule by ID (Admin only)' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
+  @ApiResponse({ status: 200, description: 'Schedule updated successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({ status: 404, description: 'Schedule not found' })
+  @ApiResponse({ status: 409, description: 'Schedule conflict detected' })
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateSchedulingDto: UpdateSchedulingDto) {
+    return this.schedulingService.update(id, updateSchedulingDto);
+  }
+
+  @Delete(':id')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Delete schedule by ID (Admin only)' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
+  @ApiResponse({ status: 200, description: 'Schedule deleted successfully' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Admin access required' })
+  @ApiResponse({ status: 404, description: 'Schedule not found' })
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.schedulingService.remove(id);
   }
 }

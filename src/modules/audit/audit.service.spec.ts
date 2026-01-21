@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
+import { NotFoundException } from '@nestjs/common';
 import { AuditService } from './audit.service';
 import { AuditLog } from './entities/audit.entity';
 import { CreateAuditDto } from './dto/create-audit.dto';
@@ -270,16 +271,15 @@ describe('AuditService', () => {
       expect(result).toEqual(mockAuditLog);
     });
 
-    it('should return null when audit log not found', async () => {
+    it('should throw NotFoundException when audit log not found', async () => {
       mockRepository.findOne.mockResolvedValue(null);
 
-      const result = await service.findOne(999);
+      await expect(service.findOne(999)).rejects.toThrow(NotFoundException);
 
       expect(mockRepository.findOne).toHaveBeenCalledWith({
         where: { id: 999 },
         relations: ['user'],
       });
-      expect(result).toBeNull();
     });
   });
 

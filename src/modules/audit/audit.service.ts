@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 import { AuditLog } from './entities/audit.entity';
@@ -49,10 +49,14 @@ export class AuditService {
   }
 
   async findOne(id: number) {
-    return this.auditRepo.findOne({
+    const log = await this.auditRepo.findOne({
       where: { id },
       relations: ['user'],
     });
+    if (!log) {
+      throw new NotFoundException('Audit log not found');
+    }
+    return log;
   }
 
   async findByResource(resource: string, resourceId: string) {
