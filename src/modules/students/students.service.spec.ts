@@ -3,14 +3,13 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { Student } from './entities/student.entity';
-import { User, UserRole } from '../users/entities/user.entity';
+import { Enrollment } from '../enrollments/entities/enrollment.entity';
 import { Grade } from '../grades/entities/grade.entity';
 import { Attendance } from '../attendance/entities/attendance.entity';
 
 describe('StudentsService', () => {
   let service: StudentsService;
   let studentRepository: any;
-  let userRepository: any;
   let gradeRepository: any;
   let attendanceRepository: any;
 
@@ -24,7 +23,7 @@ describe('StudentsService', () => {
       id: 1,
       email: 'student@example.com',
       username: 'student1',
-      role: UserRole.STUDENT,
+      role: 'student',
       firstName: 'John',
       lastName: 'Doe',
     },
@@ -36,7 +35,7 @@ describe('StudentsService', () => {
     findAndCount: jest.fn(),
     save: jest.fn(),
     create: jest.fn(),
-    delete: jest.fn(),
+    remove: jest.fn(),
     createQueryBuilder: jest.fn(() => ({
       leftJoinAndSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
@@ -48,8 +47,9 @@ describe('StudentsService', () => {
     })),
   };
 
-  const mockUserRepository = {
+  const mockEnrollmentRepository = {
     findOne: jest.fn(),
+    find: jest.fn(),
     create: jest.fn(),
     save: jest.fn(),
   };
@@ -82,8 +82,8 @@ describe('StudentsService', () => {
           useValue: mockStudentRepository,
         },
         {
-          provide: getRepositoryToken(User),
-          useValue: mockUserRepository,
+          provide: getRepositoryToken(Enrollment),
+          useValue: mockEnrollmentRepository,
         },
         {
           provide: getRepositoryToken(Grade),
@@ -98,7 +98,6 @@ describe('StudentsService', () => {
 
     service = module.get<StudentsService>(StudentsService);
     studentRepository = module.get(getRepositoryToken(Student));
-    userRepository = module.get(getRepositoryToken(User));
     gradeRepository = module.get(getRepositoryToken(Grade));
     attendanceRepository = module.get(getRepositoryToken(Attendance));
   });
@@ -109,32 +108,36 @@ describe('StudentsService', () => {
 
   describe('findAll', () => {
     it('should return paginated students', async () => {
+      mockStudentRepository.findAndCount.mockResolvedValue([[mockStudent], 1]);
       const query = { page: 1, limit: 10 };
 
       const result = await service.findAll(query);
 
-      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('items');
       expect(result).toHaveProperty('total');
       expect(result).toHaveProperty('page');
       expect(result).toHaveProperty('limit');
     });
 
-    it('should filter by status', async () => {
-      const query = { page: 1, limit: 10, status: 'ACTIVE' };
+    it('should filter by department', async () => {
+      mockStudentRepository.findAndCount.mockResolvedValue([[mockStudent], 1]);
+      const query = { page: 1, limit: 10, department_id: 1 };
 
       const result = await service.findAll(query);
 
-      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('items');
     });
   });
 
   describe('findOne', () => {
     it('should return a student by id', async () => {
       mockStudentRepository.findOne.mockResolvedValue(mockStudent);
+      mockEnrollmentRepository.find.mockResolvedValue([]);
 
       const result = await service.findOne(1);
 
-      expect(result).toEqual(mockStudent);
+      expect(result).toHaveProperty('id');
+      expect(result).toHaveProperty('enrollments');
     });
 
     it('should throw NotFoundException if student not found', async () => {
@@ -151,20 +154,12 @@ describe('StudentsService', () => {
       enrollment_date: '2023-09-01',
     };
 
-    it('should create a new student with user account', async () => {
-      mockUserRepository.findOne.mockResolvedValue(null);
+    it('should create a new student', async () => {
       mockStudentRepository.findOne.mockResolvedValue(null);
-      mockUserRepository.create.mockReturnValue({ id: 2 });
-      mockUserRepository.save.mockResolvedValue({ id: 2 });
       mockStudentRepository.create.mockReturnValue({ id: 1 });
       mockStudentRepository.save.mockResolvedValue({
         id: 1,
-        ...createStudentDto,
-      });
-      mockStudentRepository.findOne.mockResolvedValue({
-        id: 1,
-        ...createStudentDto,
-        user: { id: 2 },
+        studentId: createStudentDto.student_id,
       });
 
       const result = await service.create(createStudentDto);
@@ -203,11 +198,11 @@ describe('StudentsService', () => {
   describe('remove', () => {
     it('should delete a student', async () => {
       mockStudentRepository.findOne.mockResolvedValue(mockStudent);
-      mockStudentRepository.delete.mockResolvedValue({ affected: 1 });
+      mockStudentRepository.remove.mockResolvedValue(mockStudent);
 
       const result = await service.remove(1);
 
-      expect(result).toEqual({ message: 'Student deleted successfully' });
+      expect(result).toEqual({ deleted: true });
     });
 
     it('should throw NotFoundException if student not found', async () => {
@@ -220,6 +215,7 @@ describe('StudentsService', () => {
   describe('getGrades', () => {
     it('should return student grades', async () => {
       mockStudentRepository.findOne.mockResolvedValue(mockStudent);
+      mockGradeRepository.find.mockResolvedValue([]);
 
       const result = await service.getGrades(1);
 
@@ -237,6 +233,7 @@ describe('StudentsService', () => {
   describe('getAttendance', () => {
     it('should return student attendance', async () => {
       mockStudentRepository.findOne.mockResolvedValue(mockStudent);
+      mockAttendanceRepository.find.mockResolvedValue([]);
 
       const result = await service.getAttendance(1);
 

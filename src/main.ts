@@ -3,14 +3,21 @@ import { ValidationPipe, Logger } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
+import compression from 'compression';
 import { XssPipe } from './common/pipes/xss.pipe';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: ['error', 'warn', 'log', 'debug', 'verbose'],
+  });
   const logger = new Logger('Bootstrap');
   
+  // Security middleware
   app.use(helmet());
+  
+  // Compression middleware for response compression
+  app.use(compression());
 
   // Global exception filter
   app.useGlobalFilters(new HttpExceptionFilter());

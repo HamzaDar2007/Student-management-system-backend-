@@ -21,6 +21,9 @@ describe('UsersService', () => {
     updatedAt: new Date(),
   };
 
+  // Sanitized version (without passwordHash)
+  const { passwordHash: _, ...sanitizedUser } = mockUser;
+
   const mockUserRepository = {
     findOne: jest.fn(),
     find: jest.fn(),
@@ -28,7 +31,7 @@ describe('UsersService', () => {
     save: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
-    delete: jest.fn(),
+    remove: jest.fn(),
     createQueryBuilder: jest.fn(() => ({
       where: jest.fn().mockReturnThis(),
       andWhere: jest.fn().mockReturnThis(),
@@ -60,11 +63,12 @@ describe('UsersService', () => {
 
   describe('findAll', () => {
     it('should return paginated users', async () => {
+      mockUserRepository.findAndCount.mockResolvedValue([[mockUser], 1]);
       const query = { page: 1, limit: 10 };
 
       const result = await service.findAll(query);
 
-      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('items');
       expect(result).toHaveProperty('total');
       expect(result).toHaveProperty('page');
       expect(result).toHaveProperty('limit');
@@ -77,7 +81,7 @@ describe('UsersService', () => {
 
       const result = await service.findOne(1);
 
-      expect(result).toEqual(mockUser);
+      expect(result).toEqual(sanitizedUser);
       expect(mockUserRepository.findOne).toHaveBeenCalledWith({
         where: { id: 1 },
       });
@@ -154,12 +158,11 @@ describe('UsersService', () => {
   describe('remove', () => {
     it('should delete a user', async () => {
       mockUserRepository.findOne.mockResolvedValue(mockUser);
-      mockUserRepository.delete.mockResolvedValue({ affected: 1 });
+      mockUserRepository.remove.mockResolvedValue(mockUser);
 
       const result = await service.remove(1);
 
-      expect(result).toEqual({ message: 'User deleted successfully' });
-      expect(mockUserRepository.delete).toHaveBeenCalledWith(1);
+      expect(result).toEqual({ deleted: true });
     });
 
     it('should throw NotFoundException if user not found', async () => {

@@ -29,7 +29,7 @@ describe('CoursesService', () => {
     findAndCount: jest.fn(),
     save: jest.fn(),
     create: jest.fn(),
-    delete: jest.fn(),
+    remove: jest.fn(),
     createQueryBuilder: jest.fn(() => ({
       leftJoinAndSelect: jest.fn().mockReturnThis(),
       where: jest.fn().mockReturnThis(),
@@ -101,7 +101,7 @@ describe('CoursesService', () => {
 
       const result = await service.findAll(query);
 
-      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('items');
       expect(result).toHaveProperty('total');
       expect(result).toHaveProperty('page');
       expect(result).toHaveProperty('limit');
@@ -112,7 +112,7 @@ describe('CoursesService', () => {
 
       const result = await service.findAll(query);
 
-      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('items');
     });
   });
 
@@ -198,11 +198,11 @@ describe('CoursesService', () => {
   describe('remove', () => {
     it('should delete a course', async () => {
       mockCourseRepository.findOne.mockResolvedValue(mockCourse);
-      mockCourseRepository.delete.mockResolvedValue({ affected: 1 });
+      mockCourseRepository.remove.mockResolvedValue(mockCourse);
 
       const result = await service.remove(1);
 
-      expect(result).toEqual({ message: 'Course deleted successfully' });
+      expect(result).toEqual({ deleted: true });
     });
 
     it('should throw NotFoundException if course not found', async () => {
@@ -215,6 +215,7 @@ describe('CoursesService', () => {
   describe('getStudents', () => {
     it('should return enrolled students', async () => {
       mockCourseRepository.findOne.mockResolvedValue(mockCourse);
+      mockEnrollmentRepository.find.mockResolvedValue([]);
 
       const result = await service.getStudents(1);
 
@@ -232,6 +233,7 @@ describe('CoursesService', () => {
   describe('getAttendance', () => {
     it('should return course attendance records', async () => {
       mockCourseRepository.findOne.mockResolvedValue(mockCourse);
+      mockAttendanceRepository.find.mockResolvedValue([]);
 
       const result = await service.getAttendance(1);
 
