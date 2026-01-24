@@ -6,6 +6,7 @@ import { UpdateAttendanceDto } from './dto/update-attendance.dto';
 import { AttendanceListQueryDto } from './dto/attendance-list-query.dto';
 import { BulkAttendanceDto } from './dto/bulk-attendance.dto';
 import { User, UserRole } from '../users/entities/user.entity';
+import { AttendanceStatus } from './entities/attendance.entity';
 
 describe('AttendanceController', () => {
   let controller: AttendanceController;
@@ -13,13 +14,13 @@ describe('AttendanceController', () => {
 
   const mockAttendance = {
     id: 1,
-    student_id: 1,
-    course_id: 1,
-    date: new Date('2024-01-15'),
-    status: 'present',
-    remarks: null,
-    recorded_by: 1,
-    created_at: new Date(),
+    studentId: 1,
+    courseId: 1,
+    date: '2024-01-15',
+    status: AttendanceStatus.PRESENT,
+    notes: null,
+    recordedBy: 1,
+    createdAt: new Date(),
   };
 
   const mockUser: Partial<User> = {
@@ -65,7 +66,7 @@ describe('AttendanceController', () => {
         student_id: 1,
         course_id: 1,
         date: '2024-01-15',
-        status: 'present',
+        status: AttendanceStatus.PRESENT,
       };
       mockAttendanceService.create.mockResolvedValue(mockAttendance);
 
@@ -82,8 +83,8 @@ describe('AttendanceController', () => {
         course_id: 1,
         date: '2024-01-15',
         records: [
-          { student_id: 1, status: 'present' },
-          { student_id: 2, status: 'absent' },
+          { student_id: 1, status: AttendanceStatus.PRESENT },
+          { student_id: 2, status: AttendanceStatus.ABSENT },
         ],
       };
       const expected = { created: 2, message: 'Bulk attendance created' };
@@ -168,8 +169,11 @@ describe('AttendanceController', () => {
 
   describe('update', () => {
     it('should update an attendance record', async () => {
-      const dto: UpdateAttendanceDto = { status: 'late' };
-      const updatedAttendance = { ...mockAttendance, status: 'late' };
+      const dto: UpdateAttendanceDto = { status: AttendanceStatus.LATE };
+      const updatedAttendance = {
+        ...mockAttendance,
+        status: AttendanceStatus.LATE,
+      };
       mockAttendanceService.update.mockResolvedValue(updatedAttendance);
 
       const result = await controller.update(1, dto, mockUser as User);

@@ -4,6 +4,7 @@ import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { StudentListQueryDto } from './dto/student-list-query.dto';
+import { Gender } from './entities/student.entity';
 
 describe('StudentsController', () => {
   let controller: StudentsController;
@@ -11,21 +12,21 @@ describe('StudentsController', () => {
 
   const mockStudent = {
     id: 1,
-    student_id: 'STU001',
-    user_id: 1,
-    date_of_birth: new Date('2000-01-01'),
-    gender: 'male',
+    studentId: 'STU001',
+    userId: 1,
+    dateOfBirth: '2000-01-01',
+    gender: Gender.MALE,
     address: '123 Test St',
     phone: '1234567890',
-    emergency_contact: '0987654321',
-    enrollment_date: new Date(),
-    department_id: 1,
+    emergencyContact: '0987654321',
+    enrollmentDate: '2024-01-01',
+    departmentId: 1,
     semester: 1,
     user: {
       id: 1,
       email: 'student@test.com',
-      first_name: 'Test',
-      last_name: 'Student',
+      firstName: 'Test',
+      lastName: 'Student',
     },
   };
 
@@ -63,14 +64,11 @@ describe('StudentsController', () => {
   describe('create', () => {
     it('should create a new student', async () => {
       const dto: CreateStudentDto = {
-        email: 'newstudent@test.com',
-        password: 'Password123!',
-        first_name: 'New',
-        last_name: 'Student',
         student_id: 'STU002',
         date_of_birth: '2000-01-01',
-        gender: 'male',
+        gender: Gender.MALE,
         department_id: 1,
+        enrollment_date: '2024-01-01',
       };
       mockStudentsService.create.mockResolvedValue(mockStudent);
 

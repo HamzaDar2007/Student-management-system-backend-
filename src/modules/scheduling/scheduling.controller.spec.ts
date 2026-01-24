@@ -12,27 +12,25 @@ describe('SchedulingController', () => {
 
   const mockSchedule = {
     id: 1,
-    course_id: 1,
-    classroom_id: 1,
-    day_of_week: 'Monday',
-    start_time: '09:00',
-    end_time: '10:30',
-    teacher_id: 1,
-    created_at: new Date(),
-    updated_at: new Date(),
-    course: { id: 1, course_code: 'CS101' },
-    classroom: { id: 1, room_number: 'A101' },
+    courseId: 1,
+    classroomId: 1,
+    dayOfWeek: 1,
+    startTime: '09:00',
+    endTime: '10:30',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    course: { id: 1, courseCode: 'CS101' },
+    classroom: { id: 1, roomNumber: 'A101' },
   };
 
   const mockClassroom = {
     id: 1,
-    room_number: 'A101',
+    roomNumber: 'A101',
     building: 'Main Building',
     capacity: 50,
-    facilities: ['projector', 'whiteboard'],
-    is_active: true,
-    created_at: new Date(),
-    updated_at: new Date(),
+    type: 'lecture',
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const mockSchedulingService = {
@@ -77,10 +75,9 @@ describe('SchedulingController', () => {
       const dto: CreateSchedulingDto = {
         course_id: 1,
         classroom_id: 1,
-        day_of_week: 'Monday',
+        day_of_week: 1,
         start_time: '09:00',
         end_time: '10:30',
-        teacher_id: 1,
       };
       mockSchedulingService.create.mockResolvedValue(mockSchedule);
 

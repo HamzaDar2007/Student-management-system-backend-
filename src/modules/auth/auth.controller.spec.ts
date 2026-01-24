@@ -16,10 +16,10 @@ describe('AuthController', () => {
     id: 1,
     email: 'test@test.com',
     username: 'testuser',
-    first_name: 'Test',
-    last_name: 'User',
+    firstName: 'Test',
+    lastName: 'User',
     role: UserRole.STUDENT,
-    is_active: true,
+    isActive: true,
   };
 
   const mockAuthService = {
@@ -127,7 +127,7 @@ describe('AuthController', () => {
     it('should reset password with valid token', async () => {
       const dto: ResetPasswordDto = {
         token: 'valid_reset_token',
-        password: 'NewPassword123!',
+        new_password: 'NewPassword123!',
       };
       const expected = { message: 'Password reset successfully' };
       mockAuthService.resetPassword.mockResolvedValue(expected);

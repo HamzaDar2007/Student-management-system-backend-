@@ -3,6 +3,7 @@ import { TeachersController } from './teachers.controller';
 import { TeachersService } from './teachers.service';
 import { CreateTeacherProfileDto } from './dto/create-teacher-profile.dto';
 import { UpdateTeacherProfileDto } from './dto/update-teacher-profile.dto';
+import { AcademicRank } from './entities/teacher-profile.entity';
 
 describe('TeachersController', () => {
   let controller: TeachersController;
@@ -10,18 +11,23 @@ describe('TeachersController', () => {
 
   const mockTeacher = {
     id: 1,
-    user_id: 1,
-    employee_id: 'EMP001',
-    department_id: 1,
-    designation: 'Professor',
-    qualification: 'PhD',
+    userId: 1,
+    employeeId: 'EMP001',
+    rank: AcademicRank.PROFESSOR,
     specialization: 'Computer Science',
-    joining_date: new Date('2020-01-01'),
+    officeLocation: 'Building A',
+    officeHours: 'Mon-Fri 9-5',
+    phone: '1234567890',
+    bio: 'Experienced professor',
+    hireDate: '2020-01-01',
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
     user: {
       id: 1,
       email: 'teacher@test.com',
-      first_name: 'John',
-      last_name: 'Doe',
+      firstName: 'John',
+      lastName: 'Doe',
     },
   };
 
@@ -60,8 +66,7 @@ describe('TeachersController', () => {
       const dto: CreateTeacherProfileDto = {
         user_id: 1,
         employee_id: 'EMP002',
-        department_id: 1,
-        designation: 'Assistant Professor',
+        rank: AcademicRank.ASSISTANT_PROFESSOR,
       };
       mockTeachersService.create.mockResolvedValue(mockTeacher);
 
@@ -128,10 +133,10 @@ describe('TeachersController', () => {
 
   describe('update', () => {
     it('should update a teacher profile', async () => {
-      const dto: UpdateTeacherProfileDto = { designation: 'Senior Professor' };
+      const dto: UpdateTeacherProfileDto = { rank: AcademicRank.PROFESSOR };
       const updatedTeacher = {
         ...mockTeacher,
-        designation: 'Senior Professor',
+        rank: AcademicRank.PROFESSOR,
       };
       mockTeachersService.update.mockResolvedValue(updatedTeacher);
 

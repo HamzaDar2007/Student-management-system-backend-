@@ -14,12 +14,12 @@ describe('UsersController', () => {
     id: 1,
     email: 'test@test.com',
     username: 'testuser',
-    first_name: 'Test',
-    last_name: 'User',
+    firstName: 'Test',
+    lastName: 'User',
     role: UserRole.STUDENT,
-    is_active: true,
-    created_at: new Date(),
-    updated_at: new Date(),
+    isActive: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   };
 
   const mockUsersService = {
@@ -57,8 +57,8 @@ describe('UsersController', () => {
         email: 'new@test.com',
         password: 'Password123!',
         username: 'newuser',
-        first_name: 'New',
-        last_name: 'User',
+        firstName: 'New',
+        lastName: 'User',
         role: UserRole.STUDENT,
       };
       mockUsersService.create.mockResolvedValue(mockUser);
@@ -112,8 +112,8 @@ describe('UsersController', () => {
 
   describe('update', () => {
     it('should update a user', async () => {
-      const dto: UpdateUserDto = { first_name: 'Updated' };
-      const updatedUser = { ...mockUser, first_name: 'Updated' };
+      const dto: UpdateUserDto = { firstName: 'Updated' };
+      const updatedUser = { ...mockUser, firstName: 'Updated' };
       mockUsersService.update.mockResolvedValue(updatedUser);
 
       const result = await controller.update(1, dto);
