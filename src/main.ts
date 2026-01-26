@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { Logger, ValidationPipe, VersioningType } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { WinstonModule, WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { WinstonModule } from 'nest-winston';
 import { AppModule } from './app.module';
 import helmet from 'helmet';
 import compression from 'compression';
@@ -10,13 +10,16 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import winstonConfig from './config/logger.config';
 
 async function bootstrap() {
+  // Create Winston logger instance
+  const winstonLogger = WinstonModule.createLogger(winstonConfig);
+
   // Create app with Winston logger
   const app = await NestFactory.create(AppModule, {
-    logger: WinstonModule.createLogger(winstonConfig),
+    logger: winstonLogger,
   });
 
-  // Get logger instance for bootstrap messages
-  const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
+  // Use the same logger for bootstrap messages
+  const logger = new Logger('Bootstrap');
 
   // Set global prefix for all routes
   app.setGlobalPrefix('api');
@@ -111,10 +114,9 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port);
-  logger.log(`Application running on http://localhost:${port}`, 'Bootstrap');
+  logger.log(`Application running on http://localhost:${port}`);
   logger.log(
     `Swagger documentation available at http://localhost:${port}/api/docs`,
-    'Bootstrap',
   );
 }
 bootstrap();

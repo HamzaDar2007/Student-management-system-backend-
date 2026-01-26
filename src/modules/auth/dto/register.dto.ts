@@ -17,13 +17,14 @@ export class RegisterDto {
   @IsEmail()
   email: string;
 
+  @IsOptional()
   @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString()
   @Length(3, 50)
   @Matches(/^[a-zA-Z0-9_]+$/, {
     message: 'username must be alphanumeric (underscores allowed)',
   })
-  username: string;
+  username?: string;
 
   @IsString()
   @IsStrongPassword()

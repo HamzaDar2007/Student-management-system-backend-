@@ -34,18 +34,20 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
+    // Auto-generate username from email if not provided
+    const username = dto.username || this.generateUsernameFromEmail(dto.email);
+
     const existing = await this.userRepo.findOne({
-      where: [{ email: dto.email }, { username: dto.username }],
+      where: [{ email: dto.email }, { username }],
     });
-    if (existing)
-      throw new ConflictException('Email or username already exists');
+    if (existing) throw new ConflictException('Email already exists');
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
     const user = await this.userRepo.save(
       this.userRepo.create({
         email: dto.email,
-        username: dto.username,
+        username,
         passwordHash,
         role: dto.role || UserRole.STUDENT,
         firstName: dto.first_name ?? null,
@@ -66,6 +68,20 @@ export class AuthService {
         role: user.role,
       },
     };
+  }
+
+  /**
+   * Generate a unique username from email address
+   * e.g., john.doe@example.com -> john_doe
+   */
+  private generateUsernameFromEmail(email: string): string {
+    const localPart = email.split('@')[0];
+    // Replace dots and special chars with underscores, keep only alphanumeric and underscores
+    let username = localPart.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    // Add random suffix to ensure uniqueness
+    const randomSuffix = Math.floor(Math.random() * 10000);
+    username = `${username}_${randomSuffix}`;
+    return username.substring(0, 50); // Limit to 50 chars
   }
 
   async login(dto: LoginDto) {

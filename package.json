@@ -25,6 +25,7 @@
     "migration:generate": "npm run build && npm run typeorm migration:generate -- -d dist/config/data-source.js",
     "seed": "npm run build && ts-node -r tsconfig-paths/register src/database/seeds/seed.ts",
     "seed:only": "ts-node -r tsconfig-paths/register src/database/seeds/seed.ts",
+    "seed:admin": "ts-node -r tsconfig-paths/register src/database/seeds/admin.seed.ts",
     "docker:build": "docker build -t student-management-api .",
     "docker:run": "docker run -p 3000:3000 student-management-api",
     "docker:up": "docker-compose up -d",

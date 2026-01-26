@@ -55,13 +55,14 @@ import { UploadsModule } from './modules/uploads/uploads.module';
         CACHE_MAX: Joi.number().default(100),
       }),
     }),
-    // Redis Cache
+    // Redis Cache (with fallback to in-memory if Redis is unavailable)
     CacheModule.registerAsync({
       isGlobal: true,
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const isTest = configService.get('NODE_ENV') === 'test';
+        const isDev = configService.get('NODE_ENV') === 'development';
 
         // Use in-memory cache for tests
         if (isTest) {
@@ -71,18 +72,39 @@ import { UploadsModule } from './modules/uploads/uploads.module';
           };
         }
 
-        // Use Redis for non-test environments
-        return {
-          store: await redisStore({
+        // Try to use Redis for non-test environments
+        try {
+          const store = await redisStore({
             socket: {
               host: configService.get('cache.host'),
               port: configService.get('cache.port'),
             },
             password: configService.get('cache.password'),
             ttl: configService.get('cache.ttl') * 1000, // Convert to milliseconds
-          }),
-          max: configService.get('cache.max'),
-        };
+          });
+
+          console.log('✅ Redis cache connected successfully');
+          return {
+            store,
+            max: configService.get('cache.max'),
+          };
+        } catch (error: unknown) {
+          // Fall back to in-memory cache if Redis is unavailable
+          if (isDev) {
+            const errorMessage =
+              error instanceof Error ? error.message : 'Unknown error';
+            console.warn(
+              '⚠️  Redis connection failed, falling back to in-memory cache:',
+              errorMessage,
+            );
+            return {
+              ttl: configService.get('cache.ttl') * 1000,
+              max: configService.get('cache.max'),
+            };
+          }
+          // In production, throw the error
+          throw error;
+        }
       },
     }),
     // Rate limiting
