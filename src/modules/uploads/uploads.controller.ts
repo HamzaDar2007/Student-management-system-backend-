@@ -93,7 +93,7 @@ export class UploadsController {
       throw new BadRequestException('No file provided');
     }
 
-    // Manual validation since ParseFilePipe with FileTypeValidator can be flaky with supertest/multer mimetypes
+    // Manual validation since file type and size validation is handled manually below
     if (file.size > MAX_FILE_SIZE) {
       throw new BadRequestException(
         `File ${file.originalname} exceeds maximum size of 10MB`,

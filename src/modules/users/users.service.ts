@@ -141,6 +141,6 @@ export class UsersService {
 
   private sanitize(user: User) {
     const { passwordHash: _passwordHash, ...rest } = user as any;
-    return rest;
+    return rest as Omit<User, 'passwordHash'>;
   }
 }

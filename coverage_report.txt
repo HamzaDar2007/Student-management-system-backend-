@@ -1,0 +1,263 @@
+
+> student-management-api@1.0.0 test:cov
+> jest --coverage
+
+PASS src/modules/grades/grades.controller.spec.ts (6.102 s)
+PASS src/modules/scheduling/scheduling.controller.spec.ts (6.215 s)
+PASS src/modules/auth/auth.service.spec.ts (7.8 s)
+PASS src/modules/students/students.controller.spec.ts
+PASS src/modules/uploads/uploads.controller.spec.ts
+PASS src/modules/auth/auth.controller.spec.ts
+PASS src/modules/users/users.controller.spec.ts
+PASS src/modules/attendance/attendance.controller.spec.ts
+PASS src/modules/courses/courses.controller.spec.ts
+PASS src/modules/departments/departments.controller.spec.ts
+PASS src/modules/enrollments/enrollments.controller.spec.ts
+PASS src/modules/audit/audit.controller.spec.ts
+PASS src/modules/teachers/teachers.controller.spec.ts
+PASS src/modules/faculties/faculties.controller.spec.ts
+PASS src/modules/users/users.service.spec.ts
+PASS src/modules/attendance/attendance.service.spec.ts
+PASS src/modules/academic-terms/academic-terms.controller.spec.ts
+PASS src/modules/students/students.service.spec.ts
+PASS src/modules/courses/courses.service.spec.ts
+PASS src/modules/audit/audit.service.spec.ts
+PASS src/modules/enrollments/enrollments.service.spec.ts
+PASS src/modules/scheduling/scheduling.service.spec.ts
+PASS src/modules/auth/strategies/jwt.strategy.spec.ts
+PASS src/modules/grades/grades.service.spec.ts
+PASS src/modules/faculties/faculties.service.spec.ts
+PASS src/modules/departments/departments.service.spec.ts
+PASS src/modules/teachers/teachers.service.spec.ts
+PASS src/common/interceptors/audit.interceptor.spec.ts
+PASS src/modules/academic-terms/academic-terms.service.spec.ts
+PASS src/common/services/cache.service.spec.ts
+[Nest] 5628  - 01/27/2026, 12:02:30 PM   ERROR [StorageService] Failed to delete file: folder/file.pdf
+[Nest] 5628  - 01/27/2026, 12:02:30 PM   ERROR [StorageService] Error: Permission denied
+    at Object.<anonymous> (F:\work\students-management\backend\src\common\services\storage.service.spec.ts:218:9)
+    at Promise.finally.completed (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+    at _callCircusTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+    at F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at run (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+    at runAndTransformResultsToJestFormat (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+    at jestAdapter (F:\work\students-management\backend\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+PASS src/common/services/storage.service.spec.ts
+PASS src/common/guards/roles.guard.spec.ts
+[Nest] 7300  - 01/27/2026, 12:02:32 PM   ERROR [MailService] Failed to send email to recipient@test.com
+[Nest] 7300  - 01/27/2026, 12:02:32 PM   ERROR [MailService] Error: SMTP error
+    at Object.<anonymous> (F:\work\students-management\backend\src\common\services\mail.service.spec.ts:84:50)
+    at Promise.finally.completed (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+    at _callCircusTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+    at F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at run (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+    at runAndTransformResultsToJestFormat (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+    at jestAdapter (F:\work\students-management\backend\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+PASS src/common/services/mail.service.spec.ts
+PASS src/modules/health/health.controller.spec.ts
+PASS src/common/decorators/roles.decorator.spec.ts
+PASS src/common/decorators/skip-transform.decorator.spec.ts
+PASS src/app.service.spec.ts
+PASS src/app.controller.spec.ts
+PASS src/common/validators/min-age.decorator.spec.ts
+PASS src/common/interceptors/transform.interceptor.spec.ts
+PASS src/common/dto/pagination.dto.spec.ts
+[Nest] 5628  - 01/27/2026, 12:02:34 PM   ERROR [HttpExceptionFilter] Unhandled exception: Something went wrong
+Error: Something went wrong
+    at Object.<anonymous> (F:\work\students-management\backend\src\common\filters\http-exception.filter.spec.ts:88:25)
+    at Promise.finally.completed (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+    at _callCircusTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+    at F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at run (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+    at runAndTransformResultsToJestFormat (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+    at jestAdapter (F:\work\students-management\backend\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+[Nest] 5628  - 01/27/2026, 12:02:34 PM   ERROR [HttpExceptionFilter] Unhandled exception: Debug error
+Error: Debug error
+    at Object.<anonymous> (F:\work\students-management\backend\src\common\filters\http-exception.filter.spec.ts:135:25)
+    at Promise.finally.completed (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+    at _callCircusTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+    at F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at run (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+    at runAndTransformResultsToJestFormat (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+    at jestAdapter (F:\work\students-management\backend\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+PASS src/common/decorators/current-user.decorator.spec.ts
+[Nest] 5628  - 01/27/2026, 12:02:34 PM   ERROR [HttpExceptionFilter] Unhandled exception: Secret error
+Error: Secret error
+    at Object.<anonymous> (F:\work\students-management\backend\src\common\filters\http-exception.filter.spec.ts:152:25)
+    at Promise.finally.completed (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1557:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1497:10)
+    at _callCircusTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1007:40)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at _runTest (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:947:3)
+    at F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:849:7
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:862:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at _runTestsForDescribeBlock (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:857:11)
+    at run (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:761:3)
+    at runAndTransformResultsToJestFormat (F:\work\students-management\backend\node_modules\jest-circus\build\jestAdapterInit.js:1918:21)
+    at jestAdapter (F:\work\students-management\backend\node_modules\jest-circus\build\runner.js:101:19)
+    at runTestInternal (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:275:16)
+    at runTest (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:343:7)
+    at Object.worker (F:\work\students-management\backend\node_modules\jest-runner\build\testWorker.js:497:12)
+PASS src/common/filters/http-exception.filter.spec.ts
+PASS src/common/guards/jwt-auth.guard.spec.ts
+PASS src/common/pipes/xss.pipe.spec.ts
+PASS src/common/decorators/cache.decorator.spec.ts
+PASS src/common/validators/is-strong-password.decorator.spec.ts
+PASS src/common/validators/is-student-id.decorator.spec.ts
+PASS src/common/middleware/request-logger.middleware.spec.ts
+------------------------------------------------------|---------|----------|---------|---------|---------------------------------------------
+File                                                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                           
+------------------------------------------------------|---------|----------|---------|---------|---------------------------------------------
+All files                                             |   73.28 |    64.91 |   80.39 |   72.84 |                                             
+ src                                                  |     100 |       75 |     100 |     100 |                                             
+  app.controller.ts                                   |     100 |       75 |     100 |     100 | 6                                           
+  app.service.ts                                      |     100 |      100 |     100 |     100 |                                             
+ src/common/decorators                                |     100 |      100 |     100 |     100 |                                             
+  cache.decorator.ts                                  |     100 |      100 |     100 |     100 |                                             
+  current-user.decorator.ts                           |     100 |      100 |     100 |     100 |                                             
+  roles.decorator.ts                                  |     100 |      100 |     100 |     100 |                                             
+  skip-transform.decorator.ts                         |     100 |      100 |     100 |     100 |                                             
+ src/common/filters                                   |     100 |    92.85 |     100 |     100 |                                             
+  http-exception.filter.ts                            |     100 |    92.85 |     100 |     100 | 40                                          
+ src/common/guards                                    |     100 |       90 |     100 |     100 |                                             
+  jwt-auth.guard.ts                                   |     100 |      100 |     100 |     100 |                                             
+  roles.guard.ts                                      |     100 |       90 |     100 |     100 | 8                                           
+ src/common/interceptors                              |     100 |    88.23 |    90.9 |     100 |                                             
+  audit.interceptor.ts                                |     100 |       85 |   85.71 |     100 | 21,62-72                                    
+  transform.interceptor.ts                            |     100 |    92.85 |     100 |     100 | 34                                          
+ src/common/middleware                                |     100 |     87.5 |     100 |     100 |                                             
+  request-logger.middleware.ts                        |     100 |     87.5 |     100 |     100 | 19                                          
+ src/common/pipes                                     |     100 |      100 |     100 |     100 |                                             
+  xss.pipe.ts                                         |     100 |      100 |     100 |     100 |                                             
+ src/common/services                                  |   95.34 |    78.84 |     100 |   95.08 |                                             
+  cache.service.ts                                    |   90.76 |    92.85 |     100 |   90.47 | 40-41,56,68,92,104                          
+  mail.service.ts                                     |     100 |       60 |     100 |     100 | 10-27,55-71                                 
+  storage.service.ts                                  |     100 |    88.88 |     100 |     100 | 21,64                                       
+ src/common/validators                                |     100 |      100 |     100 |     100 |                                             
+  is-strong-password.decorator.ts                     |     100 |      100 |     100 |     100 |                                             
+  is-student-id.decorator.ts                          |     100 |      100 |     100 |     100 |                                             
+  min-age.decorator.ts                                |     100 |      100 |     100 |     100 |                                             
+ src/config                                           |       0 |        0 |       0 |       0 |                                             
+  cache.config.ts                                     |       0 |        0 |       0 |       0 | 1-3                                         
+  data-source.ts                                      |       0 |        0 |     100 |       0 | 1-21                                        
+  database.config.ts                                  |       0 |        0 |       0 |       0 | 1-3                                         
+  logger.config.ts                                    |       0 |        0 |       0 |       0 | 2-89                                        
+ src/database/migrations                              |       0 |      100 |       0 |       0 |                                             
+  1700000000001-init-enums-and-triggers.ts            |       0 |      100 |       0 |       0 | 3-60                                        
+  1700000000002-create-users.ts                       |       0 |      100 |       0 |       0 | 3-41                                        
+  1700000000003-create-students.ts                    |       0 |      100 |       0 |       0 | 3-52                                        
+  1700000000004-create-courses.ts                     |       0 |      100 |       0 |       0 | 3-55                                        
+  1700000000005-create-enrollments.ts                 |       0 |      100 |       0 |       0 | 3-53                                        
+  1700000000006-create-grades.ts                      |       0 |      100 |       0 |       0 | 3-52                                        
+  1700000000007-create-attendance.ts                  |       0 |      100 |       0 |       0 | 3-48                                        
+  1700000000008-add-search-indexes.ts                 |       0 |      100 |       0 |       0 | 3-24                                        
+  1700000000009-create-course-teachers.ts             |       0 |      100 |       0 |       0 | 3-36                                        
+  1700000000010-add-user-auth-columns.ts              |       0 |      100 |       0 |       0 | 3-19                                        
+  1700000000011-add-department-id-to-students.ts      |       0 |      100 |       0 |       0 | 3-21                                        
+  1700000000012-add-department-id-to-courses.ts       |       0 |      100 |       0 |       0 | 3-21                                        
+  1700000000013-create-faculties-departments-terms.ts |       0 |      100 |       0 |       0 | 3-176                                       
+  1737500000000-AddAccountLockoutFields.ts            |       0 |      100 |       0 |       0 | 3-37                                        
+  1737500000001-AddDeletedAtToUsers.ts                |       0 |      100 |       0 |       0 | 3-20                                        
+ src/database/seeds                                   |       0 |        0 |       0 |       0 |                                             
+  admin.seed.ts                                       |       0 |        0 |       0 |       0 | 1-73                                        
+  seed.ts                                             |       0 |      100 |       0 |       0 | 1-487                                       
+ src/modules/academic-terms                           |   97.26 |    75.92 |     100 |   96.96 |                                             
+  academic-terms.controller.ts                        |     100 |       75 |     100 |     100 | 31-89                                       
+  academic-terms.service.ts                           |      96 |    76.19 |     100 |   95.55 | 79,93                                       
+ src/modules/attendance                               |   73.98 |    61.11 |      75 |   78.64 |                                             
+  attendance.controller.ts                            |     100 |       75 |     100 |     100 | 37-121                                      
+  attendance.service.ts                               |   65.59 |    55.26 |   58.33 |   70.66 | 88-91,120,148-152,156-160,181-224           
+ src/modules/audit                                    |     100 |    91.89 |     100 |     100 |                                             
+  audit.controller.ts                                 |     100 |       75 |     100 |     100 | 29-41                                       
+  audit.service.ts                                    |     100 |    96.55 |     100 |     100 | 12                                          
+ src/modules/auth                                     |   70.67 |    63.26 |   80.95 |    68.8 |                                             
+  auth.controller.ts                                  |     100 |       75 |     100 |     100 | 30-119                                      
+  auth.service.ts                                     |   61.76 |    57.57 |   66.66 |   59.37 | 78-84,93-96,108-112,126,134,146,207-280,290 
+ src/modules/auth/strategies                          |     100 |    83.33 |     100 |     100 |                                             
+  jwt.strategy.ts                                     |     100 |    83.33 |     100 |     100 | 15                                          
+ src/modules/courses                                  |   76.78 |     62.5 |      80 |   76.76 |                                             
+  courses.controller.ts                               |   93.75 |       75 |      80 |   93.33 | 108,123                                     
+  courses.service.ts                                  |      70 |    60.22 |      80 |   69.56 | 48-56,75,78,83,110-113,133-144,159-173      
+ src/modules/departments                              |    87.5 |    68.75 |     100 |   87.32 |                                             
+  departments.controller.ts                           |     100 |       75 |     100 |     100 | 31-81                                       
+  departments.service.ts                              |   82.45 |     67.3 |     100 |      82 | 81,85-89,93-100                             
+ src/modules/enrollments                              |   66.34 |    52.38 |   78.57 |   71.76 |                                             
+  enrollments.controller.ts                           |     100 |       75 |     100 |     100 | 37-120                                      
+  enrollments.service.ts                              |   54.54 |    45.31 |   57.14 |      60 | 99-155                                      
+ src/modules/faculties                                |    87.5 |    68.75 |     100 |   89.85 |                                             
+  faculties.controller.ts                             |     100 |       75 |     100 |     100 | 31-78                                       
+  faculties.service.ts                                |   82.45 |     67.3 |     100 |   85.41 | 82-85,89-96                                 
+ src/modules/grades                                   |      80 |    65.85 |   92.85 |   85.13 |                                             
+  grades.controller.ts                                |     100 |       75 |     100 |     100 | 36-93                                       
+  grades.service.ts                                   |   71.42 |    62.06 |   85.71 |   77.55 | 86-90,94-98,129-135                         
+ src/modules/health                                   |   76.19 |    66.66 |   44.44 |   77.77 |                                             
+  health.controller.ts                                |   76.19 |    66.66 |   44.44 |   77.77 | 29-36                                       
+ src/modules/scheduling                               |   76.15 |    44.91 |   92.59 |   77.19 |                                             
+  scheduling.controller.ts                            |     100 |    82.14 |     100 |     100 | 36-52,96,158-218                            
+  scheduling.service.ts                               |   65.93 |    33.33 |   85.71 |   66.23 | 47,100-144,188-205,244                      
+ src/modules/students                                 |   84.25 |    71.15 |   80.95 |   86.17 |                                             
+  students.controller.ts                              |   93.75 |       75 |      80 |   93.33 | 109,124                                     
+  students.service.ts                                 |   80.26 |    70.45 |   81.81 |   82.81 | 72-79,122-125,167-182                       
+ src/modules/teachers                                 |     100 |    78.94 |     100 |     100 |                                             
+  teachers.controller.ts                              |     100 |    78.57 |     100 |     100 | 34-48,116                                   
+  teachers.service.ts                                 |     100 |    79.03 |     100 |     100 | 17,48,60,97,104-116                         
+ src/modules/uploads                                  |   90.74 |    69.49 |     100 |   90.38 |                                             
+  uploads.controller.ts                               |   90.74 |    69.49 |     100 |   90.38 | 96,101,107,172,177                          
+ src/modules/users                                    |   87.09 |       70 |      85 |   89.61 |                                             
+  users.controller.ts                                 |   92.85 |       75 |      75 |    92.3 | 114,129                                     
+  users.service.ts                                    |   84.61 |    68.51 |   91.66 |   88.23 | 54-66,90-93,96-99                           
+------------------------------------------------------|---------|----------|---------|---------|---------------------------------------------
+
+=============================== Coverage summary ===============================
+Statements   : 73.28% ( 1424/1943 )
+Branches     : 64.91% ( 879/1354 )
+Functions    : 80.39% ( 287/357 )
+Lines        : 72.84% ( 1253/1720 )
+================================================================================
+
+Test Suites: 49 passed, 49 total
+Tests:       532 passed, 532 total
+Snapshots:   0 total
+Time:        40.621 s
+Ran all test suites.

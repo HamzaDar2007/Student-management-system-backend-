@@ -1,0 +1,627 @@
+
+> student-management-api@1.0.0 test:e2e
+> jest --config ./test/jest-e2e.json uploads.e2e-spec.ts
+
+  console.log
+    query: SELECT version()
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: SELECT * FROM current_schema()
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: START TRANSACTION
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: SELECT * FROM current_schema()
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: SELECT * FROM current_database()
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: SELECT "table_schema", "table_name", obj_description(('"' || "table_schema" || '"."' || "table_name" || '"')::regclass, 'pg_class') AS table_comment FROM "information_schema"."tables" WHERE ("table_schema" = 'public' AND "table_name" = 'grades') OR ("table_schema" = 'public' AND "table_name" = 'attendance') OR ("table_schema" = 'public' AND "table_name" = 'faculties') OR ("table_schema" = 'public' AND "table_name" = 'departments') OR ("table_schema" = 'public' AND "table_name" = 'courses') OR ("table_schema" = 'public' AND "table_name" = 'enrollments') OR ("table_schema" = 'public' AND "table_name" = 'students') OR ("table_schema" = 'public' AND "table_name" = 'users') OR ("table_schema" = 'public' AND "table_name" = 'academic_terms') OR ("table_schema" = 'public' AND "table_name" = 'classrooms') OR ("table_schema" = 'public' AND "table_name" = 'schedules') OR ("table_schema" = 'public' AND "table_name" = 'audit_logs') OR ("table_schema" = 'public' AND "table_name" = 'teacher_profiles') OR ("table_schema" = 'public' AND "table_name" = 'grades') OR ("table_schema" = 'public' AND "table_name" = 'attendance') OR ("table_schema" = 'public' AND "table_name" = 'faculties') OR ("table_schema" = 'public' AND "table_name" = 'departments') OR ("table_schema" = 'public' AND "table_name" = 'courses') OR ("table_schema" = 'public' AND "table_name" = 'enrollments') OR ("table_schema" = 'public' AND "table_name" = 'students') OR ("table_schema" = 'public' AND "table_name" = 'users') OR ("table_schema" = 'public' AND "table_name" = 'teacher_profiles') OR ("table_schema" = 'public' AND "table_name" = 'classrooms') OR ("table_schema" = 'public' AND "table_name" = 'schedules') OR ("table_schema" = 'public' AND "table_name" = 'audit_logs') OR ("table_schema" = 'public' AND "table_name" = 'academic_terms') OR ("table_schema" = 'public' AND "table_name" = 'course_teachers') OR ("table_schema" = 'public' AND "table_name" = 'course_prerequisites') OR ("table_schema" = 'public' AND "table_name" = 'course_teachers') OR ("table_schema" = 'public' AND "table_name" = 'course_prerequisites')
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: SELECT TRUE FROM information_schema.columns WHERE table_name = 'pg_class' and column_name = 'relispartition'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: SELECT columns.*, pg_catalog.col_description(('"' || table_catalog || '"."' || table_schema || '"."' || table_name || '"')::regclass::oid, ordinal_position) AS description, ('"' || "udt_schema" || '"."' || "udt_name" || '"')::"regtype"::text AS "regtype", pg_catalog.format_type("col_attr"."atttypid", "col_attr"."atttypmod") AS "format_type" FROM "information_schema"."columns" LEFT JOIN "pg_catalog"."pg_attribute" AS "col_attr" ON "col_attr"."attname" = "columns"."column_name" AND "col_attr"."attrelid" = ( SELECT "cls"."oid" FROM "pg_catalog"."pg_class" AS "cls" LEFT JOIN "pg_catalog"."pg_namespace" AS "ns" ON "ns"."oid" = "cls"."relnamespace" WHERE "cls"."relname" = "columns"."table_name" AND "ns"."nspname" = "columns"."table_schema" ) WHERE ("table_schema" = 'public' AND "table_name" = 'course_teachers') OR ("table_schema" = 'public' AND "table_name" = 'classrooms') OR ("table_schema" = 'public' AND "table_name" = 'schedules') OR ("table_schema" = 'public' AND "table_name" = 'audit_logs') OR ("table_schema" = 'public' AND "table_name" = 'course_prerequisites') OR ("table_schema" = 'public' AND "table_name" = 'courses') OR ("table_schema" = 'public' AND "table_name" = 'grades') OR ("table_schema" = 'public' AND "table_name" = 'enrollments') OR ("table_schema" = 'public' AND "table_name" = 'faculties') OR ("table_schema" = 'public' AND "table_name" = 'departments') OR ("table_schema" = 'public' AND "table_name" = 'students') OR ("table_schema" = 'public' AND "table_name" = 'users') OR ("table_schema" = 'public' AND "table_name" = 'academic_terms') OR ("table_schema" = 'public' AND "table_name" = 'teacher_profiles') OR ("table_schema" = 'public' AND "table_name" = 'attendance')
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 0)
+
+  console.log
+    query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "cnst"."conname" AS "constraint_name", pg_get_constraintdef("cnst"."oid") AS "expression", CASE "cnst"."contype" WHEN 'p' THEN 'PRIMARY' WHEN 'u' THEN 'UNIQUE' WHEN 'c' THEN 'CHECK' WHEN 'x' THEN 'EXCLUDE' END AS "constraint_type", "a"."attname" AS "column_name" FROM "pg_constraint" "cnst" INNER JOIN "pg_class" "t" ON "t"."oid" = "cnst"."conrelid" INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "cnst"."connamespace" LEFT JOIN "pg_attribute" "a" ON "a"."attrelid" = "cnst"."conrelid" AND "a"."attnum" = ANY ("cnst"."conkey") WHERE "t"."relkind" IN ('r', 'p') AND (("ns"."nspname" = 'public' AND "t"."relname" = 'course_teachers') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'classrooms') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'schedules') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'audit_logs') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'course_prerequisites') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'courses') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'grades') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'enrollments') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'faculties') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'departments') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'students') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'users') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'academic_terms') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'teacher_profiles') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'attendance'))
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 1)
+
+  console.log
+    query: SELECT "ns"."nspname" AS "table_schema", "t"."relname" AS "table_name", "i"."relname" AS "constraint_name", "a"."attname" AS "column_name", CASE "ix"."indisunique" WHEN 't' THEN 'TRUE' ELSE'FALSE' END AS "is_unique", pg_get_expr("ix"."indpred", "ix"."indrelid") AS "condition", "types"."typname" AS "type_name", "am"."amname" AS "index_type" FROM "pg_class" "t" INNER JOIN "pg_index" "ix" ON "ix"."indrelid" = "t"."oid" INNER JOIN "pg_attribute" "a" ON "a"."attrelid" = "t"."oid"  AND "a"."attnum" = ANY ("ix"."indkey") INNER JOIN "pg_namespace" "ns" ON "ns"."oid" = "t"."relnamespace" INNER JOIN "pg_class" "i" ON "i"."oid" = "ix"."indexrelid" INNER JOIN "pg_type" "types" ON "types"."oid" = "a"."atttypid" INNER JOIN "pg_am" "am" ON "i"."relam" = "am"."oid" LEFT JOIN "pg_constraint" "cnst" ON "cnst"."conname" = "i"."relname" WHERE "t"."relkind" IN ('r', 'p') AND "cnst"."contype" IS NULL AND (("ns"."nspname" = 'public' AND "t"."relname" = 'course_teachers') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'classrooms') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'schedules') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'audit_logs') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'course_prerequisites') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'courses') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'grades') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'enrollments') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'faculties') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'departments') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'students') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'users') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'academic_terms') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'teacher_profiles') OR ("ns"."nspname" = 'public' AND "t"."relname" = 'attendance'))
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 2)
+
+  console.log
+    query: SELECT "con"."conname" AS "constraint_name", "con"."nspname" AS "table_schema", "con"."relname" AS "table_name", "att2"."attname" AS "column_name", "ns"."nspname" AS "referenced_table_schema", "cl"."relname" AS "referenced_table_name", "att"."attname" AS "referenced_column_name", "con"."confdeltype" AS "on_delete", "con"."confupdtype" AS "on_update", "con"."condeferrable" AS "deferrable", "con"."condeferred" AS "deferred" FROM ( SELECT UNNEST ("con1"."conkey") AS "parent", UNNEST ("con1"."confkey") AS "child", "con1"."confrelid", "con1"."conrelid", "con1"."conname", "con1"."contype", "ns"."nspname", "cl"."relname", "con1"."condeferrable", CASE WHEN "con1"."condeferred" THEN 'INITIALLY DEFERRED' ELSE 'INITIALLY IMMEDIATE' END as condeferred, CASE "con1"."confdeltype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confdeltype", CASE "con1"."confupdtype" WHEN 'a' THEN 'NO ACTION' WHEN 'r' THEN 'RESTRICT' WHEN 'c' THEN 'CASCADE' WHEN 'n' THEN 'SET NULL' WHEN 'd' THEN 'SET DEFAULT' END as "confupdtype" FROM "pg_class" "cl" INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_constraint" "con1" ON "con1"."conrelid" = "cl"."oid" WHERE "con1"."contype" = 'f' AND (("ns"."nspname" = 'public' AND "cl"."relname" = 'course_teachers') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'classrooms') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'schedules') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'audit_logs') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'course_prerequisites') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'courses') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'grades') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'enrollments') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'faculties') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'departments') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'students') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'users') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'academic_terms') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'teacher_profiles') OR ("ns"."nspname" = 'public' AND "cl"."relname" = 'attendance')) ) "con" INNER JOIN "pg_attribute" "att" ON "att"."attrelid" = "con"."confrelid" AND "att"."attnum" = "con"."child" INNER JOIN "pg_class" "cl" ON "cl"."oid" = "con"."confrelid"  AND "cl"."relispartition" = 'f'INNER JOIN "pg_namespace" "ns" ON "cl"."relnamespace" = "ns"."oid" INNER JOIN "pg_attribute" "att2" ON "att2"."attrelid" = "con"."conrelid" AND "att2"."attnum" = "con"."parent"
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 3)
+
+  console.log
+    query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'classrooms' AND "column_name"='type'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 1)
+
+  console.log
+    query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'enrollments' AND "column_name"='status'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 7)
+
+  console.log
+    query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'students' AND "column_name"='gender'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 10)
+
+  console.log
+    query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'users' AND "column_name"='role'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 11)
+
+  console.log
+    query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'teacher_profiles' AND "column_name"='rank'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 2)
+          at async Promise.all (index 13)
+
+  console.log
+    query: SELECT "udt_schema", "udt_name" FROM "information_schema"."columns" WHERE "table_schema" = 'public' AND "table_name" = 'attendance' AND "column_name"='status'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 14)
+
+  console.log
+    query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'classrooms_type_enum'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 1)
+
+  console.log
+    query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'enrollments_status_enum'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 7)
+
+  console.log
+    query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'students_gender_enum'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 10)
+
+  console.log
+    query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'users_role_enum'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 11)
+
+  console.log
+    query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'teacher_profiles_rank_enum'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 2)
+          at async Promise.all (index 13)
+
+  console.log
+    query: SELECT "e"."enumlabel" AS "value" FROM "pg_enum" "e" INNER JOIN "pg_type" "t" ON "t"."oid" = "e"."enumtypid" INNER JOIN "pg_namespace" "n" ON "n"."oid" = "t"."typnamespace" WHERE "n"."nspname" = 'public' AND "t"."typname" = 'attendance_status_enum'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+          at async Promise.all (index 4)
+          at async Promise.all (index 14)
+
+  console.log
+    query: SELECT * FROM "information_schema"."tables" WHERE "table_schema" = 'public' AND "table_name" = 'typeorm_metadata'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: ALTER TABLE "grades" ALTER COLUMN "weightage" SET DEFAULT '100.00'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: ALTER TABLE "enrollments" ALTER COLUMN "attendance_percentage" SET DEFAULT '100.00'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: ALTER TABLE "grades" ALTER COLUMN "weightage" SET DEFAULT '100.00'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: ALTER TABLE "enrollments" ALTER COLUMN "attendance_percentage" SET DEFAULT '100.00'
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: COMMIT
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active, email_verified) 
+           VALUES ($1, $2, $3, $4, $5, $6, true, true) RETURNING id -- PARAMETERS: ["e2e_uploads_admin_109717@test.com","e2e_uploads_admin_109717","$2b$10$1o6i1MyeI7SwGNWzlr6d0ufTkSCvpjzj81x6SlY.zfa5gVhYK01rO","admin","Admin","Test"]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active, email_verified) 
+           VALUES ($1, $2, $3, $4, $5, $6, true, true) RETURNING id -- PARAMETERS: ["e2e_uploads_teacher_109717@test.com","e2e_uploads_teacher_109717","$2b$10$1o6i1MyeI7SwGNWzlr6d0ufTkSCvpjzj81x6SlY.zfa5gVhYK01rO","teacher","Teacher","Test"]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active, email_verified) 
+           VALUES ($1, $2, $3, $4, $5, $6, true, true) RETURNING id -- PARAMETERS: ["e2e_uploads_student_109717@test.com","e2e_uploads_student_109717","$2b$10$1o6i1MyeI7SwGNWzlr6d0ufTkSCvpjzj81x6SlY.zfa5gVhYK01rO","student","Student","Test"]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: SELECT "User"."id" AS "User_id", "User"."email" AS "User_email", "User"."username" AS "User_username", "User"."password_hash" AS "User_password_hash", "User"."role" AS "User_role", "User"."first_name" AS "User_first_name", "User"."last_name" AS "User_last_name", "User"."is_active" AS "User_is_active", "User"."refresh_token" AS "User_refresh_token", "User"."email_verified" AS "User_email_verified", "User"."email_verification_token" AS "User_email_verification_token", "User"."password_reset_token" AS "User_password_reset_token", "User"."password_reset_expires" AS "User_password_reset_expires", "User"."failed_login_attempts" AS "User_failed_login_attempts", "User"."locked_until" AS "User_locked_until", "User"."last_failed_login" AS "User_last_failed_login", "User"."created_at" AS "User_created_at", "User"."updated_at" AS "User_updated_at", "User"."deleted_at" AS "User_deleted_at" FROM "users" "User" WHERE ( (("User"."email" = $1)) ) AND ( "User"."deleted_at" IS NULL ) LIMIT 1 -- PARAMETERS: ["e2e_uploads_admin_109717@test.com"]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: UPDATE "users" SET "refresh_token" = $1, "updated_at" = CURRENT_TIMESTAMP WHERE "id" IN ($2) -- PARAMETERS: ["$2b$10$E8pswFXWpSuvPQI3L0ZfS.J1f..zGalPVDpcXmHrlMgUVwp.Ic7bq",1169]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: SELECT "User"."id" AS "User_id", "User"."email" AS "User_email", "User"."username" AS "User_username", "User"."password_hash" AS "User_password_hash", "User"."role" AS "User_role", "User"."first_name" AS "User_first_name", "User"."last_name" AS "User_last_name", "User"."is_active" AS "User_is_active", "User"."refresh_token" AS "User_refresh_token", "User"."email_verified" AS "User_email_verified", "User"."email_verification_token" AS "User_email_verification_token", "User"."password_reset_token" AS "User_password_reset_token", "User"."password_reset_expires" AS "User_password_reset_expires", "User"."failed_login_attempts" AS "User_failed_login_attempts", "User"."locked_until" AS "User_locked_until", "User"."last_failed_login" AS "User_last_failed_login", "User"."created_at" AS "User_created_at", "User"."updated_at" AS "User_updated_at", "User"."deleted_at" AS "User_deleted_at" FROM "users" "User" WHERE ( (("User"."email" = $1)) ) AND ( "User"."deleted_at" IS NULL ) LIMIT 1 -- PARAMETERS: ["e2e_uploads_teacher_109717@test.com"]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: UPDATE "users" SET "refresh_token" = $1, "updated_at" = CURRENT_TIMESTAMP WHERE "id" IN ($2) -- PARAMETERS: ["$2b$10$SyyeQUrWHK0OKVGwopaQmutt1Jrrk8K408ZA443WI2Urkh3Pre.Yq",1170]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: SELECT "User"."id" AS "User_id", "User"."email" AS "User_email", "User"."username" AS "User_username", "User"."password_hash" AS "User_password_hash", "User"."role" AS "User_role", "User"."first_name" AS "User_first_name", "User"."last_name" AS "User_last_name", "User"."is_active" AS "User_is_active", "User"."refresh_token" AS "User_refresh_token", "User"."email_verified" AS "User_email_verified", "User"."email_verification_token" AS "User_email_verification_token", "User"."password_reset_token" AS "User_password_reset_token", "User"."password_reset_expires" AS "User_password_reset_expires", "User"."failed_login_attempts" AS "User_failed_login_attempts", "User"."locked_until" AS "User_locked_until", "User"."last_failed_login" AS "User_last_failed_login", "User"."created_at" AS "User_created_at", "User"."updated_at" AS "User_updated_at", "User"."deleted_at" AS "User_deleted_at" FROM "users" "User" WHERE ( (("User"."email" = $1)) ) AND ( "User"."deleted_at" IS NULL ) LIMIT 1 -- PARAMETERS: ["e2e_uploads_student_109717@test.com"]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: UPDATE "users" SET "refresh_token" = $1, "updated_at" = CURRENT_TIMESTAMP WHERE "id" IN ($2) -- PARAMETERS: ["$2b$10$Pvq743zSrkJDPuSTafEjBOHphjA5Y71hNVmpXA0fhsJ9SWov6qXLq",1171]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+  console.log
+    query: DELETE FROM users WHERE email LIKE $1 -- PARAMETERS: ["e2e_uploads_%_109717@test.com"]
+
+      at Function.logInfo (../src/platform/PlatformTools.ts:262:17)
+
+FAIL test/uploads.e2e-spec.ts (8.565 s)
+  Uploads (e2e)
+    POST /api/uploads (Single File Upload)
+      ├ù should upload a PNG image successfully as admin (83 ms)
+      ├ù should upload a PDF document successfully as teacher (21 ms)
+      ├ù should upload a text file successfully (18 ms)
+      ├ù should use default folder when not specified (15 ms)
+      ΓêÜ should reject upload from student (forbidden) (12 ms)
+      ΓêÜ should reject upload without authentication (13 ms)
+      ├ù should reject upload with invalid file type (19 ms)
+    POST /api/uploads/multiple (Multiple Files Upload)
+      ΓêÜ should upload multiple files successfully as admin (31 ms)
+      ΓêÜ should upload multiple files as teacher (23 ms)
+      ΓêÜ should reject multiple upload from student (15 ms)
+      ΓêÜ should reject multiple upload without authentication (10 ms)
+    GET /api/uploads/:folder/:filename (Download File)
+      ├ù should download a file successfully (public access)
+      ├ù should download file as student (read access allowed)
+      ├ù should return 404 for non-existent file (1 ms)
+      ├ù should return 404 for non-existent folder
+    GET /api/uploads/exists/:folder/:filename (Check File Exists)
+      ├ù should return exists: true for existing file
+      ├ù should return exists: false for non-existent file
+      ├ù should allow student to check file existence
+    DELETE /api/uploads/:folder/:filename (Delete File)
+      ├ù should delete a file successfully as admin (16 ms)
+      ├ù should reject delete from teacher (admin only) (15 ms)
+      ├ù should reject delete from student (admin only) (12 ms)
+      ├ù should reject delete without authentication (14 ms)
+      ├ù should return 404 when deleting non-existent file (23 ms)
+    Authorization Edge Cases
+      ΓêÜ should reject requests with invalid token (9 ms)
+      ΓêÜ should reject requests with expired token format (9 ms)
+      ΓêÜ should reject requests with malformed authorization header (7 ms)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ POST /api/uploads (Single File Upload) ΓÇ║ should upload a PNG image successfully as admin
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      169 |         .attach('file', createTestImageBuffer(), 'test-image.png')
+      170 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 171 |         .expect(201);
+          |          ^
+      172 |
+      173 |       expect(response.body).toHaveProperty(
+      174 |         'message',
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:171:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ POST /api/uploads (Single File Upload) ΓÇ║ should upload a PDF document successfully as teacher
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      194 |         .attach('file', createTestPdfBuffer(), 'test-document.pdf')
+      195 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 196 |         .expect(201);
+          |          ^
+      197 |
+      198 |       expect(response.body).toHaveProperty(
+      199 |         'message',
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:196:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ POST /api/uploads (Single File Upload) ΓÇ║ should upload a text file successfully
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      215 |         .attach('file', createTestTextBuffer(), 'test-file.txt')
+      216 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 217 |         .expect(201);
+          |          ^
+      218 |
+      219 |       expect(response.body.file).toHaveProperty(
+      220 |         'originalName',
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:217:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ POST /api/uploads (Single File Upload) ΓÇ║ should use default folder when not specified
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      231 |         .set('Authorization', `Bearer ${adminToken}`)
+      232 |         .attach('file', createTestTextBuffer(), 'default-folder-test.txt')
+    > 233 |         .expect(201);
+          |          ^
+      234 |
+      235 |       expect(response.body.file.key).toMatch(/^general\//);
+      236 |
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:233:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ POST /api/uploads (Single File Upload) ΓÇ║ should reject upload with invalid file type
+
+    expected 422 "Unprocessable Entity", got 400 "Bad Request"
+
+      263 |         .attach('file', invalidBuffer, 'malicious.exe')
+      264 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 265 |         .expect(422); // Unprocessable Entity - validation failed
+          |          ^
+      266 |     });
+      267 |   });
+      268 |
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:265:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ GET /api/uploads/:folder/:filename (Download File) ΓÇ║ should download a file successfully (public access)
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      334 |         .attach('file', createTestTextBuffer(), 'download-test.txt')
+      335 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 336 |         .expect(201);
+          |          ^
+      337 |
+      338 |       testFileKey = response.body.file.key;
+      339 |       uploadedFiles.push(testFileKey);
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:336:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ GET /api/uploads/:folder/:filename (Download File) ΓÇ║ should download file as student (read access allowed)
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      334 |         .attach('file', createTestTextBuffer(), 'download-test.txt')
+      335 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 336 |         .expect(201);
+          |          ^
+      337 |
+      338 |       testFileKey = response.body.file.key;
+      339 |       uploadedFiles.push(testFileKey);
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:336:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ GET /api/uploads/:folder/:filename (Download File) ΓÇ║ should return 404 for non-existent file
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      334 |         .attach('file', createTestTextBuffer(), 'download-test.txt')
+      335 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 336 |         .expect(201);
+          |          ^
+      337 |
+      338 |       testFileKey = response.body.file.key;
+      339 |       uploadedFiles.push(testFileKey);
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:336:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ GET /api/uploads/:folder/:filename (Download File) ΓÇ║ should return 404 for non-existent folder
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      334 |         .attach('file', createTestTextBuffer(), 'download-test.txt')
+      335 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 336 |         .expect(201);
+          |          ^
+      337 |
+      338 |       testFileKey = response.body.file.key;
+      339 |       uploadedFiles.push(testFileKey);
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:336:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ GET /api/uploads/exists/:folder/:filename (Check File Exists) ΓÇ║ should return exists: true for existing file
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      392 |         .attach('file', createTestTextBuffer(), 'exists-test.txt')
+      393 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 394 |         .expect(201);
+          |          ^
+      395 |
+      396 |       const fileKey = response.body.file.key;
+      397 |       uploadedFiles.push(fileKey);
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:394:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ GET /api/uploads/exists/:folder/:filename (Check File Exists) ΓÇ║ should return exists: false for non-existent file
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      392 |         .attach('file', createTestTextBuffer(), 'exists-test.txt')
+      393 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 394 |         .expect(201);
+          |          ^
+      395 |
+      396 |       const fileKey = response.body.file.key;
+      397 |       uploadedFiles.push(fileKey);
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:394:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ GET /api/uploads/exists/:folder/:filename (Check File Exists) ΓÇ║ should allow student to check file existence
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      392 |         .attach('file', createTestTextBuffer(), 'exists-test.txt')
+      393 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 394 |         .expect(201);
+          |          ^
+      395 |
+      396 |       const fileKey = response.body.file.key;
+      397 |       uploadedFiles.push(fileKey);
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:394:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ DELETE /api/uploads/:folder/:filename (Delete File) ΓÇ║ should delete a file successfully as admin
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      444 |         .attach('file', createTestTextBuffer(), `delete-test-${Date.now()}.txt`)
+      445 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 446 |         .expect(201);
+          |          ^
+      447 |
+      448 |       deleteFileKey = response.body.file.key;
+      449 |       const parts = deleteFileKey.split('/');
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:446:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ DELETE /api/uploads/:folder/:filename (Delete File) ΓÇ║ should reject delete from teacher (admin only)
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      444 |         .attach('file', createTestTextBuffer(), `delete-test-${Date.now()}.txt`)
+      445 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 446 |         .expect(201);
+          |          ^
+      447 |
+      448 |       deleteFileKey = response.body.file.key;
+      449 |       const parts = deleteFileKey.split('/');
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:446:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ DELETE /api/uploads/:folder/:filename (Delete File) ΓÇ║ should reject delete from student (admin only)
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      444 |         .attach('file', createTestTextBuffer(), `delete-test-${Date.now()}.txt`)
+      445 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 446 |         .expect(201);
+          |          ^
+      447 |
+      448 |       deleteFileKey = response.body.file.key;
+      449 |       const parts = deleteFileKey.split('/');
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:446:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ DELETE /api/uploads/:folder/:filename (Delete File) ΓÇ║ should reject delete without authentication
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      444 |         .attach('file', createTestTextBuffer(), `delete-test-${Date.now()}.txt`)
+      445 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 446 |         .expect(201);
+          |          ^
+      447 |
+      448 |       deleteFileKey = response.body.file.key;
+      449 |       const parts = deleteFileKey.split('/');
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:446:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ΓùÅ Uploads (e2e) ΓÇ║ DELETE /api/uploads/:folder/:filename (Delete File) ΓÇ║ should return 404 when deleting non-existent file
+
+    expected 201 "Created", got 400 "Bad Request"
+
+      444 |         .attach('file', createTestTextBuffer(), `delete-test-${Date.now()}.txt`)
+      445 |         .field('folder', `e2e_test_${uniqueId}`)
+    > 446 |         .expect(201);
+          |          ^
+      447 |
+      448 |       deleteFileKey = response.body.file.key;
+      449 |       const parts = deleteFileKey.split('/');
+
+      at Object.<anonymous> (uploads.e2e-spec.ts:446:10)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+Test Suites: 1 failed, 1 total
+Tests:       17 failed, 9 passed, 26 total
+Snapshots:   0 total
+Time:        9.3 s
+Ran all test suites matching uploads.e2e-spec.ts.
