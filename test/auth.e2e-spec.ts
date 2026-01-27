@@ -4,6 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
 import { UserRole } from '../src/modules/users/entities/user.entity';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('Auth (e2e)', () => {
   let app: INestApplication;
@@ -26,16 +27,7 @@ describe('Auth (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);

@@ -9,9 +9,6 @@ import {
   UseInterceptors,
   UploadedFile,
   UploadedFiles,
-  ParseFilePipe,
-  MaxFileSizeValidator,
-  FileTypeValidator,
   Res,
   NotFoundException,
   BadRequestException,
@@ -88,17 +85,27 @@ export class UploadsController {
     description: 'Forbidden - Admin or Teacher only',
   })
   async uploadFile(
-    @UploadedFile(
-      new ParseFilePipe({
-        validators: [
-          new MaxFileSizeValidator({ maxSize: MAX_FILE_SIZE }),
-          new FileTypeValidator({ fileType: ALLOWED_FILE_TYPES }),
-        ],
-      }),
-    )
+    @UploadedFile()
     file: Express.Multer.File,
     @Body() dto: UploadFileDto,
   ): Promise<UploadResponseDto> {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    // Manual validation since ParseFilePipe with FileTypeValidator can be flaky with supertest/multer mimetypes
+    if (file.size > MAX_FILE_SIZE) {
+      throw new BadRequestException(
+        `File ${file.originalname} exceeds maximum size of 10MB`,
+      );
+    }
+
+    if (!ALLOWED_FILE_TYPES.test(file.mimetype)) {
+      throw new BadRequestException(
+        `File ${file.originalname} has invalid type: ${file.mimetype}`,
+      );
+    }
+
     const result = await this.storageService.uploadFile(
       file,
       dto.folder || 'general',

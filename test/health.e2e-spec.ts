@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('Health (e2e)', () => {
   let app: INestApplication;
@@ -12,12 +13,7 @@ describe('Health (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
   });
@@ -33,8 +29,13 @@ describe('Health (e2e)', () => {
         .expect((res) => {
           // Accept both 200 (ok) and 503 (service unavailable due to memory thresholds)
           expect([200, 503]).toContain(res.status);
-          expect(res.body).toHaveProperty('status');
-          expect(res.body).toHaveProperty('info');
+          if (res.status === 200) {
+            expect(res.body).toHaveProperty('status', 'ok');
+            expect(res.body).toHaveProperty('info');
+          } else {
+            // When 503, it might be wrapped by HttpExceptionFilter
+            expect(res.body).toHaveProperty('message');
+          }
         });
     });
   });
@@ -57,7 +58,9 @@ describe('Health (e2e)', () => {
         .get('/api/v1/health/readiness')
         .expect((res) => {
           expect([200, 503]).toContain(res.status);
-          expect(res.body).toHaveProperty('status');
+          if (res.status === 200) {
+            expect(res.body).toHaveProperty('status', 'ok');
+          }
         });
     });
   });

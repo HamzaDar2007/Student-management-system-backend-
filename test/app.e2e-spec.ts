@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('App (e2e)', () => {
   let app: INestApplication;
@@ -12,16 +13,7 @@ describe('App (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
   });
@@ -31,9 +23,9 @@ describe('App (e2e)', () => {
   });
 
   describe('Root endpoint', () => {
-    it('/ (GET) should return Hello World', () => {
+    it('/api/v1 (GET) should return Hello World', () => {
       return request(app.getHttpServer())
-        .get('/')
+        .get('/api/v1')
         .expect(200)
         .expect('Hello World!');
     });

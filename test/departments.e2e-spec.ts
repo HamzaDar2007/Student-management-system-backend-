@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
+import { setupE2EApp } from './helpers/app-setup.helper';
 import {
   createAdminAndLogin,
   createTeacherAndLogin,
@@ -29,14 +30,7 @@ describe('DepartmentsController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -75,7 +69,7 @@ describe('DepartmentsController (e2e)', () => {
   });
 
   describe('POST /departments', () => {
-    const endpoint = '/departments';
+    const endpoint = '/api/v1/departments';
 
     it('admin should create department', async () => {
       const timestamp = Date.now();
@@ -147,7 +141,7 @@ describe('DepartmentsController (e2e)', () => {
   });
 
   describe('GET /departments', () => {
-    const endpoint = '/departments';
+    const endpoint = '/api/v1/departments';
 
     beforeAll(async () => {
       await createTestDepartment(dataSource, testFaculty, TEST_PREFIX);
@@ -200,7 +194,7 @@ describe('DepartmentsController (e2e)', () => {
 
     it('should get department by ID', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/departments/${testDeptId}`)
+        .get(`/api/v1/departments/${testDeptId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -211,7 +205,7 @@ describe('DepartmentsController (e2e)', () => {
 
     it('should return 404 for non-existent department', async () => {
       await request(app.getHttpServer())
-        .get('/departments/999999')
+        .get('/api/v1/departments/999999')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -231,7 +225,7 @@ describe('DepartmentsController (e2e)', () => {
 
     it('admin should update department', async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/departments/${testDeptId}`)
+        .patch(`/api/v1/departments/${testDeptId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
           name: `${TEST_PREFIX} Updated Department`,
@@ -243,7 +237,7 @@ describe('DepartmentsController (e2e)', () => {
 
     it('non-admin should be rejected', async () => {
       await request(app.getHttpServer())
-        .patch(`/departments/${testDeptId}`)
+        .patch(`/api/v1/departments/${testDeptId}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .send({ name: 'Hacked' })
         .expect(403);
@@ -259,13 +253,13 @@ describe('DepartmentsController (e2e)', () => {
       );
 
       await request(app.getHttpServer())
-        .delete(`/departments/${dept.id}`)
+        .delete(`/api/v1/departments/${dept.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
       // Verify deleted
       await request(app.getHttpServer())
-        .get(`/departments/${dept.id}`)
+        .get(`/api/v1/departments/${dept.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -278,7 +272,7 @@ describe('DepartmentsController (e2e)', () => {
       );
 
       await request(app.getHttpServer())
-        .delete(`/departments/${dept.id}`)
+        .delete(`/api/v1/departments/${dept.id}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(403);
     });

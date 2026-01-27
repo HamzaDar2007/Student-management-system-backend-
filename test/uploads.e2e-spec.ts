@@ -7,6 +7,7 @@ import { UserRole } from '../src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import * as path from 'path';
 import * as fs from 'fs';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('Uploads (e2e)', () => {
   let app: INestApplication;
@@ -52,16 +53,7 @@ describe('Uploads (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -174,7 +166,10 @@ describe('Uploads (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/uploads')
         .set('Authorization', `Bearer ${adminToken}`)
-        .attach('file', createTestImageBuffer(), 'test-image.png')
+        .attach('file', createTestImageBuffer(), {
+          filename: 'test-image.png',
+          contentType: 'image/png',
+        })
         .field('folder', `e2e_test_${uniqueId}`)
         .expect(201);
 
@@ -199,7 +194,10 @@ describe('Uploads (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/uploads')
         .set('Authorization', `Bearer ${teacherToken}`)
-        .attach('file', createTestPdfBuffer(), 'test-document.pdf')
+        .attach('file', createTestPdfBuffer(), {
+          filename: 'test-document.pdf',
+          contentType: 'application/pdf',
+        })
         .field('folder', `e2e_test_${uniqueId}`)
         .expect(201);
 
@@ -220,7 +218,10 @@ describe('Uploads (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/uploads')
         .set('Authorization', `Bearer ${adminToken}`)
-        .attach('file', createTestTextBuffer(), 'test-file.txt')
+        .attach('file', createTestTextBuffer(), {
+          filename: 'test-file.txt',
+          contentType: 'text/plain',
+        })
         .field('folder', `e2e_test_${uniqueId}`)
         .expect(201);
 
@@ -237,7 +238,10 @@ describe('Uploads (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/uploads')
         .set('Authorization', `Bearer ${adminToken}`)
-        .attach('file', createTestTextBuffer(), 'default-folder-test.txt')
+        .attach('file', createTestTextBuffer(), {
+          filename: 'default-folder-test.txt',
+          contentType: 'text/plain',
+        })
         .expect(201);
 
       expect(response.body.file.key).toMatch(/^general\//);
@@ -249,7 +253,10 @@ describe('Uploads (e2e)', () => {
       await request(app.getHttpServer())
         .post('/api/v1/uploads')
         .set('Authorization', `Bearer ${studentToken}`)
-        .attach('file', createTestTextBuffer(), 'student-upload.txt')
+        .attach('file', createTestTextBuffer(), {
+          filename: 'student-upload.txt',
+          contentType: 'text/plain',
+        })
         .field('folder', `e2e_test_${uniqueId}`)
         .expect(403);
     });
@@ -257,7 +264,10 @@ describe('Uploads (e2e)', () => {
     it('should reject upload without authentication', async () => {
       await request(app.getHttpServer())
         .post('/api/v1/uploads')
-        .attach('file', createTestTextBuffer(), 'no-auth.txt')
+        .attach('file', createTestTextBuffer(), {
+          filename: 'no-auth.txt',
+          contentType: 'text/plain',
+        })
         .expect(401);
     });
 
@@ -268,9 +278,12 @@ describe('Uploads (e2e)', () => {
       await request(app.getHttpServer())
         .post('/api/v1/uploads')
         .set('Authorization', `Bearer ${adminToken}`)
-        .attach('file', invalidBuffer, 'malicious.exe')
+        .attach('file', invalidBuffer, {
+          filename: 'malicious.exe',
+          contentType: 'application/x-msdownload',
+        })
         .field('folder', `e2e_test_${uniqueId}`)
-        .expect(422); // Unprocessable Entity - validation failed
+        .expect(400); // Bad Request from FileTypeValidator
     });
   });
 
@@ -300,8 +313,14 @@ describe('Uploads (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/uploads/multiple')
         .set('Authorization', `Bearer ${teacherToken}`)
-        .attach('files', createTestPdfBuffer(), 'teacher-doc-1.pdf')
-        .attach('files', createTestPdfBuffer(), 'teacher-doc-2.pdf')
+        .attach('files', createTestPdfBuffer(), {
+          filename: 'teacher-doc-1.pdf',
+          contentType: 'application/pdf',
+        })
+        .attach('files', createTestPdfBuffer(), {
+          filename: 'teacher-doc-2.pdf',
+          contentType: 'application/pdf',
+        })
         .field('folder', `e2e_test_${uniqueId}`)
         .expect(201);
 
@@ -339,7 +358,10 @@ describe('Uploads (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/uploads')
         .set('Authorization', `Bearer ${adminToken}`)
-        .attach('file', createTestTextBuffer(), 'download-test.txt')
+        .attach('file', createTestTextBuffer(), {
+          filename: 'download-test.txt',
+          contentType: 'text/plain',
+        })
         .field('folder', `e2e_test_${uniqueId}`)
         .expect(201);
 
@@ -354,19 +376,20 @@ describe('Uploads (e2e)', () => {
 
     it('should download a file successfully (public access)', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/uploads/${testFolder}/${testFilename}`)
+        .get(`/api/v1/uploads/${testFolder}/${testFilename}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
 
       expect(response.headers['content-type']).toBe('text/plain');
-      expect(response.body.toString()).toBe(
+      // Use .text instead of .body.toString() for text responses in supertest
+      expect(response.text).toBe(
         'This is a test file content for E2E testing.',
       );
     });
 
     it('should download file as student (read access allowed)', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/uploads/${testFolder}/${testFilename}`)
+        .get(`/api/v1/uploads/${testFolder}/${testFilename}`)
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(200);
 
@@ -375,7 +398,7 @@ describe('Uploads (e2e)', () => {
 
     it('should return 404 for non-existent file', async () => {
       await request(app.getHttpServer())
-        .get(`/api/uploads/${testFolder}/non-existent-file.txt`)
+        .get(`/api/v1/uploads/${testFolder}/non-existent-file.txt`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });
@@ -397,7 +420,10 @@ describe('Uploads (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/uploads')
         .set('Authorization', `Bearer ${adminToken}`)
-        .attach('file', createTestTextBuffer(), 'exists-test.txt')
+        .attach('file', createTestTextBuffer(), {
+          filename: 'exists-test.txt',
+          contentType: 'text/plain',
+        })
         .field('folder', `e2e_test_${uniqueId}`)
         .expect(201);
 
@@ -411,7 +437,7 @@ describe('Uploads (e2e)', () => {
 
     it('should return exists: true for existing file', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/uploads/exists/${existingFolder}/${existingFilename}`)
+        .get(`/api/v1/uploads/exists/${existingFolder}/${existingFilename}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
 
@@ -421,7 +447,7 @@ describe('Uploads (e2e)', () => {
 
     it('should return exists: false for non-existent file', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/uploads/exists/${existingFolder}/non-existent.txt`)
+        .get(`/api/v1/uploads/exists/${existingFolder}/non-existent.txt`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
 
@@ -431,7 +457,7 @@ describe('Uploads (e2e)', () => {
 
     it('should allow student to check file existence', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/uploads/exists/${existingFolder}/${existingFilename}`)
+        .get(`/api/v1/uploads/exists/${existingFolder}/${existingFilename}`)
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(200);
 
@@ -449,7 +475,10 @@ describe('Uploads (e2e)', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/uploads')
         .set('Authorization', `Bearer ${adminToken}`)
-        .attach('file', createTestTextBuffer(), `delete-test-${Date.now()}.txt`)
+        .attach('file', createTestTextBuffer(), {
+          filename: `delete-test-${Date.now()}.txt`,
+          contentType: 'text/plain',
+        })
         .field('folder', `e2e_test_${uniqueId}`)
         .expect(201);
 
@@ -461,7 +490,7 @@ describe('Uploads (e2e)', () => {
 
     it('should delete a file successfully as admin', async () => {
       const response = await request(app.getHttpServer())
-        .delete(`/api/uploads/${deleteFolder}/${deleteFilename}`)
+        .delete(`/api/v1/uploads/${deleteFolder}/${deleteFilename}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
 
@@ -473,7 +502,7 @@ describe('Uploads (e2e)', () => {
 
       // Verify file is deleted
       const existsCheck = await request(app.getHttpServer())
-        .get(`/api/uploads/exists/${deleteFolder}/${deleteFilename}`)
+        .get(`/api/v1/uploads/exists/${deleteFolder}/${deleteFilename}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
 
@@ -482,7 +511,7 @@ describe('Uploads (e2e)', () => {
 
     it('should reject delete from teacher (admin only)', async () => {
       await request(app.getHttpServer())
-        .delete(`/api/uploads/${deleteFolder}/${deleteFilename}`)
+        .delete(`/api/v1/uploads/${deleteFolder}/${deleteFilename}`)
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect(403);
 
@@ -492,7 +521,7 @@ describe('Uploads (e2e)', () => {
 
     it('should reject delete from student (admin only)', async () => {
       await request(app.getHttpServer())
-        .delete(`/api/uploads/${deleteFolder}/${deleteFilename}`)
+        .delete(`/api/v1/uploads/${deleteFolder}/${deleteFilename}`)
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(403);
 
@@ -501,7 +530,7 @@ describe('Uploads (e2e)', () => {
 
     it('should reject delete without authentication', async () => {
       await request(app.getHttpServer())
-        .delete(`/api/uploads/${deleteFolder}/${deleteFilename}`)
+        .delete(`/api/v1/uploads/${deleteFolder}/${deleteFilename}`)
         .expect(401);
 
       uploadedFiles.push(deleteFileKey);
@@ -510,13 +539,13 @@ describe('Uploads (e2e)', () => {
     it('should return 404 when deleting non-existent file', async () => {
       // Delete the file first
       await request(app.getHttpServer())
-        .delete(`/api/uploads/${deleteFolder}/${deleteFilename}`)
+        .delete(`/api/v1/uploads/${deleteFolder}/${deleteFilename}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200);
 
       // Try to delete again
       await request(app.getHttpServer())
-        .delete(`/api/uploads/${deleteFolder}/${deleteFilename}`)
+        .delete(`/api/v1/uploads/${deleteFolder}/${deleteFilename}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(404);
     });

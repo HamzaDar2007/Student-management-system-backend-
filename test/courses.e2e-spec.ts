@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
 import { UserRole } from '../src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('Courses (e2e)', () => {
   let app: INestApplication;
@@ -20,16 +21,7 @@ describe('Courses (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -243,7 +235,7 @@ describe('Courses (e2e)', () => {
   describe('GET /api/courses/:id', () => {
     it('should return course by id', () => {
       return request(app.getHttpServer())
-        .get(`/api/courses/${testCourseId}`)
+        .get(`/api/v1/courses/${testCourseId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -263,7 +255,7 @@ describe('Courses (e2e)', () => {
   describe('PUT /api/courses/:id', () => {
     it('should update course for admin', () => {
       return request(app.getHttpServer())
-        .put(`/api/courses/${testCourseId}`)
+        .put(`/api/v1/courses/${testCourseId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           course_name: 'Updated E2E Course',
@@ -278,7 +270,7 @@ describe('Courses (e2e)', () => {
 
     it('should reject update by teacher', () => {
       return request(app.getHttpServer())
-        .put(`/api/courses/${testCourseId}`)
+        .put(`/api/v1/courses/${testCourseId}`)
         .set('Authorization', `Bearer ${teacherToken}`)
         .send({ course_name: 'Teacher Update' })
         .expect(403);
@@ -299,7 +291,7 @@ describe('Courses (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .get(`/api/courses/${testCourseId}/students`)
+        .get(`/api/v1/courses/${testCourseId}/students`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect((res) => {
           // May return 200 or 404 if course doesn't exist
@@ -312,7 +304,7 @@ describe('Courses (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .get(`/api/courses/${testCourseId}/students`)
+        .get(`/api/v1/courses/${testCourseId}/students`)
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect((res) => {
           expect([200, 400, 404]).toContain(res.status);
@@ -324,7 +316,7 @@ describe('Courses (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .get(`/api/courses/${testCourseId}/students`)
+        .get(`/api/v1/courses/${testCourseId}/students`)
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(403);
     });
@@ -344,7 +336,7 @@ describe('Courses (e2e)', () => {
 
     it('should reject deletion by student', () => {
       return request(app.getHttpServer())
-        .delete(`/api/courses/${deleteCourseId}`)
+        .delete(`/api/v1/courses/${deleteCourseId}`)
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(403);
     });
@@ -353,7 +345,7 @@ describe('Courses (e2e)', () => {
       // Note: The API delete might fail due to missing course_prerequisites table
       // So we test that admin can attempt deletion (gets past authorization)
       const res = await request(app.getHttpServer())
-        .delete(`/api/courses/${deleteCourseId}`)
+        .delete(`/api/v1/courses/${deleteCourseId}`)
         .set('Authorization', `Bearer ${adminToken}`);
 
       // Accept both 200 (success) or 500 (infrastructure issue with missing table)

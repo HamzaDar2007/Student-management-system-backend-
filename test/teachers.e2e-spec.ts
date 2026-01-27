@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
+import { setupE2EApp } from './helpers/app-setup.helper';
 import {
   createAdminAndLogin,
   createTeacherAndLogin,
@@ -28,14 +29,7 @@ describe('TeachersController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -223,7 +217,7 @@ describe('TeachersController (e2e)', () => {
 
     it('should get teacher by ID', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/teachers/${testProfileId}`)
+        .get(`/api/v1/teachers/${testProfileId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -254,7 +248,7 @@ describe('TeachersController (e2e)', () => {
 
     it('should get teacher by user ID', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/teachers/user/${testUserId}`)
+        .get(`/api/v1/teachers/user/${testUserId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -269,7 +263,7 @@ describe('TeachersController (e2e)', () => {
       );
 
       await request(app.getHttpServer())
-        .get(`/api/teachers/user/${userWithoutProfile.id}`)
+        .get(`/api/v1/teachers/user/${userWithoutProfile.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -294,7 +288,7 @@ describe('TeachersController (e2e)', () => {
 
     it('admin should update teacher', async () => {
       const response = await request(app.getHttpServer())
-        .put(`/api/teachers/${testProfileId}`)
+        .put(`/api/v1/teachers/${testProfileId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
           rank: 'associate_professor',
@@ -310,7 +304,7 @@ describe('TeachersController (e2e)', () => {
 
     it('non-admin should be rejected', async () => {
       await request(app.getHttpServer())
-        .put(`/api/teachers/${testProfileId}`)
+        .put(`/api/v1/teachers/${testProfileId}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .send({ rank: 'professor' })
         .expect(403);
@@ -331,13 +325,13 @@ describe('TeachersController (e2e)', () => {
       );
 
       await request(app.getHttpServer())
-        .delete(`/api/teachers/${profile.id}`)
+        .delete(`/api/v1/teachers/${profile.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
       // Verify deleted
       await request(app.getHttpServer())
-        .get(`/api/teachers/${profile.id}`)
+        .get(`/api/v1/teachers/${profile.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -355,7 +349,7 @@ describe('TeachersController (e2e)', () => {
       );
 
       await request(app.getHttpServer())
-        .delete(`/api/teachers/${profile.id}`)
+        .delete(`/api/v1/teachers/${profile.id}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(403);
     });

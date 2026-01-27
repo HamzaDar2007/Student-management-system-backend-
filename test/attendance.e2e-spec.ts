@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
 import { UserRole } from '../src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('Attendance (e2e)', () => {
   let app: INestApplication;
@@ -23,16 +24,7 @@ describe('Attendance (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -217,7 +209,7 @@ describe('Attendance (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .get(`/api/attendance/${testAttendanceId}`)
+        .get(`/api/v1/attendance/${testAttendanceId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -239,7 +231,7 @@ describe('Attendance (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .put(`/api/attendance/${testAttendanceId}`)
+        .put(`/api/v1/attendance/${testAttendanceId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           status: 'late',
@@ -254,7 +246,7 @@ describe('Attendance (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .put(`/api/attendance/${testAttendanceId}`)
+        .put(`/api/v1/attendance/${testAttendanceId}`)
         .set('Authorization', `Bearer ${studentToken}`)
         .send({ status: 'present' })
         .expect(403);
@@ -267,7 +259,7 @@ describe('Attendance (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .delete(`/api/attendance/${testAttendanceId}`)
+        .delete(`/api/v1/attendance/${testAttendanceId}`)
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(403);
     });
@@ -277,7 +269,7 @@ describe('Attendance (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .delete(`/api/attendance/${testAttendanceId}`)
+        .delete(`/api/v1/attendance/${testAttendanceId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect((res) => {
           expect([200, 204]).toContain(res.status);

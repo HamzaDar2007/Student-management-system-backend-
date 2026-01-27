@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
 import { UserRole } from '../src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('Students (e2e)', () => {
   let app: INestApplication;
@@ -23,16 +24,7 @@ describe('Students (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -218,7 +210,7 @@ describe('Students (e2e)', () => {
   describe('GET /api/students/:id', () => {
     it('should return student by id for admin', () => {
       return request(app.getHttpServer())
-        .get(`/api/students/${testStudentId}`)
+        .get(`/api/v1/students/${testStudentId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -229,7 +221,7 @@ describe('Students (e2e)', () => {
 
     it('should return student by id for teacher', () => {
       return request(app.getHttpServer())
-        .get(`/api/students/${testStudentId}`)
+        .get(`/api/v1/students/${testStudentId}`)
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect(200);
     });
@@ -245,7 +237,7 @@ describe('Students (e2e)', () => {
   describe('PUT /api/students/:id', () => {
     it('should update student for admin', () => {
       return request(app.getHttpServer())
-        .put(`/api/students/${testStudentId}`)
+        .put(`/api/v1/students/${testStudentId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           address: '123 Test Street',
@@ -259,7 +251,7 @@ describe('Students (e2e)', () => {
 
     it('should reject update by non-admin', () => {
       return request(app.getHttpServer())
-        .put(`/api/students/${testStudentId}`)
+        .put(`/api/v1/students/${testStudentId}`)
         .set('Authorization', `Bearer ${teacherToken}`)
         .send({ address: 'New Address' })
         .expect(403);
@@ -269,7 +261,7 @@ describe('Students (e2e)', () => {
   describe('GET /api/students/:id/grades', () => {
     it('should return student grades for admin', () => {
       return request(app.getHttpServer())
-        .get(`/api/students/${testStudentId}/grades`)
+        .get(`/api/v1/students/${testStudentId}/grades`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -279,7 +271,7 @@ describe('Students (e2e)', () => {
 
     it('should return student grades for teacher', () => {
       return request(app.getHttpServer())
-        .get(`/api/students/${testStudentId}/grades`)
+        .get(`/api/v1/students/${testStudentId}/grades`)
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect(200);
     });
@@ -288,7 +280,7 @@ describe('Students (e2e)', () => {
   describe('GET /api/students/:id/attendance', () => {
     it('should return student attendance for admin', () => {
       return request(app.getHttpServer())
-        .get(`/api/students/${testStudentId}/attendance`)
+        .get(`/api/v1/students/${testStudentId}/attendance`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -300,7 +292,7 @@ describe('Students (e2e)', () => {
   describe('DELETE /api/students/:id', () => {
     it('should reject deletion by non-admin', () => {
       return request(app.getHttpServer())
-        .delete(`/api/students/${testStudentId}`)
+        .delete(`/api/v1/students/${testStudentId}`)
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect(403);
     });
@@ -308,7 +300,7 @@ describe('Students (e2e)', () => {
     // Note: Actual deletion test should be last
     it('should delete student for admin', () => {
       return request(app.getHttpServer())
-        .delete(`/api/students/${testStudentId}`)
+        .delete(`/api/v1/students/${testStudentId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {

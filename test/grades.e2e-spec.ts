@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
 import { UserRole } from '../src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('Grades (e2e)', () => {
   let app: INestApplication;
@@ -23,16 +24,7 @@ describe('Grades (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -231,7 +223,7 @@ describe('Grades (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .get(`/api/grades/${testGradeId}`)
+        .get(`/api/v1/grades/${testGradeId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -253,7 +245,7 @@ describe('Grades (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .put(`/api/grades/${testGradeId}`)
+        .put(`/api/v1/grades/${testGradeId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           score_obtained: 90,
@@ -268,7 +260,7 @@ describe('Grades (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .put(`/api/grades/${testGradeId}`)
+        .put(`/api/v1/grades/${testGradeId}`)
         .set('Authorization', `Bearer ${studentToken}`)
         .send({ score: 100 })
         .expect(403);
@@ -281,7 +273,7 @@ describe('Grades (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .delete(`/api/grades/${testGradeId}`)
+        .delete(`/api/v1/grades/${testGradeId}`)
         .set('Authorization', `Bearer ${studentToken}`)
         .expect(403);
     });
@@ -291,7 +283,7 @@ describe('Grades (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .delete(`/api/grades/${testGradeId}`)
+        .delete(`/api/v1/grades/${testGradeId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect((res) => {
           expect([200, 204]).toContain(res.status);

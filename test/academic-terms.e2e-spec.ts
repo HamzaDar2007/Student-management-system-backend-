@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
+import { setupE2EApp } from './helpers/app-setup.helper';
 import {
   createAdminAndLogin,
   createTeacherAndLogin,
@@ -27,14 +28,7 @@ describe('AcademicTermsController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -57,8 +51,8 @@ describe('AcademicTermsController (e2e)', () => {
     await app.close();
   });
 
-  describe('POST /academic-terms', () => {
-    const endpoint = '/academic-terms';
+  describe('POST /api/v1/academic-terms', () => {
+    const endpoint = '/api/v1/academic-terms';
 
     it('admin should create academic term', async () => {
       const timestamp = Date.now();
@@ -138,8 +132,8 @@ describe('AcademicTermsController (e2e)', () => {
     });
   });
 
-  describe('GET /academic-terms', () => {
-    const endpoint = '/academic-terms';
+  describe('GET /api/v1/academic-terms', () => {
+    const endpoint = '/api/v1/academic-terms';
 
     beforeAll(async () => {
       await createTestAcademicTerm(dataSource, TEST_PREFIX);
@@ -188,7 +182,7 @@ describe('AcademicTermsController (e2e)', () => {
 
     it('should get term by ID', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/academic-terms/${testTermId}`)
+        .get(`/api/v1/academic-terms/${testTermId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -200,7 +194,7 @@ describe('AcademicTermsController (e2e)', () => {
 
     it('should return 404 for non-existent term', async () => {
       await request(app.getHttpServer())
-        .get('/academic-terms/999999')
+        .get('/api/v1/academic-terms/999999')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -216,7 +210,7 @@ describe('AcademicTermsController (e2e)', () => {
 
     it('admin should update term', async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/academic-terms/${testTermId}`)
+        .patch(`/api/v1/academic-terms/${testTermId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
           name: `${TEST_PREFIX} Updated Term`,
@@ -230,7 +224,7 @@ describe('AcademicTermsController (e2e)', () => {
 
     it('non-admin should be rejected', async () => {
       await request(app.getHttpServer())
-        .patch(`/academic-terms/${testTermId}`)
+        .patch(`/api/v1/academic-terms/${testTermId}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .send({ name: 'Hacked' })
         .expect(403);
@@ -242,13 +236,13 @@ describe('AcademicTermsController (e2e)', () => {
       const term = await createTestAcademicTerm(dataSource, TEST_PREFIX);
 
       await request(app.getHttpServer())
-        .delete(`/academic-terms/${term.id}`)
+        .delete(`/api/v1/academic-terms/${term.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
       // Verify deleted
       await request(app.getHttpServer())
-        .get(`/academic-terms/${term.id}`)
+        .get(`/api/v1/academic-terms/${term.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -257,7 +251,7 @@ describe('AcademicTermsController (e2e)', () => {
       const term = await createTestAcademicTerm(dataSource, TEST_PREFIX);
 
       await request(app.getHttpServer())
-        .delete(`/academic-terms/${term.id}`)
+        .delete(`/api/v1/academic-terms/${term.id}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(403);
     });

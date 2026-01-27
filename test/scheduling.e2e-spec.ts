@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
+import { setupE2EApp } from './helpers/app-setup.helper';
 import {
   createAdminAndLogin,
   createTeacherAndLogin,
@@ -17,6 +18,7 @@ import {
 } from './helpers/data.helper';
 import { Classroom } from '../src/modules/scheduling/entities/classroom.entity';
 import { Schedule } from '../src/modules/scheduling/entities/schedule.entity';
+import { Course } from '../src/modules/courses/entities/course.entity';
 
 describe('SchedulingController (e2e)', () => {
   let app: INestApplication;
@@ -32,14 +34,7 @@ describe('SchedulingController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -53,6 +48,14 @@ describe('SchedulingController (e2e)', () => {
     // Clean up test schedules
     const scheduleRepo = dataSource.getRepository(Schedule);
     await scheduleRepo.createQueryBuilder().delete().execute();
+
+    // Clean up test courses (these reference users)
+    const courseRepo = dataSource.getRepository(Course);
+    await courseRepo
+      .createQueryBuilder()
+      .delete()
+      .where('course_name LIKE :pattern', { pattern: `${TEST_PREFIX}%` })
+      .execute();
 
     // Clean up test classrooms
     const classroomRepo = dataSource.getRepository(Classroom);
@@ -73,7 +76,7 @@ describe('SchedulingController (e2e)', () => {
   // ========================================
 
   describe('POST /scheduling/classrooms', () => {
-    const endpoint = '/scheduling/classrooms';
+    const endpoint = '/api/v1/scheduling/classrooms';
 
     it('admin should create classroom', async () => {
       const timestamp = Date.now();
@@ -136,7 +139,7 @@ describe('SchedulingController (e2e)', () => {
   });
 
   describe('GET /scheduling/classrooms', () => {
-    const endpoint = '/scheduling/classrooms';
+    const endpoint = '/api/v1/scheduling/classrooms';
 
     beforeAll(async () => {
       await createTestClassroom(dataSource, TEST_PREFIX);
@@ -185,7 +188,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('should get classroom by ID', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/scheduling/classrooms/${testClassroomId}`)
+        .get(`/api/v1/scheduling/classrooms/${testClassroomId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -197,7 +200,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('should return 404 for non-existent classroom', async () => {
       await request(app.getHttpServer())
-        .get('/scheduling/classrooms/999999')
+        .get('/api/v1/scheduling/classrooms/999999')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -213,7 +216,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('admin should update classroom', async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/scheduling/classrooms/${testClassroomId}`)
+        .patch(`/api/v1/scheduling/classrooms/${testClassroomId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
           building: `${TEST_PREFIX} Updated Building`,
@@ -227,7 +230,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('non-admin should be rejected', async () => {
       await request(app.getHttpServer())
-        .patch(`/scheduling/classrooms/${testClassroomId}`)
+        .patch(`/api/v1/scheduling/classrooms/${testClassroomId}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .send({ capacity: 100 })
         .expect(403);
@@ -239,13 +242,13 @@ describe('SchedulingController (e2e)', () => {
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
 
       await request(app.getHttpServer())
-        .delete(`/scheduling/classrooms/${classroom.id}`)
+        .delete(`/api/v1/scheduling/classrooms/${classroom.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
       // Verify deleted
       await request(app.getHttpServer())
-        .get(`/scheduling/classrooms/${classroom.id}`)
+        .get(`/api/v1/scheduling/classrooms/${classroom.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -254,7 +257,7 @@ describe('SchedulingController (e2e)', () => {
       const classroom = await createTestClassroom(dataSource, TEST_PREFIX);
 
       await request(app.getHttpServer())
-        .delete(`/scheduling/classrooms/${classroom.id}`)
+        .delete(`/api/v1/scheduling/classrooms/${classroom.id}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(403);
     });
@@ -265,7 +268,7 @@ describe('SchedulingController (e2e)', () => {
   // ========================================
 
   describe('POST /scheduling', () => {
-    const endpoint = '/scheduling';
+    const endpoint = '/api/v1/scheduling';
     let testCourseId: number;
     let testClassroomId: number;
 
@@ -343,7 +346,7 @@ describe('SchedulingController (e2e)', () => {
   });
 
   describe('GET /scheduling', () => {
-    const endpoint = '/scheduling';
+    const endpoint = '/api/v1/scheduling';
 
     beforeAll(async () => {
       const course = await createTestCourse(
@@ -408,7 +411,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('should get schedule by ID', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/scheduling/${testScheduleId}`)
+        .get(`/api/v1/scheduling/${testScheduleId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -420,7 +423,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('should return 404 for non-existent schedule', async () => {
       await request(app.getHttpServer())
-        .get('/scheduling/999999')
+        .get('/api/v1/scheduling/999999')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -443,7 +446,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('should return course schedules', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/scheduling/course/${testCourseId}`)
+        .get(`/api/v1/scheduling/course/${testCourseId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -472,7 +475,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('should return classroom schedules', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/scheduling/classrooms/${testClassroomId}/schedules`)
+        .get(`/api/v1/scheduling/classrooms/${testClassroomId}/schedules`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -505,7 +508,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('admin should update schedule', async () => {
       const response = await request(app.getHttpServer())
-        .patch(`/scheduling/${testScheduleId}`)
+        .patch(`/api/v1/scheduling/${testScheduleId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
           day_of_week: 3,
@@ -521,7 +524,7 @@ describe('SchedulingController (e2e)', () => {
 
     it('non-admin should be rejected', async () => {
       await request(app.getHttpServer())
-        .patch(`/scheduling/${testScheduleId}`)
+        .patch(`/api/v1/scheduling/${testScheduleId}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .send({ day_of_week: 5 })
         .expect(403);
@@ -544,13 +547,13 @@ describe('SchedulingController (e2e)', () => {
       );
 
       await request(app.getHttpServer())
-        .delete(`/scheduling/${schedule.id}`)
+        .delete(`/api/v1/scheduling/${schedule.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
       // Verify deleted
       await request(app.getHttpServer())
-        .get(`/scheduling/${schedule.id}`)
+        .get(`/api/v1/scheduling/${schedule.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
@@ -570,7 +573,7 @@ describe('SchedulingController (e2e)', () => {
       );
 
       await request(app.getHttpServer())
-        .delete(`/scheduling/${schedule.id}`)
+        .delete(`/api/v1/scheduling/${schedule.id}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(403);
     });

@@ -3,6 +3,7 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
+import { setupE2EApp } from './helpers/app-setup.helper';
 import {
   createAdminAndLogin,
   createTeacherAndLogin,
@@ -26,14 +27,7 @@ describe('AuditController (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: { enableImplicitConversion: true },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -185,7 +179,7 @@ describe('AuditController (e2e)', () => {
 
     it('admin should get audit log by ID', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/audit/${auditLogId}`)
+        .get(`/api/v1/audit/${auditLogId}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -203,7 +197,7 @@ describe('AuditController (e2e)', () => {
 
     it('non-admin should be rejected', async () => {
       await request(app.getHttpServer())
-        .get(`/api/audit/${auditLogId}`)
+        .get(`/api/v1/audit/${auditLogId}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(403);
     });
@@ -252,7 +246,7 @@ describe('AuditController (e2e)', () => {
   describe('GET /api/audit/user/:userId', () => {
     it('should return logs for specific user', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/api/audit/user/${adminAuth.user.id}`)
+        .get(`/api/v1/audit/user/${adminAuth.user.id}`)
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
@@ -274,7 +268,7 @@ describe('AuditController (e2e)', () => {
 
     it('non-admin should be rejected', async () => {
       await request(app.getHttpServer())
-        .get(`/api/audit/user/${adminAuth.user.id}`)
+        .get(`/api/v1/audit/user/${adminAuth.user.id}`)
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(403);
     });

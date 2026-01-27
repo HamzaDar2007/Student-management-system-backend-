@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
 import { UserRole } from '../src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('Enrollments (e2e)', () => {
   let app: INestApplication;
@@ -22,16 +23,7 @@ describe('Enrollments (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -213,7 +205,7 @@ describe('Enrollments (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .get(`/api/enrollments/${testEnrollmentId}`)
+        .get(`/api/v1/enrollments/${testEnrollmentId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -235,7 +227,7 @@ describe('Enrollments (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .put(`/api/enrollments/${testEnrollmentId}`)
+        .put(`/api/v1/enrollments/${testEnrollmentId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           status: 'completed',
@@ -252,7 +244,7 @@ describe('Enrollments (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .delete(`/api/enrollments/${testEnrollmentId}`)
+        .delete(`/api/v1/enrollments/${testEnrollmentId}`)
         .set('Authorization', `Bearer ${studentToken}`)
         .expect((res) => {
           // 401 if token invalid, 403 if properly forbidden
@@ -265,7 +257,7 @@ describe('Enrollments (e2e)', () => {
         return Promise.resolve();
       }
       return request(app.getHttpServer())
-        .delete(`/api/enrollments/${testEnrollmentId}`)
+        .delete(`/api/v1/enrollments/${testEnrollmentId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect((res) => {
           expect([200, 204]).toContain(res.status);

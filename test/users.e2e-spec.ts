@@ -5,6 +5,7 @@ import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
 import { UserRole } from '../src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
+import { setupE2EApp } from './helpers/app-setup.helper';
 
 describe('Users (e2e)', () => {
   let app: INestApplication;
@@ -23,16 +24,7 @@ describe('Users (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        transform: true,
-        forbidNonWhitelisted: true,
-        transformOptions: {
-          enableImplicitConversion: true,
-        },
-      }),
-    );
+    setupE2EApp(app);
 
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
@@ -175,7 +167,7 @@ describe('Users (e2e)', () => {
   describe('GET /api/users/:id', () => {
     it('should return user by id for admin', () => {
       return request(app.getHttpServer())
-        .get(`/api/users/${studentUserId}`)
+        .get(`/api/v1/users/${studentUserId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -244,7 +236,7 @@ describe('Users (e2e)', () => {
   describe('PUT /api/users/:id', () => {
     it('should update user for admin', () => {
       return request(app.getHttpServer())
-        .put(`/api/users/${studentUserId}`)
+        .put(`/api/v1/users/${studentUserId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .send({
           firstName: 'Updated',
@@ -286,7 +278,7 @@ describe('Users (e2e)', () => {
 
     it('should delete user for admin', () => {
       return request(app.getHttpServer())
-        .delete(`/api/users/${deleteUserId}`)
+        .delete(`/api/v1/users/${deleteUserId}`)
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
@@ -303,7 +295,7 @@ describe('Users (e2e)', () => {
 
     it('should reject deletion by non-admin', () => {
       return request(app.getHttpServer())
-        .delete(`/api/users/${studentUserId}`)
+        .delete(`/api/v1/users/${studentUserId}`)
         .set('Authorization', `Bearer ${teacherToken}`)
         .expect(403);
     });
