@@ -5,8 +5,6 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Param,
-  ParseIntPipe,
   Post,
   Put,
   Query,
