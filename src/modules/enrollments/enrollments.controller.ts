@@ -5,7 +5,8 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Patch,
+  Param,
+  ParseIntPipe,
   Post,
   Put,
   Query,
@@ -105,7 +106,7 @@ export class EnrollmentsController {
     return this.enrollmentsService.remove(id);
   }
 
-  @Patch(':id/grade')
+  @Put(':id/grade')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Update enrollment grade (Admin/Teacher)' })
   @ApiParam({ name: 'id', type: 'number', description: 'Enrollment ID' })

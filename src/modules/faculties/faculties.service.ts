@@ -87,7 +87,7 @@ export class FacultiesService {
 
     if (dto.dean_id !== undefined) {
       if (dto.dean_id === null) {
-        faculty.dean = null as any;
+        faculty.dean = null as unknown as User;
       } else {
         const dean = await this.userRepo.findOne({
           where: { id: dto.dean_id },

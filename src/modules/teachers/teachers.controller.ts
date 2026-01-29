@@ -120,7 +120,7 @@ export class TeachersController {
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Delete teacher profile by ID (Admin only)' })
+  @ApiOperation({ summary: 'Soft delete teacher profile by ID (Admin only)' })
   @ApiParam({ name: 'id', type: 'number', description: 'Teacher profile ID' })
   @ApiResponse({
     status: 200,
@@ -133,5 +133,24 @@ export class TeachersController {
   @ApiResponse({ status: 404, description: 'Teacher not found' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.teachersService.remove(id);
+  }
+
+  @Post(':id/restore')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Restore a soft-deleted teacher profile (Admin only)',
+  })
+  @ApiParam({ name: 'id', type: 'number', description: 'Teacher profile ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Teacher profile restored successfully',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Admin access required',
+  })
+  @ApiResponse({ status: 404, description: 'Teacher not found' })
+  restore(@Param('id', ParseIntPipe) id: number) {
+    return this.teachersService.restore(id);
   }
 }

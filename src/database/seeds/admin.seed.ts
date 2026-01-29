@@ -70,4 +70,4 @@ async function seedAdmin() {
   }
 }
 
-seedAdmin();
+void seedAdmin();

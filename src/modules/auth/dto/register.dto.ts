@@ -11,7 +11,7 @@ import { IsStrongPassword } from '../../../common/validators/is-strong-password.
 import { UserRole } from '../../users/entities/user.entity';
 
 export class RegisterDto {
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: string }) =>
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
   @IsEmail()

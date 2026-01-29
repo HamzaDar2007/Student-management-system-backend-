@@ -7,6 +7,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { XssPipe } from './common/pipes/xss.pipe';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { SnakeCaseInterceptor } from './common/interceptors/snake-case.interceptor';
 import winstonConfig from './config/logger.config';
 
 async function bootstrap() {
@@ -38,6 +39,7 @@ async function bootstrap() {
 
   // Global exception filter
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new SnakeCaseInterceptor());
 
   // Global validation pipe
   app.useGlobalPipes(
@@ -119,4 +121,4 @@ async function bootstrap() {
     `Swagger documentation available at http://localhost:${port}/api/docs`,
   );
 }
-bootstrap();
+void bootstrap();

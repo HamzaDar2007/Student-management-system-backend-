@@ -3,14 +3,14 @@ import { Transform } from 'class-transformer';
 
 export class AttendanceReportQueryDto {
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: string }) =>
     value === undefined ? undefined : parseInt(value, 10),
   )
   @IsInt()
   student_id?: number;
 
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: string }) =>
     value === undefined ? undefined : parseInt(value, 10),
   )
   @IsInt()

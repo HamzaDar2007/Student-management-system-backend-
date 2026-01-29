@@ -22,13 +22,15 @@ export class XssPipe implements PipeTransform {
   }
 
   private sanitizeObject(obj: any): any {
-    for (const key in obj) {
-      if (typeof obj[key] === 'string') {
-        obj[key] = this.sanitize(obj[key]);
-      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
-        this.sanitizeObject(obj[key]);
+    if (typeof obj !== 'object' || obj === null) return obj;
+    const typedObj = obj as Record<string, any>;
+    for (const key in typedObj) {
+      if (typeof typedObj[key] === 'string') {
+        typedObj[key] = this.sanitize(typedObj[key]);
+      } else if (typeof typedObj[key] === 'object' && typedObj[key] !== null) {
+        this.sanitizeObject(typedObj[key]);
       }
     }
-    return obj;
+    return typedObj;
   }
 }

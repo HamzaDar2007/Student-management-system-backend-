@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, IsNull, Not, Repository } from 'typeorm';
+import { FindOptionsWhere, ILike, IsNull, Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 
 import { User } from './entities/user.entity';
@@ -46,7 +46,7 @@ export class UsersService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: FindOptionsWhere<User> = {};
     if (query.role) where.role = query.role;
 
     const search = query.search?.trim();
@@ -139,8 +139,12 @@ export class UsersService {
     return users.map((u) => this.sanitize(u));
   }
 
-  private sanitize(user: User) {
-    const { passwordHash: _passwordHash, ...rest } = user as any;
-    return rest as Omit<User, 'passwordHash'>;
+  private sanitize(user: User): Omit<User, 'passwordHash' | 'refreshToken'> {
+    const {
+      passwordHash: _passwordHash,
+      refreshToken: _refreshToken,
+      ...rest
+    } = user;
+    return rest;
   }
 }

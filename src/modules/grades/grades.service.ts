@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 
 import { Grade } from './entities/grade.entity';
 import { Student } from '../students/entities/student.entity';
@@ -53,7 +53,7 @@ export class GradesService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: FindOptionsWhere<Grade> = {};
     if (query.student_id) where.studentId = query.student_id;
     if (query.course_id) where.courseId = query.course_id;
     if (query.assessment_type) where.assessmentType = query.assessment_type;
@@ -129,7 +129,7 @@ export class GradesService {
     const course = await this.courseRepo.findOne({ where: { id: courseId } });
     if (!course) throw new NotFoundException('Course not found');
 
-    const where: any = { courseId };
+    const where: FindOptionsWhere<Grade> = { courseId };
     if (assessmentType) where.assessmentType = assessmentType;
 
     return this.gradeRepo.find({

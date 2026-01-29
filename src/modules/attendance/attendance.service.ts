@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, In, Repository } from 'typeorm';
 
 import { Attendance } from './entities/attendance.entity';
 import { Student } from '../students/entities/student.entity';
@@ -112,7 +112,7 @@ export class AttendanceService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: FindOptionsWhere<Attendance> = {};
     if (query.student_id) where.studentId = query.student_id;
     if (query.course_id) where.courseId = query.course_id;
     if (query.status) where.status = query.status;
@@ -215,25 +215,31 @@ export class AttendanceService {
 
     const studentIds = rawData.map((r) => r.studentId);
     const students = await this.studentRepo.find({
-      where: studentIds.length > 0 ? studentIds.map((id) => ({ id })) : {},
+      where: studentIds.length > 0 ? { id: In(studentIds) } : {},
       relations: ['user'],
     });
 
     const studentsMap = new Map(students.map((s) => [s.id, s]));
 
-    return rawData.map((row) => ({
-      student: studentsMap.get(row.studentId) || null,
-      totalClasses: parseInt(row.totalClasses, 10),
-      presentCount: parseInt(row.presentCount, 10),
-      absentCount: parseInt(row.absentCount, 10),
-      lateCount: parseInt(row.lateCount, 10),
-      excusedCount: parseInt(row.excusedCount, 10),
-      attendanceRate:
-        row.totalClasses > 0
-          ? ((parseInt(row.presentCount, 10) + parseInt(row.lateCount, 10)) /
-              parseInt(row.totalClasses, 10)) *
-            100
-          : 0,
-    }));
+    return rawData.map((row) => {
+      const totalClasses = parseInt(row.totalClasses, 10);
+      const presentCount = parseInt(row.presentCount, 10);
+      const lateCount = parseInt(row.lateCount, 10);
+      const absentCount = parseInt(row.absentCount, 10);
+      const excusedCount = parseInt(row.excusedCount, 10);
+
+      return {
+        student: studentsMap.get(row.studentId) || null,
+        totalClasses,
+        presentCount,
+        absentCount,
+        lateCount,
+        excusedCount,
+        attendanceRate:
+          totalClasses > 0
+            ? ((presentCount + lateCount) / totalClasses) * 100
+            : 0,
+      };
+    });
   }
 }

@@ -7,6 +7,15 @@ import {
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { AuditService } from '../../modules/audit/audit.service';
+import { User } from '../../modules/users/entities/user.entity';
+
+interface RequestWithUser extends Request {
+  user?: User;
+  method: string;
+  url: string;
+  body: any;
+  params: any;
+}
 
 const AUDITED_RESOURCES = [
   'students',
@@ -21,7 +30,7 @@ export class AuditInterceptor implements NestInterceptor {
   constructor(private readonly auditService: AuditService) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<RequestWithUser>();
     const { method, url, body, params, user } = request;
 
     // Only audit specific HTTP methods
@@ -42,7 +51,7 @@ export class AuditInterceptor implements NestInterceptor {
       tap({
         next: (data) => {
           // Log successful operations
-          this.auditService.log({
+          void this.auditService.log({
             user_id: user?.id,
             action,
             resource: resource.charAt(0).toUpperCase() + resource.slice(1),

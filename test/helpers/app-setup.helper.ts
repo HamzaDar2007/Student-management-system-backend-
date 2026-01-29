@@ -22,6 +22,9 @@ export function setupE2EApp(app: INestApplication): INestApplication {
   // Apply filters
   app.useGlobalFilters(new HttpExceptionFilter());
 
+  // Note: SnakeCaseInterceptor is NOT applied in E2E tests to preserve test assertions
+  // In production, it's applied in main.ts
+
   // Apply pipes
   app.useGlobalPipes(
     new ValidationPipe({

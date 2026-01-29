@@ -2,6 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
+interface UserLike {
+  email: string;
+  firstName?: string;
+  username: string;
+}
+
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
@@ -38,7 +44,7 @@ export class MailService {
     }
   }
 
-  async sendWelcomeEmail(user: any) {
+  async sendWelcomeEmail(user: UserLike) {
     const html = `
             <h1>Welcome to Student Management System</h1>
             <p>Hello ${user.firstName || user.username},</p>
@@ -51,7 +57,7 @@ export class MailService {
     );
   }
 
-  async sendPasswordResetEmail(user: any, token: string) {
+  async sendPasswordResetEmail(user: UserLike, token: string) {
     const resetUrl = `${this.configService.get<string>('FRONTEND_URL') || 'http://localhost:4200'}/auth/reset-password?token=${token}`;
     const html = `
             <h1>Password Reset Request</h1>
@@ -64,7 +70,7 @@ export class MailService {
     return this.sendMail(user.email, 'Password Reset Request', html);
   }
 
-  async sendEmailVerification(user: any, token: string) {
+  async sendEmailVerification(user: UserLike, token: string) {
     const verifyUrl = `${this.configService.get<string>('FRONTEND_URL') || 'http://localhost:4200'}/auth/verify-email?token=${token}`;
     const html = `
             <h1>Verify Your Email</h1>

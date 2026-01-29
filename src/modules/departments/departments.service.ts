@@ -91,7 +91,7 @@ export class DepartmentsService {
 
     if (dto.faculty_id !== undefined) {
       if (dto.faculty_id === null) {
-        department.faculty = null as any;
+        department.faculty = null as unknown as Faculty;
       } else {
         const faculty = await this.facultyRepo.findOne({
           where: { id: dto.faculty_id },

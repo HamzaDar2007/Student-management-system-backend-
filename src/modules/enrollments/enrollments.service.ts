@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOptionsWhere, Repository } from 'typeorm';
 
 import { Enrollment, EnrollmentStatus } from './entities/enrollment.entity';
 import { Student } from '../students/entities/student.entity';
@@ -70,7 +70,7 @@ export class EnrollmentsService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: FindOptionsWhere<Enrollment> = {};
     if (query.student_id) where.studentId = query.student_id;
     if (query.course_id) where.courseId = query.course_id;
     if (query.status) where.status = query.status;

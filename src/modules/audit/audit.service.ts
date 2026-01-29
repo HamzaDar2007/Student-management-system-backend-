@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
+import { Between, FindOptionsWhere, Repository } from 'typeorm';
 import { AuditLog } from './entities/audit.entity';
 import { CreateAuditDto } from './dto/create-audit.dto';
 import { AuditQueryDto } from './dto/audit-query.dto';
@@ -28,7 +28,7 @@ export class AuditService {
     const limit = query.limit ?? 20;
     const skip = (page - 1) * limit;
 
-    const where: any = {};
+    const where: FindOptionsWhere<AuditLog> = {};
     if (query.user_id) where.userId = query.user_id;
     if (query.action) where.action = query.action;
     if (query.resource) where.resource = query.resource;

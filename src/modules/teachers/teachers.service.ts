@@ -125,4 +125,17 @@ export class TeachersService {
     await this.profileRepo.softRemove(profile);
     return { deleted: true };
   }
+
+  async restore(id: number) {
+    const profile = await this.profileRepo.findOne({
+      where: { id },
+      withDeleted: true,
+    });
+    if (!profile) throw new NotFoundException('Teacher profile not found');
+    if (!profile.deletedAt)
+      throw new ConflictException('Teacher profile is not deleted');
+
+    await this.profileRepo.restore(id);
+    return { restored: true };
+  }
 }

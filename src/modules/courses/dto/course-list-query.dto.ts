@@ -4,14 +4,14 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 export class CourseListQueryDto extends PaginationDto {
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: string }) =>
     value === undefined ? undefined : parseInt(value, 10),
   )
   @IsInt()
   department_id?: number;
 
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: string }) =>
     value === undefined ? undefined : parseInt(value, 10),
   )
   @IsInt()
@@ -20,7 +20,7 @@ export class CourseListQueryDto extends PaginationDto {
   semester?: number;
 
   @IsOptional()
-  @Transform(({ value }) => {
+  @Transform(({ value }: { value: string | boolean }) => {
     if (value === undefined) return undefined;
     if (value === 'true' || value === true) return true;
     if (value === 'false' || value === false) return false;

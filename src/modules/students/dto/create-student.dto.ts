@@ -18,7 +18,7 @@ export class CreateStudentDto {
   @IsInt()
   user_id?: number;
 
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: string }) =>
     typeof value === 'string' ? value.trim().toUpperCase() : value,
   )
   @IsString()

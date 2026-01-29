@@ -12,7 +12,7 @@ import { UserRole } from '../entities/user.entity';
 
 export class UpdateUserDto {
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: string }) =>
     typeof value === 'string' ? value.trim().toLowerCase() : value,
   )
   @IsEmail()

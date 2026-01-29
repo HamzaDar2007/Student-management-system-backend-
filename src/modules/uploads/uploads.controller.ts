@@ -189,6 +189,59 @@ export class UploadsController {
     };
   }
 
+  @Post(':folder')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Upload a single file to a specific folder' })
+  @ApiConsumes('multipart/form-data')
+  @ApiParam({ name: 'folder', description: 'Folder to store file in' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+          description: 'File to upload (max 10MB)',
+        },
+      },
+      required: ['file'],
+    },
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'File uploaded successfully',
+    type: UploadResponseDto,
+  })
+  async uploadToFolder(
+    @UploadedFile()
+    file: Express.Multer.File,
+    @Param('folder') folder: string,
+  ): Promise<UploadResponseDto> {
+    if (!file) {
+      throw new BadRequestException('No file provided');
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      throw new BadRequestException(
+        `File ${file.originalname} exceeds maximum size of 10MB`,
+      );
+    }
+
+    if (!ALLOWED_FILE_TYPES.test(file.mimetype)) {
+      throw new BadRequestException(
+        `File ${file.originalname} has invalid type: ${file.mimetype}`,
+      );
+    }
+
+    const result = await this.storageService.uploadFile(file, folder);
+
+    return {
+      message: 'File uploaded successfully',
+      file: result,
+    };
+  }
+
   @Get(':folder/:filename')
   @ApiOperation({ summary: 'Download/view a file' })
   @ApiParam({ name: 'folder', description: 'Folder name' })
