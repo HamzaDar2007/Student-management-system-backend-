@@ -107,4 +107,20 @@ export class AcademicTermsController {
   remove(@Param('id') id: string) {
     return this.academicTermsService.remove(+id);
   }
+
+  @Patch(':id/restore')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({
+    summary: 'Restore a soft-deleted academic term (Admin only)',
+  })
+  @ApiParam({ name: 'id', type: 'number', description: 'Academic term ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Academic term restored successfully',
+  })
+  @ApiResponse({ status: 404, description: 'Academic term not found' })
+  @ApiResponse({ status: 409, description: 'Academic term is not deleted' })
+  restore(@Param('id') id: string) {
+    return this.academicTermsService.restore(+id);
+  }
 }

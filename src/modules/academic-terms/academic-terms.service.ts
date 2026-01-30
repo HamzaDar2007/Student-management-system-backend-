@@ -119,4 +119,21 @@ export class AcademicTermsService {
     await this.termRepo.softRemove(term);
     return { deleted: true };
   }
+
+  async restore(id: number) {
+    const term = await this.termRepo.findOne({
+      where: { id },
+      withDeleted: true,
+    });
+
+    if (!term) {
+      throw new NotFoundException(`Academic term with ID ${id} not found`);
+    }
+
+    if (!term.deletedAt) {
+      throw new ConflictException(`Academic term with ID ${id} is not deleted`);
+    }
+
+    return this.termRepo.restore(id);
+  }
 }

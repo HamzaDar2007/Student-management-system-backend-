@@ -26,6 +26,7 @@ describe('DepartmentsService', () => {
     remove: jest.fn(),
     softRemove: jest.fn(),
     restore: jest.fn(),
+    softDelete: jest.fn(),
   };
 
   const mockFacultyRepository = {
@@ -164,14 +165,17 @@ describe('DepartmentsService', () => {
         ...mockDepartment,
         students: [],
       });
-      mockDepartmentRepository.softRemove.mockResolvedValue({
-        ...mockDepartment,
-        students: [],
+      mockDepartmentRepository.softDelete.mockResolvedValue({
+        raw: [],
+        affected: 1,
       });
 
       const result = await service.remove(1);
 
-      expect(result).toEqual({ deleted: true });
+      expect(result).toEqual({
+        raw: [],
+        affected: 1,
+      });
     });
 
     it('should throw NotFoundException if department not found', async () => {

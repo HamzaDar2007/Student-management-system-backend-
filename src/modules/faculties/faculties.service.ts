@@ -121,4 +121,21 @@ export class FacultiesService {
     await this.facultyRepo.softRemove(faculty);
     return { deleted: true };
   }
+
+  async restore(id: number) {
+    const faculty = await this.facultyRepo.findOne({
+      where: { id },
+      withDeleted: true,
+    });
+
+    if (!faculty) {
+      throw new NotFoundException(`Faculty with ID ${id} not found`);
+    }
+
+    if (!faculty.deletedAt) {
+      throw new ConflictException(`Faculty with ID ${id} is not deleted`);
+    }
+
+    return this.facultyRepo.restore(id);
+  }
 }

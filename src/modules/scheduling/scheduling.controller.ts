@@ -178,6 +178,20 @@ export class SchedulingController {
     return this.schedulingService.removeClassroom(id);
   }
 
+  @Patch('classrooms/:id/restore')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Restore a soft-deleted classroom (Admin only)' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Classroom ID' })
+  @ApiResponse({
+    status: 200,
+    description: 'Classroom restored successfully',
+  })
+  @ApiResponse({ status: 404, description: 'Classroom not found' })
+  @ApiResponse({ status: 409, description: 'Classroom is not deleted' })
+  restoreClassroom(@Param('id', ParseIntPipe) id: number) {
+    return this.schedulingService.restoreClassroom(id);
+  }
+
   // ========================================
   // Schedule parameter routes - Must be after static routes
   // ========================================

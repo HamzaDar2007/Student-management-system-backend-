@@ -28,6 +28,7 @@ import { CommonModule } from './common/common.module';
 import { HealthModule } from './modules/health/health.module';
 import { TeachersModule } from './modules/teachers/teachers.module';
 import { UploadsModule } from './modules/uploads/uploads.module';
+import { AnalyticsModule } from './modules/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -154,6 +155,7 @@ import { UploadsModule } from './modules/uploads/uploads.module';
     HealthModule,
     TeachersModule,
     UploadsModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [

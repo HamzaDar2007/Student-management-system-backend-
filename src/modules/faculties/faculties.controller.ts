@@ -96,4 +96,15 @@ export class FacultiesController {
   remove(@Param('id') id: string) {
     return this.facultiesService.remove(+id);
   }
+
+  @Patch(':id/restore')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Restore a soft-deleted faculty (Admin only)' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Faculty ID' })
+  @ApiResponse({ status: 200, description: 'Faculty restored successfully' })
+  @ApiResponse({ status: 404, description: 'Faculty not found' })
+  @ApiResponse({ status: 409, description: 'Faculty is not deleted' })
+  restore(@Param('id') id: string) {
+    return this.facultiesService.restore(+id);
+  }
 }

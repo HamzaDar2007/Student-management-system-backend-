@@ -223,6 +223,23 @@ export class SchedulingService {
     return { deleted: true };
   }
 
+  async restoreClassroom(id: number) {
+    const classroom = await this.classroomRepo.findOne({
+      where: { id },
+      withDeleted: true,
+    });
+
+    if (!classroom) {
+      throw new NotFoundException(`Classroom with ID ${id} not found`);
+    }
+
+    if (!classroom.deletedAt) {
+      throw new ConflictException(`Classroom with ID ${id} is not deleted`);
+    }
+
+    return this.classroomRepo.restore(id);
+  }
+
   // Helper method to check for schedule conflicts
   private async checkScheduleConflict(
     classroomId: number,

@@ -100,4 +100,15 @@ export class DepartmentsController {
   remove(@Param('id') id: string) {
     return this.departmentsService.remove(+id);
   }
+
+  @Patch(':id/restore')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Restore a soft-deleted department (Admin only)' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Department ID' })
+  @ApiResponse({ status: 200, description: 'Department restored successfully' })
+  @ApiResponse({ status: 404, description: 'Department not found' })
+  @ApiResponse({ status: 409, description: 'Department is not deleted' })
+  restore(@Param('id') id: string) {
+    return this.departmentsService.restore(+id);
+  }
 }

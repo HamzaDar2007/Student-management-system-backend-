@@ -4,7 +4,7 @@ import * as nodemailer from 'nodemailer';
 
 interface UserLike {
   email: string;
-  firstName?: string;
+  firstName?: string | null;
   username: string;
 }
 
