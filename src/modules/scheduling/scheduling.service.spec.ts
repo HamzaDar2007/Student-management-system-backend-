@@ -98,10 +98,11 @@ describe('SchedulingService', () => {
 
       const result = await service.findAll(1, 10);
 
-      expect(result).toHaveProperty('items');
-      expect(result).toHaveProperty('total');
-      expect(result).toHaveProperty('page');
-      expect(result).toHaveProperty('limit');
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('meta');
+      expect(result.meta).toHaveProperty('total');
+      expect(result.meta).toHaveProperty('page');
+      expect(result.meta).toHaveProperty('limit');
     });
   });
 
@@ -169,10 +170,11 @@ describe('SchedulingService', () => {
 
       const result = await service.findAllClassrooms(1, 10);
 
-      expect(result).toHaveProperty('items');
-      expect(result).toHaveProperty('total');
-      expect(result).toHaveProperty('page');
-      expect(result).toHaveProperty('limit');
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('meta');
+      expect(result.meta).toHaveProperty('total');
+      expect(result.meta).toHaveProperty('page');
+      expect(result.meta).toHaveProperty('limit');
     });
   });
 

@@ -190,8 +190,9 @@ describe('Attendance (e2e)', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
-          expect(res.body).toHaveProperty('items');
-          expect(Array.isArray(res.body.items)).toBe(true);
+          expect(res.body).toHaveProperty('data');
+          expect(res.body).toHaveProperty('meta');
+          expect(Array.isArray(res.body.data)).toBe(true);
         });
     });
 

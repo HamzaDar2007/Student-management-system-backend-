@@ -177,10 +177,9 @@ describe('Courses (e2e)', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
-          expect(res.body).toHaveProperty('items');
-          expect(res.body).toHaveProperty('total');
-          expect(res.body).toHaveProperty('page');
-          expect(res.body).toHaveProperty('limit');
+          expect(res.body).toHaveProperty('data');
+          expect(res.body).toHaveProperty('meta');
+          expect(Array.isArray(res.body.data)).toBe(true);
         });
     });
 
@@ -206,8 +205,8 @@ describe('Courses (e2e)', () => {
         .expect(200)
         .expect((res) => {
           // All returned courses should be active
-          if (res.body.items && res.body.items.length > 0) {
-            expect(res.body.items.every((c: any) => c.isActive === true)).toBe(
+          if (res.body.data && res.body.data.length > 0) {
+            expect(res.body.data.every((c: any) => c.isActive === true)).toBe(
               true,
             );
           }
@@ -221,9 +220,9 @@ describe('Courses (e2e)', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
-          expect(res.body.page).toBe(1);
-          expect(res.body.limit).toBe(2);
-          expect(res.body.items.length).toBeLessThanOrEqual(2);
+          expect(res.body.meta.page).toBe(1);
+          expect(res.body.meta.limit).toBe(2);
+          expect(res.body.data.length).toBeLessThanOrEqual(2);
         });
     });
 

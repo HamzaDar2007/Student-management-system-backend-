@@ -1,4 +1,11 @@
-import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsBoolean,
+  IsEnum,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
+import { Transform } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import { UserRole } from '../entities/user.entity';
 
@@ -11,4 +18,9 @@ export class UserListQueryDto extends PaginationDto {
   @IsString()
   @Length(1, 100)
   search?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => value === 'true')
+  includeDeleted?: boolean;
 }

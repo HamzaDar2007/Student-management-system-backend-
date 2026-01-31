@@ -174,11 +174,9 @@ describe('TeachersController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty('items');
-      expect(response.body).toHaveProperty('total');
-      expect(response.body).toHaveProperty('page');
-      expect(response.body).toHaveProperty('limit');
-      expect(Array.isArray(response.body.items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(response.body).toHaveProperty('meta');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it('teacher should access teacher list', async () => {
@@ -187,7 +185,7 @@ describe('TeachersController (e2e)', () => {
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty('items');
+      expect(response.body).toHaveProperty('data');
     });
 
     it('student should be rejected', async () => {

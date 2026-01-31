@@ -128,7 +128,15 @@ export class AttendanceService {
       take: limit,
     });
 
-    return { page, limit, total, items };
+    return {
+      data: items,
+      meta: {
+        total,
+        page,
+        limit,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOne(id: number) {
@@ -211,7 +219,14 @@ export class AttendanceService {
       });
     }
 
-    const rawData = await qb.getRawMany();
+    const rawData = await qb.getRawMany<{
+      studentId: number;
+      totalClasses: string;
+      presentCount: string;
+      absentCount: string;
+      lateCount: string;
+      excusedCount: string;
+    }>();
 
     const studentIds = rawData.map((r) => r.studentId);
     const students = await this.studentRepo.find({

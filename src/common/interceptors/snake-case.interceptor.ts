@@ -13,7 +13,7 @@ export class SnakeCaseInterceptor implements NestInterceptor {
     return next.handle().pipe(map((data) => this.toSnakeCase(data)));
   }
 
-  private toSnakeCase(obj: any): any {
+  private toSnakeCase(obj: unknown): unknown {
     if (Array.isArray(obj)) {
       return obj.map((v) => this.toSnakeCase(v));
     }
@@ -23,9 +23,9 @@ export class SnakeCaseInterceptor implements NestInterceptor {
         return obj;
       }
 
-      const typedObj = obj as Record<string, any>;
+      const typedObj = obj as Record<string, unknown>;
       return Object.keys(typedObj).reduce(
-        (result: Record<string, any>, key: string) => {
+        (result: Record<string, unknown>, key: string) => {
           const snakeKey = key.replace(
             /[A-Z]/g,
             (letter) => `_${letter.toLowerCase()}`,

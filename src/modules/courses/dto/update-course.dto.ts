@@ -13,7 +13,7 @@ import { Transform, Type } from 'class-transformer';
 
 export class UpdateCourseDto {
   @IsOptional()
-  @Transform(({ value }) =>
+  @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toUpperCase() : value,
   )
   @IsString()
@@ -21,7 +21,9 @@ export class UpdateCourseDto {
   course_code?: string;
 
   @IsOptional()
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @IsString()
   @Length(2, 100)
   course_name?: string;

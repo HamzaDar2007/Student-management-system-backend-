@@ -152,9 +152,10 @@ describe('SchedulingController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      const items = response.body.items || response.body;
-      expect(Array.isArray(items)).toBe(true);
-      expect(items.length).toBeGreaterThan(0);
+      expect(response.body).toHaveProperty('data');
+      expect(response.body).toHaveProperty('meta');
+      expect(Array.isArray(response.body.data)).toBe(true);
+      expect(response.body.data.length).toBeGreaterThan(0);
     });
 
     it('teacher should access classrooms', async () => {
@@ -163,8 +164,8 @@ describe('SchedulingController (e2e)', () => {
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(200);
 
-      const items = response.body.items || response.body;
-      expect(Array.isArray(items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it('student should access classrooms', async () => {
@@ -173,8 +174,8 @@ describe('SchedulingController (e2e)', () => {
         .set('Authorization', `Bearer ${studentAuth.accessToken}`)
         .expect(200);
 
-      const items = response.body.items || response.body;
-      expect(Array.isArray(items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
   });
 
@@ -365,8 +366,8 @@ describe('SchedulingController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      const items = response.body.items || response.body;
-      expect(Array.isArray(items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it('teacher should access schedules', async () => {
@@ -375,8 +376,8 @@ describe('SchedulingController (e2e)', () => {
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(200);
 
-      const items = response.body.items || response.body;
-      expect(Array.isArray(items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it('student should access schedules', async () => {
@@ -385,8 +386,8 @@ describe('SchedulingController (e2e)', () => {
         .set('Authorization', `Bearer ${studentAuth.accessToken}`)
         .expect(200);
 
-      const items = response.body.items || response.body;
-      expect(Array.isArray(items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
   });
 
@@ -450,9 +451,8 @@ describe('SchedulingController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      const items = response.body.items || response.body;
-      expect(Array.isArray(items)).toBe(true);
-      items.forEach((schedule: any) => {
+      expect(Array.isArray(response.body)).toBe(true);
+      response.body.forEach((schedule: any) => {
         expect(schedule.courseId).toBe(testCourseId);
       });
     });
@@ -479,9 +479,8 @@ describe('SchedulingController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      const items = response.body.items || response.body;
-      expect(Array.isArray(items)).toBe(true);
-      items.forEach((schedule: any) => {
+      expect(Array.isArray(response.body)).toBe(true);
+      response.body.forEach((schedule: any) => {
         expect(schedule.classroomId).toBe(testClassroomId);
       });
     });

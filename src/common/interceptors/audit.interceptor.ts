@@ -9,12 +9,12 @@ import { tap } from 'rxjs/operators';
 import { AuditService } from '../../modules/audit/audit.service';
 import { User } from '../../modules/users/entities/user.entity';
 
-interface RequestWithUser extends Request {
+interface RequestWithUser {
   user?: User;
   method: string;
   url: string;
-  body: any;
-  params: any;
+  body: Record<string, unknown> | null;
+  params: Record<string, string>;
 }
 
 const AUDITED_RESOURCES = [
@@ -49,13 +49,14 @@ export class AuditInterceptor implements NestInterceptor {
 
     return next.handle().pipe(
       tap({
-        next: (data) => {
+        next: (data: unknown) => {
           // Log successful operations
           void this.auditService.log({
             user_id: user?.id,
             action,
             resource: resource.charAt(0).toUpperCase() + resource.slice(1),
-            resource_id: resourceId || data?.id?.toString(),
+            resource_id:
+              resourceId || (data as { id?: unknown })?.id?.toString(),
             payload: this.sanitizePayload(body),
           });
         },
@@ -67,7 +68,7 @@ export class AuditInterceptor implements NestInterceptor {
   }
 
   private extractResource(url: string): string | null {
-    const match = url.match(/\/api\/([^\/\?]+)/);
+    const match = url.match(/\/api\/([^/?]+)/);
     return match ? match[1] : null;
   }
 
@@ -81,7 +82,9 @@ export class AuditInterceptor implements NestInterceptor {
     return map[method] || method;
   }
 
-  private sanitizePayload(body: any): any {
+  private sanitizePayload(
+    body: Record<string, unknown> | null,
+  ): Record<string, unknown> | null {
     if (!body) return null;
     const sanitized = { ...body };
     // Remove sensitive fields

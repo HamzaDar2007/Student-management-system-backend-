@@ -31,8 +31,20 @@ export class CourseListQueryDto extends PaginationDto {
 
   @IsOptional()
   @Transform(({ value }) =>
-    value === undefined ? undefined : parseInt(value, 10),
+    value === undefined ? undefined : parseInt(value as string, 10),
   )
   @IsInt()
   teacher_id?: number;
+
+  @IsOptional()
+  @Transform(({ value }: { value: unknown }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  @IsBoolean()
+  includeDeleted?: boolean;
+
+  @IsOptional()
+  search?: string;
 }

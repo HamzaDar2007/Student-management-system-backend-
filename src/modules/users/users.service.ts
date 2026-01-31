@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, ILike, IsNull, Not, Repository } from 'typeorm';
+import { ILike, IsNull, Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 
 import { User } from './entities/user.entity';
@@ -46,34 +46,44 @@ export class UsersService {
     const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
 
-    const where: FindOptionsWhere<User> = {};
-    if (query.role) where.role = query.role;
-
-    const search = query.search?.trim();
-    if (search) {
-      const [items, total] = await this.userRepo.findAndCount({
-        where: [
-          { ...where, email: ILike(`%${search}%`) },
-          { ...where, username: ILike(`%${search}%`) },
-          { ...where, firstName: ILike(`%${search}%`) },
-          { ...where, lastName: ILike(`%${search}%`) },
-        ],
-        order: { id: 'DESC' },
-        skip,
-        take: limit,
-      });
-
-      return { page, limit, total, items: items.map((u) => this.sanitize(u)) };
-    }
-
-    const [items, total] = await this.userRepo.findAndCount({
-      where,
+    const findOptions: import('typeorm').FindManyOptions<User> = {
       order: { id: 'DESC' },
       skip,
       take: limit,
-    });
+      where: {},
+    };
 
-    return { page, limit, total, items: items.map((u) => this.sanitize(u)) };
+    if (query.role) findOptions.where.role = query.role;
+
+    // Handle includeDeleted
+    // If includeDeleted is true, we fetch everything (including deleted).
+    // If specific logic is needed (only deleted vs all), adjust here.
+    // Assuming includeDeleted means "show active + deleted".
+    if (query.includeDeleted) {
+      findOptions.withDeleted = true;
+    }
+
+    const search = query.search?.trim();
+    if (search) {
+      findOptions.where = [
+        { ...findOptions.where, email: ILike(`%${search}%`) },
+        { ...findOptions.where, username: ILike(`%${search}%`) },
+        { ...findOptions.where, firstName: ILike(`%${search}%`) },
+        { ...findOptions.where, lastName: ILike(`%${search}%`) },
+      ];
+    }
+
+    const [items, total] = await this.userRepo.findAndCount(findOptions);
+
+    return {
+      data: items.map((u) => this.sanitize(u)),
+      meta: {
+        total,
+        page,
+        limit,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOne(id: number) {

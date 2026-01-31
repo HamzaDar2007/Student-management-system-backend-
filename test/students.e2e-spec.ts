@@ -164,11 +164,9 @@ describe('Students (e2e)', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
-          expect(res.body).toHaveProperty('items');
-          expect(res.body).toHaveProperty('total');
-          expect(res.body).toHaveProperty('page');
-          expect(res.body).toHaveProperty('limit');
-          expect(Array.isArray(res.body.items)).toBe(true);
+          expect(res.body).toHaveProperty('data');
+          expect(res.body).toHaveProperty('meta');
+          expect(Array.isArray(res.body.data)).toBe(true);
         });
     });
 
@@ -201,8 +199,8 @@ describe('Students (e2e)', () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .expect(200)
         .expect((res) => {
-          expect(res.body.page).toBe(1);
-          expect(res.body.limit).toBe(5);
+          expect(res.body.meta.page).toBe(1);
+          expect(res.body.meta.limit).toBe(5);
         });
     });
   });

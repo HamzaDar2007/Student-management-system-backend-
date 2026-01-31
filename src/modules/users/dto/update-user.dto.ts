@@ -19,7 +19,9 @@ export class UpdateUserDto {
   email?: string;
 
   @IsOptional()
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
   @IsString()
   @Length(3, 50)
   @Matches(/^[a-zA-Z0-9_]+$/, {

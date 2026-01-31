@@ -103,10 +103,11 @@ describe('CoursesService', () => {
 
       const result = await service.findAll(query);
 
-      expect(result).toHaveProperty('items');
-      expect(result).toHaveProperty('total');
-      expect(result).toHaveProperty('page');
-      expect(result).toHaveProperty('limit');
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('meta');
+      expect(result.meta).toHaveProperty('total');
+      expect(result.meta).toHaveProperty('page');
+      expect(result.meta).toHaveProperty('limit');
     });
 
     it('should filter by active status', async () => {
@@ -114,7 +115,7 @@ describe('CoursesService', () => {
 
       const result = await service.findAll(query);
 
-      expect(result).toHaveProperty('items');
+      expect(result).toHaveProperty('data');
     });
   });
 

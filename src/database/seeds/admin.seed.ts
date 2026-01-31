@@ -21,12 +21,12 @@ async function seedAdmin() {
     const passwordHash = await bcrypt.hash('Admin@123', 10);
 
     // Check if admin already exists
-    const existingAdmin = await dataSource.query(
+    const existingAdmin = (await dataSource.query(
       `SELECT * FROM users WHERE email = $1`,
       ['admin@system.com'],
-    );
+    )) as unknown as Record<string, unknown>[];
 
-    if (existingAdmin.length > 0) {
+    if (Array.isArray(existingAdmin) && existingAdmin.length > 0) {
       console.log('');
       console.log('⚠️  Admin user already exists');
       console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');

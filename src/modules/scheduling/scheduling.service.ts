@@ -68,7 +68,15 @@ export class SchedulingService {
       skip,
       take: limit,
     });
-    return { page, limit, total, items };
+    return {
+      data: items,
+      meta: {
+        total,
+        page,
+        limit,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOne(id: number) {
@@ -175,7 +183,15 @@ export class SchedulingService {
       skip,
       take: limit,
     });
-    return { page, limit, total, items };
+    return {
+      data: items,
+      meta: {
+        total,
+        page,
+        limit,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOneClassroom(id: number) {

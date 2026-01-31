@@ -154,9 +154,9 @@ describe('DepartmentsController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty('items');
-      expect(response.body).toHaveProperty('total');
-      expect(Array.isArray(response.body.items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(response.body).toHaveProperty('meta');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it('teacher should access departments', async () => {
@@ -165,8 +165,8 @@ describe('DepartmentsController (e2e)', () => {
         .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty('items');
-      expect(Array.isArray(response.body.items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it('student should access departments', async () => {
@@ -175,8 +175,8 @@ describe('DepartmentsController (e2e)', () => {
         .set('Authorization', `Bearer ${studentAuth.accessToken}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty('items');
-      expect(Array.isArray(response.body.items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
   });
 

@@ -83,11 +83,30 @@ export class CoursesService {
       qb.andWhere('teacher.id = :teacherId', { teacherId: query.teacher_id });
     }
 
+    if (query.search) {
+      qb.andWhere(
+        '(course.courseCode ILIKE :search OR course.courseName ILIKE :search)',
+        { search: `%${query.search}%` },
+      );
+    }
+
+    if (query.includeDeleted) {
+      qb.withDeleted();
+    }
+
     qb.orderBy('course.id', 'DESC').skip(skip).take(limit);
 
     const [items, total] = await qb.getManyAndCount();
 
-    return { page, limit, total, items };
+    return {
+      data: items,
+      meta: {
+        total,
+        page,
+        limit,
+        lastPage: Math.ceil(total / limit),
+      },
+    };
   }
 
   async findOne(id: number) {

@@ -1,22 +1,28 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ValidationPipe } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 import { DataSource } from 'typeorm';
 import { UserRole } from '../src/modules/users/entities/user.entity';
 import * as bcrypt from 'bcryptjs';
 import { setupE2EApp } from './helpers/app-setup.helper';
+import {
+  createAdminAndLogin,
+  createTeacherAndLogin,
+  createStudentAndLogin,
+  deleteTestUsers,
+  AuthTokens,
+  cleanupTestDataByPrefix,
+} from './helpers';
 
 describe('Users (e2e)', () => {
   let app: INestApplication;
   let dataSource: DataSource;
-  let adminToken: string;
-  let teacherToken: string;
-  let studentToken: string;
-  let adminUserId: number;
-  let teacherUserId: number;
-  let studentUserId: number;
+  let adminAuth: AuthTokens;
+  let teacherAuth: AuthTokens;
+  let studentAuth: AuthTokens;
   let createdUserId: number;
+  const TEST_PREFIX = 'users_e2e';
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -29,69 +35,13 @@ describe('Users (e2e)', () => {
     await app.init();
     dataSource = moduleFixture.get<DataSource>(DataSource);
 
-    // Create test users with different roles
-    const passwordHash = await bcrypt.hash('TestPassword123!', 10);
+    // Proactive cleanup
+    await cleanupTestDataByPrefix(dataSource, TEST_PREFIX);
 
-    // Create admin user
-    const adminResult = await dataSource.query(
-      `INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active) 
-       VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id`,
-      [
-        'e2e_admin@test.com',
-        'e2e_admin',
-        passwordHash,
-        UserRole.ADMIN,
-        'Admin',
-        'Test',
-      ],
-    );
-    adminUserId = adminResult[0].id;
-
-    // Create teacher user
-    const teacherResult = await dataSource.query(
-      `INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active) 
-       VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id`,
-      [
-        'e2e_teacher@test.com',
-        'e2e_teacher',
-        passwordHash,
-        UserRole.TEACHER,
-        'Teacher',
-        'Test',
-      ],
-    );
-    teacherUserId = teacherResult[0].id;
-
-    // Create student user
-    const studentResult = await dataSource.query(
-      `INSERT INTO users (email, username, password_hash, role, first_name, last_name, is_active) 
-       VALUES ($1, $2, $3, $4, $5, $6, true) RETURNING id`,
-      [
-        'e2e_student@test.com',
-        'e2e_student',
-        passwordHash,
-        UserRole.STUDENT,
-        'Student',
-        'Test',
-      ],
-    );
-    studentUserId = studentResult[0].id;
-
-    // Login to get tokens
-    const adminLogin = await request(app.getHttpServer())
-      .post('/api/v1/auth/login')
-      .send({ email: 'e2e_admin@test.com', password: 'TestPassword123!' });
-    adminToken = adminLogin.body.access_token;
-
-    const teacherLogin = await request(app.getHttpServer())
-      .post('/api/v1/auth/login')
-      .send({ email: 'e2e_teacher@test.com', password: 'TestPassword123!' });
-    teacherToken = teacherLogin.body.access_token;
-
-    const studentLogin = await request(app.getHttpServer())
-      .post('/api/v1/auth/login')
-      .send({ email: 'e2e_student@test.com', password: 'TestPassword123!' });
-    studentToken = studentLogin.body.access_token;
+    // Create test users with different roles using helpers
+    adminAuth = await createAdminAndLogin(app, dataSource, TEST_PREFIX);
+    teacherAuth = await createTeacherAndLogin(app, dataSource, TEST_PREFIX);
+    studentAuth = await createStudentAndLogin(app, dataSource, TEST_PREFIX);
   });
 
   afterAll(async () => {
@@ -102,9 +52,7 @@ describe('Users (e2e)', () => {
           createdUserId,
         ]);
       }
-      await dataSource.query('DELETE FROM users WHERE email LIKE $1', [
-        'e2e_%@test.com',
-      ]);
+      await cleanupTestDataByPrefix(dataSource, TEST_PREFIX);
     } catch (e) {
       // Ignore cleanup errors
     }
@@ -115,14 +63,12 @@ describe('Users (e2e)', () => {
     it('should return paginated users for admin', () => {
       return request(app.getHttpServer())
         .get('/api/v1/users')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200)
         .expect((res) => {
-          expect(res.body).toHaveProperty('items');
-          expect(res.body).toHaveProperty('total');
-          expect(res.body).toHaveProperty('page');
-          expect(res.body).toHaveProperty('limit');
-          expect(Array.isArray(res.body.items)).toBe(true);
+          expect(res.body).toHaveProperty('data');
+          expect(res.body).toHaveProperty('meta');
+          expect(Array.isArray(res.body.data)).toBe(true);
         });
     });
 
@@ -130,10 +76,10 @@ describe('Users (e2e)', () => {
       return request(app.getHttpServer())
         .get('/api/v1/users')
         .query({ role: UserRole.ADMIN })
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200)
         .expect((res) => {
-          res.body.items.forEach((user: any) => {
+          res.body.data.forEach((user: any) => {
             expect(user.role).toBe(UserRole.ADMIN);
           });
         });
@@ -143,19 +89,19 @@ describe('Users (e2e)', () => {
       return request(app.getHttpServer())
         .get('/api/v1/users')
         .query({ page: 1, limit: 5 })
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200)
         .expect((res) => {
-          expect(res.body.page).toBe(1);
-          expect(res.body.limit).toBe(5);
-          expect(res.body.items.length).toBeLessThanOrEqual(5);
+          expect(res.body.meta.page).toBe(1);
+          expect(res.body.meta.limit).toBe(5);
+          expect(res.body.data.length).toBeLessThanOrEqual(5);
         });
     });
 
     it('should reject request from non-admin users', () => {
       return request(app.getHttpServer())
         .get('/api/v1/users')
-        .set('Authorization', `Bearer ${studentToken}`)
+        .set('Authorization', `Bearer ${studentAuth.accessToken}`)
         .expect(403);
     });
 
@@ -167,11 +113,11 @@ describe('Users (e2e)', () => {
   describe('GET /api/users/:id', () => {
     it('should return user by id for admin', () => {
       return request(app.getHttpServer())
-        .get(`/api/v1/users/${studentUserId}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .get(`/api/v1/users/${studentAuth.user.id}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200)
         .expect((res) => {
-          expect(res.body).toHaveProperty('id', studentUserId);
+          expect(res.body).toHaveProperty('id', studentAuth.user.id);
           expect(res.body).toHaveProperty('email');
           expect(res.body).not.toHaveProperty('passwordHash');
         });
@@ -180,7 +126,7 @@ describe('Users (e2e)', () => {
     it('should return 404 for non-existent user', () => {
       return request(app.getHttpServer())
         .get('/api/v1/users/99999')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
   });
@@ -189,7 +135,7 @@ describe('Users (e2e)', () => {
     it('should create a new user for admin', () => {
       return request(app.getHttpServer())
         .post('/api/v1/users')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
           email: 'e2e_newuser@test.com',
           username: 'e2e_newuser',
@@ -209,7 +155,7 @@ describe('Users (e2e)', () => {
     it('should reject duplicate email', () => {
       return request(app.getHttpServer())
         .post('/api/v1/users')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
           email: 'e2e_admin@test.com',
           username: 'different_username',
@@ -222,7 +168,7 @@ describe('Users (e2e)', () => {
     it('should reject creation by non-admin', () => {
       return request(app.getHttpServer())
         .post('/api/v1/users')
-        .set('Authorization', `Bearer ${teacherToken}`)
+        .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .send({
           email: 'another@test.com',
           username: 'another',
@@ -236,8 +182,8 @@ describe('Users (e2e)', () => {
   describe('PUT /api/users/:id', () => {
     it('should update user for admin', () => {
       return request(app.getHttpServer())
-        .put(`/api/v1/users/${studentUserId}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .put(`/api/v1/users/${studentAuth.user.id}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
           firstName: 'Updated',
           lastName: 'Student',
@@ -252,7 +198,7 @@ describe('Users (e2e)', () => {
     it('should return 404 for non-existent user', () => {
       return request(app.getHttpServer())
         .put('/api/v1/users/99999')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({ firstName: 'Test' })
         .expect(404);
     });
@@ -279,7 +225,7 @@ describe('Users (e2e)', () => {
     it('should delete user for admin', () => {
       return request(app.getHttpServer())
         .delete(`/api/v1/users/${deleteUserId}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200)
         .expect((res) => {
           expect(res.body).toHaveProperty('deleted', true);
@@ -289,14 +235,14 @@ describe('Users (e2e)', () => {
     it('should return 404 for non-existent user', () => {
       return request(app.getHttpServer())
         .delete('/api/v1/users/99999')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(404);
     });
 
     it('should reject deletion by non-admin', () => {
       return request(app.getHttpServer())
-        .delete(`/api/v1/users/${studentUserId}`)
-        .set('Authorization', `Bearer ${teacherToken}`)
+        .delete(`/api/v1/users/${studentAuth.user.id}`)
+        .set('Authorization', `Bearer ${teacherAuth.accessToken}`)
         .expect(403);
     });
   });

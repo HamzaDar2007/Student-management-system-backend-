@@ -87,11 +87,9 @@ describe('AuditController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      expect(response.body).toHaveProperty('items');
-      expect(response.body).toHaveProperty('total');
-      expect(response.body).toHaveProperty('page');
-      expect(response.body).toHaveProperty('limit');
-      expect(Array.isArray(response.body.items)).toBe(true);
+      expect(response.body).toHaveProperty('data');
+      expect(response.body).toHaveProperty('meta');
+      expect(Array.isArray(response.body.data)).toBe(true);
     });
 
     it('should filter by user_id', async () => {
@@ -101,19 +99,19 @@ describe('AuditController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      response.body.items.forEach((log: any) => {
+      response.body.data.forEach((log: any) => {
         expect(log.userId).toBe(adminAuth.user.id);
       });
     });
 
-    it('should filter by action', async () => {
+    it('should filter logs by action', async () => {
       const response = await request(app.getHttpServer())
-        .get(endpoint)
+        .get('/api/v1/audit')
         .query({ action: 'CREATE' })
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      response.body.items.forEach((log: any) => {
+      response.body.data.forEach((log: any) => {
         expect(log.action).toBe('CREATE');
       });
     });
@@ -125,21 +123,21 @@ describe('AuditController (e2e)', () => {
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      response.body.items.forEach((log: any) => {
+      response.body.data.forEach((log: any) => {
         expect(log.resource).toBe('Student');
       });
     });
 
     it('should support pagination', async () => {
       const response = await request(app.getHttpServer())
-        .get(endpoint)
+        .get('/api/v1/audit')
         .query({ page: 1, limit: 2 })
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .expect(200);
 
-      expect(response.body.page).toBe(1);
-      expect(response.body.limit).toBe(2);
-      expect(response.body.items.length).toBeLessThanOrEqual(2);
+      expect(response.body.meta.page).toBe(1);
+      expect(response.body.meta.limit).toBe(2);
+      expect(response.body.data.length).toBeLessThanOrEqual(2);
     });
 
     it('teacher should be rejected', async () => {

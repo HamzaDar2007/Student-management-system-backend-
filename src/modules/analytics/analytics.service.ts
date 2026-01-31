@@ -9,7 +9,10 @@ import {
   Enrollment,
   EnrollmentStatus,
 } from '../enrollments/entities/enrollment.entity';
-import { Attendance } from '../attendance/entities/attendance.entity';
+import {
+  Attendance,
+  AttendanceStatus,
+} from '../attendance/entities/attendance.entity';
 import { Schedule } from '../scheduling/entities/schedule.entity';
 
 @Injectable()
@@ -44,7 +47,7 @@ export class AnalyticsService {
       .createQueryBuilder('attendance')
       .select('COUNT(attendance.id)', 'total')
       .addSelect(
-        "SUM(CASE WHEN attendance.status = 'PRESENT' THEN 1 ELSE 0 END)",
+        `SUM(CASE WHEN attendance.status = '${AttendanceStatus.PRESENT}' THEN 1 ELSE 0 END)`,
         'present',
       )
       .getRawOne()) as { total: string; present: string };
@@ -74,7 +77,8 @@ export class AnalyticsService {
       .addSelect('COUNT(enrollment.id)', 'count')
       .where('enrollment.grade IS NOT NULL')
       .groupBy('enrollment.grade')
-      .getRawMany();
+      .groupBy('enrollment.grade')
+      .getRawMany<{ grade: string; count: string }>();
 
     // Attendance Overview
     const attendanceOverview = await this.attendanceRepo
@@ -82,20 +86,23 @@ export class AnalyticsService {
       .select('attendance.status', 'name')
       .addSelect('COUNT(attendance.id)', 'value')
       .groupBy('attendance.status')
-      .getRawMany();
+      .groupBy('attendance.status')
+      .getRawMany<{ name: string; value: string }>();
 
     // Map colors for attendance
+    // Use lowercase keys to match enum values
     const attendanceColors: Record<string, string> = {
-      PRESENT: '#22c55e',
-      ABSENT: '#ef4444',
-      LATE: '#f59e0b',
-      EXCUSED: '#3b82f6',
+      [AttendanceStatus.PRESENT]: '#22c55e',
+      [AttendanceStatus.ABSENT]: '#ef4444',
+      [AttendanceStatus.LATE]: '#f59e0b',
+      [AttendanceStatus.EXCUSED]: '#3b82f6',
     };
 
     const formattedAttendance = attendanceOverview.map((item) => ({
-      name: item.name.charAt(0) + item.name.slice(1).toLowerCase(),
+      name:
+        item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase(),
       value: Number(item.value),
-      color: attendanceColors[item.name] || '#888888',
+      color: attendanceColors[String(item.name)] || '#888888',
     }));
 
     return {
@@ -190,19 +197,21 @@ export class AnalyticsService {
       .select('attendance.status', 'name')
       .addSelect('COUNT(attendance.id)', 'value')
       .groupBy('attendance.status')
-      .getRawMany();
+      .groupBy('attendance.status')
+      .getRawMany<{ name: string; value: string }>();
 
     const attendanceColors: Record<string, string> = {
-      PRESENT: '#22c55e',
-      ABSENT: '#ef4444',
-      LATE: '#f59e0b',
-      EXCUSED: '#3b82f6',
+      [AttendanceStatus.PRESENT]: '#22c55e',
+      [AttendanceStatus.ABSENT]: '#ef4444',
+      [AttendanceStatus.LATE]: '#f59e0b',
+      [AttendanceStatus.EXCUSED]: '#3b82f6',
     };
 
     const formattedAttendance = attendanceOverview.map((item) => ({
-      name: item.name.charAt(0) + item.name.slice(1).toLowerCase(),
+      name:
+        item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase(),
       value: Number(item.value),
-      color: attendanceColors[item.name] || '#888888',
+      color: attendanceColors[String(item.name)] || '#888888',
     }));
 
     // Grade Distribution for this teacher
@@ -215,7 +224,8 @@ export class AnalyticsService {
       .addSelect('COUNT(enrollment.id)', 'count')
       .andWhere('enrollment.grade IS NOT NULL')
       .groupBy('enrollment.grade')
-      .getRawMany();
+      .groupBy('enrollment.grade')
+      .getRawMany<{ grade: string; count: string }>();
 
     return {
       attendanceData: formattedAttendance,
@@ -245,7 +255,7 @@ export class AnalyticsService {
       .where('attendance.studentId = :studentId', { studentId: student.id })
       .select('COUNT(attendance.id)', 'total')
       .addSelect(
-        "SUM(CASE WHEN attendance.status = 'PRESENT' THEN 1 ELSE 0 END)",
+        `SUM(CASE WHEN attendance.status = '${AttendanceStatus.PRESENT}' THEN 1 ELSE 0 END)`,
         'present',
       )
       .getRawOne()) as { total: string; present: string };
@@ -323,19 +333,21 @@ export class AnalyticsService {
       .select('attendance.status', 'name')
       .addSelect('COUNT(attendance.id)', 'value')
       .groupBy('attendance.status')
-      .getRawMany();
+      .groupBy('attendance.status')
+      .getRawMany<{ name: string; value: string }>();
 
     const attendanceColors: Record<string, string> = {
-      PRESENT: '#22c55e',
-      ABSENT: '#ef4444',
-      LATE: '#f59e0b',
-      EXCUSED: '#3b82f6',
+      [AttendanceStatus.PRESENT]: '#22c55e',
+      [AttendanceStatus.ABSENT]: '#ef4444',
+      [AttendanceStatus.LATE]: '#f59e0b',
+      [AttendanceStatus.EXCUSED]: '#3b82f6',
     };
 
     const formattedAttendance = attendanceOverview.map((item) => ({
-      name: item.name.charAt(0) + item.name.slice(1).toLowerCase(),
+      name:
+        item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase(),
       value: Number(item.value),
-      color: attendanceColors[item.name] || '#888888',
+      color: attendanceColors[String(item.name)] || '#888888',
     }));
 
     return {
