@@ -70,13 +70,23 @@ describe('GradesService', () => {
   describe('findAll', () => {
     it('should return paginated grades', async () => {
       mockGradeRepository.findAndCount.mockResolvedValue([[mockGrade], 1]);
+      const mockItems = [mockGrade];
+      mockGradeRepository.findAndCount.mockResolvedValue([mockItems, 1]);
 
       const result = await service.findAll({ page: 1, limit: 10 });
 
-      expect(result).toHaveProperty('items');
-      expect(result).toHaveProperty('total');
-      expect(result).toHaveProperty('page');
-      expect(result).toHaveProperty('limit');
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('meta');
+      expect(result.meta).toHaveProperty('total');
+      expect(result).toEqual({
+        data: mockItems,
+        meta: {
+          page: 1,
+          limit: 10,
+          total: 1,
+          lastPage: 1,
+        },
+      });
     });
   });
 

@@ -131,10 +131,13 @@ describe('AuditService', () => {
         take: 20,
       });
       expect(result).toEqual({
-        page: 1,
-        limit: 20,
-        total: 1,
-        items: mockItems,
+        data: mockItems,
+        meta: {
+          page: 1,
+          limit: 20,
+          total: 1,
+          lastPage: 1,
+        },
       });
     });
 
@@ -154,10 +157,13 @@ describe('AuditService', () => {
         take: 10,
       });
       expect(result).toEqual({
-        page: 2,
-        limit: 10,
-        total: 15,
-        items: mockItems,
+        data: mockItems,
+        meta: {
+          page: 2,
+          limit: 10,
+          total: 15,
+          lastPage: 2,
+        },
       });
     });
 

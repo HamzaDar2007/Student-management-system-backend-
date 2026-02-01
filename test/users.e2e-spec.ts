@@ -137,8 +137,8 @@ describe('Users (e2e)', () => {
         .post('/api/v1/users')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
-          email: 'e2e_newuser@test.com',
-          username: 'e2e_newuser',
+          email: `${TEST_PREFIX}_newuser@test.com`,
+          username: `${TEST_PREFIX}_newuser`,
           password: 'NewPassword123!',
           role: UserRole.STUDENT,
           firstName: 'New',
@@ -147,7 +147,7 @@ describe('Users (e2e)', () => {
         .expect(201)
         .expect((res) => {
           expect(res.body).toHaveProperty('id');
-          expect(res.body.email).toBe('e2e_newuser@test.com');
+          expect(res.body.email).toBe(`${TEST_PREFIX}_newuser@test.com`);
           createdUserId = res.body.id;
         });
     });
@@ -157,7 +157,7 @@ describe('Users (e2e)', () => {
         .post('/api/v1/users')
         .set('Authorization', `Bearer ${adminAuth.accessToken}`)
         .send({
-          email: 'e2e_admin@test.com',
+          email: `${TEST_PREFIX}_${UserRole.ADMIN}_${adminAuth.user.id}@test.com`, // Use an existing email from beforeAll
           username: 'different_username',
           password: 'Password123!',
           role: UserRole.STUDENT,
@@ -210,11 +210,11 @@ describe('Users (e2e)', () => {
     beforeAll(async () => {
       const passwordHash = await bcrypt.hash('TestPassword123!', 10);
       const result = await dataSource.query(
-        `INSERT INTO users (email, username, password_hash, role, is_active) 
-         VALUES ($1, $2, $3, $4, true) RETURNING id`,
+        `INSERT INTO users (email, username, password_hash, role, is_active, first_name, last_name) 
+         VALUES ($1, $2, $3, $4, true, 'Delete', 'Me') RETURNING id`,
         [
-          'e2e_todelete@test.com',
-          'e2e_todelete',
+          `${TEST_PREFIX}_todelete@test.com`,
+          `${TEST_PREFIX}_todelete`,
           passwordHash,
           UserRole.STUDENT,
         ],
