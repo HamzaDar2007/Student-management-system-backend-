@@ -31,10 +31,17 @@ describe('SchedulingService', () => {
   const mockCourse = { id: 1, courseCode: 'CS101' };
 
   const mockQueryBuilder = {
+    leftJoinAndSelect: jest.fn().mockReturnThis(),
+    innerJoin: jest.fn().mockReturnThis(),
     where: jest.fn().mockReturnThis(),
     andWhere: jest.fn().mockReturnThis(),
+    skip: jest.fn().mockReturnThis(),
+    take: jest.fn().mockReturnThis(),
+    orderBy: jest.fn().mockReturnThis(),
+    addOrderBy: jest.fn().mockReturnThis(),
     getCount: jest.fn().mockResolvedValue(0),
     getOne: jest.fn().mockResolvedValue(null),
+    getManyAndCount: jest.fn().mockResolvedValue([[], 0]),
   };
 
   const mockScheduleRepository = {
@@ -91,18 +98,30 @@ describe('SchedulingService', () => {
 
   describe('findAll', () => {
     it('should return paginated schedules', async () => {
-      mockScheduleRepository.findAndCount.mockResolvedValue([
-        [mockSchedule],
-        1,
-      ]);
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[mockSchedule], 1]);
 
-      const result = await service.findAll(1, 10);
+      const result = await service.findAll({ page: 1, limit: 10 });
 
       expect(result).toHaveProperty('data');
       expect(result).toHaveProperty('meta');
       expect(result.meta).toHaveProperty('total');
       expect(result.meta).toHaveProperty('page');
       expect(result.meta).toHaveProperty('limit');
+    });
+
+    it('should filter by teacherId', async () => {
+      mockQueryBuilder.getManyAndCount.mockResolvedValue([[], 0]);
+
+      await service.findAll({ teacherId: 1 });
+
+      expect(mockQueryBuilder.innerJoin).toHaveBeenCalledWith(
+        'course.teachers',
+        'teacher',
+      );
+      expect(mockQueryBuilder.andWhere).toHaveBeenCalledWith(
+        'teacher.id = :teacherId',
+        { teacherId: 1 },
+      );
     });
   });
 

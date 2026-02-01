@@ -64,7 +64,11 @@ export class AuditController {
     type: 'string',
     description: 'Resource type (e.g., user, student, course)',
   })
-  @ApiParam({ name: 'resourceId', type: 'string', description: 'Resource ID' })
+  @ApiParam({
+    name: 'resourceId',
+    type: 'string',
+    description: 'ID of the resource',
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns audit logs for the resource',

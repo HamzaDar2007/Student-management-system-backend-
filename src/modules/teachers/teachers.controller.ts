@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -135,7 +136,7 @@ export class TeachersController {
     return this.teachersService.remove(id);
   }
 
-  @Post(':id/restore')
+  @Patch(':id/restore')
   @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Restore a soft-deleted teacher profile (Admin only)',

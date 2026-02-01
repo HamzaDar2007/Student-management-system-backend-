@@ -23,6 +23,7 @@ import { CreateSchedulingDto } from './dto/create-scheduling.dto';
 import { UpdateSchedulingDto } from './dto/update-scheduling.dto';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
+import { SchedulingQueryDto } from './dto/scheduling-query.dto';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -56,24 +57,12 @@ export class SchedulingController {
   @Get()
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get all schedules with pagination' })
-  @ApiQuery({
-    name: 'page',
-    required: false,
-    type: 'number',
-    description: 'Page number',
-  })
-  @ApiQuery({
-    name: 'limit',
-    required: false,
-    type: 'number',
-    description: 'Items per page',
-  })
   @ApiResponse({
     status: 200,
     description: 'Returns paginated list of schedules',
   })
-  findAll(@Query('page') page?: number, @Query('limit') limit?: number) {
-    return this.schedulingService.findAll(page || 1, limit || 10);
+  findAll(@Query() query: SchedulingQueryDto) {
+    return this.schedulingService.findAll(query);
   }
 
   // ========================================
@@ -246,5 +235,16 @@ export class SchedulingController {
   @ApiResponse({ status: 404, description: 'Schedule not found' })
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.schedulingService.remove(id);
+  }
+
+  @Patch(':id/restore')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Restore a soft-deleted schedule (Admin only)' })
+  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
+  @ApiResponse({ status: 200, description: 'Schedule restored successfully' })
+  @ApiResponse({ status: 404, description: 'Schedule not found' })
+  @ApiResponse({ status: 409, description: 'Schedule is not deleted' })
+  restore(@Param('id', ParseIntPipe) id: number) {
+    return this.schedulingService.restore(id);
   }
 }

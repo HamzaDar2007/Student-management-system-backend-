@@ -11,6 +11,7 @@ import { CreateSchedulingDto } from './dto/create-scheduling.dto';
 import { UpdateSchedulingDto } from './dto/update-scheduling.dto';
 import { CreateClassroomDto } from './dto/create-classroom.dto';
 import { UpdateClassroomDto } from './dto/update-classroom.dto';
+import { SchedulingQueryDto } from './dto/scheduling-query.dto';
 import { Course } from '../courses/entities/course.entity';
 
 @Injectable()
@@ -60,14 +61,28 @@ export class SchedulingService {
     return this.scheduleRepo.save(schedule);
   }
 
-  async findAll(page = 1, limit = 10) {
+  async findAll(query: SchedulingQueryDto) {
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
     const skip = (page - 1) * limit;
-    const [items, total] = await this.scheduleRepo.findAndCount({
-      relations: ['course', 'classroom'],
-      order: { dayOfWeek: 'ASC', startTime: 'ASC' },
-      skip,
-      take: limit,
-    });
+
+    const queryBuilder = this.scheduleRepo
+      .createQueryBuilder('schedule')
+      .leftJoinAndSelect('schedule.course', 'course')
+      .leftJoinAndSelect('schedule.classroom', 'classroom')
+      .skip(skip)
+      .take(limit)
+      .orderBy('schedule.dayOfWeek', 'ASC')
+      .addOrderBy('schedule.startTime', 'ASC');
+
+    if (query.teacherId) {
+      queryBuilder
+        .innerJoin('course.teachers', 'teacher')
+        .andWhere('teacher.id = :teacherId', { teacherId: query.teacherId });
+    }
+
+    const [items, total] = await queryBuilder.getManyAndCount();
+
     return {
       data: items,
       meta: {
@@ -256,6 +271,23 @@ export class SchedulingService {
     return this.classroomRepo.restore(id);
   }
 
+  async restore(id: number) {
+    const schedule = await this.scheduleRepo.findOne({
+      where: { id },
+      withDeleted: true,
+    });
+
+    if (!schedule) {
+      throw new NotFoundException(`Schedule with ID ${id} not found`);
+    }
+
+    if (!schedule.deletedAt) {
+      throw new ConflictException(`Schedule with ID ${id} is not deleted`);
+    }
+
+    return this.scheduleRepo.restore(id);
+  }
+
   // Helper method to check for schedule conflicts
   private async checkScheduleConflict(
     classroomId: number,
@@ -266,10 +298,10 @@ export class SchedulingService {
   ): Promise<boolean> {
     const query = this.scheduleRepo
       .createQueryBuilder('schedule')
-      .where('schedule.classroom_id = :classroomId', { classroomId })
-      .andWhere('schedule.day_of_week = :dayOfWeek', { dayOfWeek })
+      .where('schedule.classroomId = :classroomId', { classroomId })
+      .andWhere('schedule.dayOfWeek = :dayOfWeek', { dayOfWeek })
       .andWhere(
-        '(schedule.start_time < :endTime AND schedule.end_time > :startTime)',
+        '(schedule.startTime < :endTime AND schedule.endTime > :startTime)',
         { startTime, endTime },
       );
 

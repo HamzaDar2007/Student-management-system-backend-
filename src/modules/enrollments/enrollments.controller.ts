@@ -7,6 +7,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Patch,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -104,7 +105,7 @@ export class EnrollmentsController {
     return this.enrollmentsService.remove(id);
   }
 
-  @Put(':id/grade')
+  @Patch(':id/grade')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Update enrollment grade (Admin/Teacher)' })
   @ApiParam({ name: 'id', type: 'number', description: 'Enrollment ID' })

@@ -92,31 +92,39 @@ describe('SchedulingController', () => {
     it('should return paginated list of schedules', async () => {
       const expected = {
         items: [mockSchedule],
-        total: 1,
-        page: 1,
-        limit: 10,
+        meta: { total: 1, page: 1, limit: 10 },
       };
       mockSchedulingService.findAll.mockResolvedValue(expected);
 
-      const result = await controller.findAll(1, 10);
+      const result = await controller.findAll({ page: 1, limit: 10 });
 
-      expect(schedulingService.findAll).toHaveBeenCalledWith(1, 10);
+      expect(schedulingService.findAll).toHaveBeenCalledWith({
+        page: 1,
+        limit: 10,
+      });
       expect(result).toEqual(expected);
     });
 
     it('should use default pagination', async () => {
       const expected = {
         items: [],
-        total: 0,
-        page: 1,
-        limit: 10,
+        meta: { total: 0, page: 1, limit: 10 },
       };
       mockSchedulingService.findAll.mockResolvedValue(expected);
 
-      const result = await controller.findAll();
+      const result = await controller.findAll({});
 
-      expect(schedulingService.findAll).toHaveBeenCalledWith(1, 10);
+      expect(schedulingService.findAll).toHaveBeenCalledWith({});
       expect(result).toEqual(expected);
+    });
+
+    it('should filter by teacherId', async () => {
+      const expected = { items: [], meta: { total: 0, page: 1, limit: 10 } };
+      mockSchedulingService.findAll.mockResolvedValue(expected);
+
+      await controller.findAll({ teacherId: 1 });
+
+      expect(schedulingService.findAll).toHaveBeenCalledWith({ teacherId: 1 });
     });
   });
 

@@ -70,9 +70,13 @@ export class AuditService {
     return log;
   }
 
-  async findByResource(resource: string, resourceId: string) {
+  async findByResource(resource: string, resourceId?: string) {
+    const where: FindOptionsWhere<AuditLog> = { resource };
+    if (resourceId) {
+      where.resourceId = resourceId;
+    }
     return this.auditRepo.find({
-      where: { resource, resourceId },
+      where,
       relations: ['user'],
       order: { createdAt: 'DESC' },
     });
