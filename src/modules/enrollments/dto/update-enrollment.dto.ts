@@ -11,7 +11,7 @@ import { EnrollmentStatus } from '../entities/enrollment.entity';
 export class UpdateEnrollmentDto {
   @IsOptional()
   @IsInt()
-  student_id?: number;
+  student_id?: string;
 
   @IsOptional()
   @IsInt()

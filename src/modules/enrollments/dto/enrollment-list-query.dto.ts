@@ -9,7 +9,7 @@ export class EnrollmentListQueryDto extends PaginationDto {
     value === undefined ? undefined : parseInt(value, 10),
   )
   @IsInt()
-  student_id?: number;
+  student_id?: string;
 
   @IsOptional()
   @Transform(({ value }: { value: string }) =>

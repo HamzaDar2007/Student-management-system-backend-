@@ -67,38 +67,38 @@ export class StudentsController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get student by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Student ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Student ID' })
   @ApiResponse({ status: 200, description: 'Returns student data' })
   @ApiResponse({ status: 404, description: 'Student not found' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: string) {
     return this.studentsService.findOne(id);
   }
 
   @Put(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update student by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Student ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Student ID' })
   @ApiResponse({ status: 200, description: 'Student updated successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Student not found' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateStudentDto) {
+  update(@Param('id') id: string, @Body() dto: UpdateStudentDto) {
     return this.studentsService.update(id, dto);
   }
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete student by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Student ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Student ID' })
   @ApiResponse({ status: 200, description: 'Student deleted successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Student not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.studentsService.remove(id);
   }
 
@@ -117,7 +117,7 @@ export class StudentsController {
   @Patch(':id/restore')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Restore a soft-deleted student (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Student ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Student ID' })
   @ApiResponse({ status: 200, description: 'Student restored successfully' })
   @ApiResponse({
     status: 403,
@@ -125,30 +125,30 @@ export class StudentsController {
   })
   @ApiResponse({ status: 404, description: 'Student not found' })
   @ApiResponse({ status: 409, description: 'Student is not deleted' })
-  restore(@Param('id', ParseIntPipe) id: number) {
+  restore(@Param('id') id: string) {
     return this.studentsService.restore(id);
   }
 
   @Get(':id/grades')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get all grades for a student' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Student ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Student ID' })
   @ApiResponse({ status: 200, description: 'Returns student grades' })
   @ApiResponse({ status: 404, description: 'Student not found' })
-  grades(@Param('id', ParseIntPipe) id: number) {
+  grades(@Param('id') id: string) {
     return this.studentsService.getGrades(id);
   }
 
   @Get(':id/attendance')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get attendance records for a student' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Student ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Student ID' })
   @ApiResponse({
     status: 200,
     description: 'Returns student attendance records',
   })
   @ApiResponse({ status: 404, description: 'Student not found' })
-  attendance(@Param('id', ParseIntPipe) id: number) {
+  attendance(@Param('id') id: string) {
     return this.studentsService.getAttendance(id);
   }
 
@@ -179,7 +179,7 @@ export class StudentsController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Bulk delete students (Admin only)' })
   @ApiResponse({ status: 200, description: 'Students deleted successfully' })
-  async bulkDelete(@Body('studentIds') studentIds: number[]) {
+  async bulkDelete(@Body('studentIds') studentIds: string[]) {
     return this.studentsService.bulkDelete(studentIds);
   }
 
@@ -187,7 +187,7 @@ export class StudentsController {
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Bulk activate students (Admin only)' })
   @ApiResponse({ status: 200, description: 'Students activated successfully' })
-  async bulkActivate(@Body('studentIds') studentIds: number[]) {
+  async bulkActivate(@Body('studentIds') studentIds: string[]) {
     return this.studentsService.bulkActivate(studentIds);
   }
 
@@ -198,7 +198,7 @@ export class StudentsController {
     status: 200,
     description: 'Students deactivated successfully',
   })
-  async bulkDeactivate(@Body('studentIds') studentIds: number[]) {
+  async bulkDeactivate(@Body('studentIds') studentIds: string[]) {
     return this.studentsService.bulkDeactivate(studentIds);
   }
 }

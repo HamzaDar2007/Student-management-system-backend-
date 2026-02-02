@@ -129,7 +129,7 @@ export class CacheService {
  */
 export const CacheKeys = {
   // Students
-  student: (id: number) => `student:${id}`,
+  student: (id: string) => `student:${id}`,
   studentByUserId: (userId: number) => `student:user:${userId}`,
   studentsList: (page: number, limit: number) =>
     `students:list:${page}:${limit}`,
@@ -168,14 +168,14 @@ export const CacheKeys = {
 
   // Enrollments
   enrollment: (id: number) => `enrollment:${id}`,
-  enrollmentsByStudent: (studentId: number) =>
+  enrollmentsByStudent: (studentId: string) =>
     `enrollments:student:${studentId}`,
   enrollmentsByCourse: (courseId: number) => `enrollments:course:${courseId}`,
   enrollmentsPrefix: 'enrollment',
 
   // Grades
   grade: (id: number) => `grade:${id}`,
-  gradesByStudent: (studentId: number) => `grades:student:${studentId}`,
+  gradesByStudent: (studentId: string) => `grades:student:${studentId}`,
   gradesByCourse: (courseId: number) => `grades:course:${courseId}`,
   gradesPrefix: 'grade',
 

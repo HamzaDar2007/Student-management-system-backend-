@@ -220,7 +220,7 @@ export class AttendanceService {
     }
 
     const rawData = await qb.getRawMany<{
-      studentId: number;
+      studentId: string;
       totalClasses: string;
       presentCount: string;
       absentCount: string;

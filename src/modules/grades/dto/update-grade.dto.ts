@@ -11,7 +11,7 @@ import {
 export class UpdateGradeDto {
   @IsOptional()
   @IsInt()
-  student_id?: number;
+  student_id?: string;
 
   @IsOptional()
   @IsInt()

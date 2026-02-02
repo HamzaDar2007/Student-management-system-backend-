@@ -10,7 +10,7 @@ import { AttendanceStatus } from '../entities/attendance.entity';
 
 export class CreateAttendanceDto {
   @IsInt()
-  student_id: number;
+  student_id: string;
 
   @IsInt()
   course_id: number;

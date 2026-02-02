@@ -11,7 +11,7 @@ import { AttendanceStatus } from '../entities/attendance.entity';
 export class UpdateAttendanceDto {
   @IsOptional()
   @IsInt()
-  student_id?: number;
+  student_id?: string;
 
   @IsOptional()
   @IsInt()

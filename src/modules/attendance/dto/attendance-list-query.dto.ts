@@ -7,7 +7,7 @@ export class AttendanceListQueryDto extends PaginationDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  student_id?: number;
+  student_id?: string;
 
   @IsOptional()
   @Type(() => Number)

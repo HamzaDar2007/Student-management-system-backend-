@@ -25,8 +25,8 @@ export class Attendance {
   id: number;
 
   @Index('idx_attendance_student_date')
-  @Column({ name: 'student_id', type: 'int' })
-  studentId: number;
+  @Column({ name: 'student_id', type: 'uuid' })
+  studentId: string;
 
   @ManyToOne(() => Student, (s) => s.attendanceRecords, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'student_id' })

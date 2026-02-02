@@ -2,7 +2,7 @@ import { IsDateString, IsInt, IsOptional } from 'class-validator';
 
 export class CreateEnrollmentDto {
   @IsInt()
-  student_id: number;
+  student_id: string;
 
   @IsInt()
   course_id: number;

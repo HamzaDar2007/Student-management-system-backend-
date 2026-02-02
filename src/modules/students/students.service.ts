@@ -139,7 +139,7 @@ export class StudentsService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const cacheKey = CacheKeys.student(id);
 
     return this.cacheService.getOrSet(
@@ -163,7 +163,7 @@ export class StudentsService {
     );
   }
 
-  async update(id: number, dto: UpdateStudentDto) {
+  async update(id: string, dto: UpdateStudentDto) {
     const student = await this.studentRepo.findOne({ where: { id } });
     if (!student) throw new NotFoundException('Student not found');
 
@@ -201,7 +201,7 @@ export class StudentsService {
     return updated;
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const student = await this.studentRepo.findOne({ where: { id } });
     if (!student) throw new NotFoundException('Student not found');
     await this.studentRepo.softRemove(student);
@@ -212,7 +212,7 @@ export class StudentsService {
     return { deleted: true };
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     const student = await this.studentRepo.findOne({
       where: { id },
       withDeleted: true,
@@ -246,7 +246,7 @@ export class StudentsService {
     };
   }
 
-  async getGrades(studentId: number) {
+  async getGrades(studentId: string) {
     const student = await this.studentRepo.findOne({
       where: { id: studentId },
     });
@@ -259,7 +259,7 @@ export class StudentsService {
     });
   }
 
-  async getAttendance(studentId: number) {
+  async getAttendance(studentId: string) {
     const student = await this.studentRepo.findOne({
       where: { id: studentId },
     });
@@ -442,7 +442,7 @@ export class StudentsService {
     return results;
   }
 
-  async bulkDelete(studentIds: number[]) {
+  async bulkDelete(studentIds: string[]) {
     if (!studentIds || studentIds.length === 0) {
       throw new ConflictException('No student IDs provided');
     }
@@ -461,7 +461,7 @@ export class StudentsService {
     };
   }
 
-  async bulkActivate(studentIds: number[]) {
+  async bulkActivate(studentIds: string[]) {
     if (!studentIds || studentIds.length === 0) {
       throw new ConflictException('No student IDs provided');
     }
@@ -480,7 +480,7 @@ export class StudentsService {
     };
   }
 
-  async bulkDeactivate(studentIds: number[]) {
+  async bulkDeactivate(studentIds: string[]) {
     // Same as bulk delete (soft delete)
     return this.bulkDelete(studentIds);
   }

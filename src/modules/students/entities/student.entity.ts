@@ -26,8 +26,8 @@ export enum Gender {
 
 @Entity({ name: 'students' })
 export class Student {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   // UNIQUE user_id (nullable) with FK ON DELETE SET NULL
   @Column({ name: 'user_id', type: 'uuid', unique: true, nullable: true })
