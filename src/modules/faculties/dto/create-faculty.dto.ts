@@ -13,5 +13,5 @@ export class CreateFacultyDto {
 
   @IsOptional()
   @IsString()
-  dean_id?: string;
+  deanId?: string;
 }

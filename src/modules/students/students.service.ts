@@ -36,36 +36,35 @@ export class StudentsService {
 
   async create(dto: CreateStudentDto) {
     const exists = await this.studentRepo.findOne({
-      where: { studentId: dto.student_id },
+      where: { studentId: dto.studentId },
     });
     if (exists) throw new ConflictException('student_id already exists');
 
     const student = await this.studentRepo.save(
       this.studentRepo.create({
-        userId: dto.user_id ?? null,
-        studentId: dto.student_id,
-        dateOfBirth: dto.date_of_birth ?? null,
+        userId: dto.userId ?? null,
+        studentId: dto.studentId,
+        dateOfBirth: dto.dateOfBirth ?? null,
         gender: dto.gender ?? null,
         address: dto.address ?? null,
         phone: dto.phone ?? null,
-        emergencyContact: dto.emergency_contact ?? null,
-        enrollmentDate: dto.enrollment_date,
-        departmentId: dto.department_id ?? null,
+        emergencyContact: dto.emergencyContact ?? null,
+        enrollmentDate: dto.enrollmentDate,
+        departmentId: dto.departmentId ?? null,
         semester: dto.semester ?? null,
-        bloodGroup: dto.blood_group ?? null,
+        bloodGroup: dto.bloodGroup ?? null,
         nationality: dto.nationality ?? null,
-        emergencyContactName: dto.emergency_contact_name ?? null,
-        emergencyContactPhone: dto.emergency_contact_phone ?? null,
-        emergencyContactRelationship:
-          dto.emergency_contact_relationship ?? null,
-        guardianName: dto.guardian_name ?? null,
-        guardianPhone: dto.guardian_phone ?? null,
-        guardianEmail: dto.guardian_email ?? null,
-        guardianRelationship: dto.guardian_relationship ?? null,
-        medicalConditions: dto.medical_conditions ?? null,
+        emergencyContactName: dto.emergencyContactName ?? null,
+        emergencyContactPhone: dto.emergencyContactPhone ?? null,
+        emergencyContactRelationship: dto.emergencyContactRelationship ?? null,
+        guardianName: dto.guardianName ?? null,
+        guardianPhone: dto.guardianPhone ?? null,
+        guardianEmail: dto.guardianEmail ?? null,
+        guardianRelationship: dto.guardianRelationship ?? null,
+        medicalConditions: dto.medicalConditions ?? null,
         allergies: dto.allergies ?? null,
-        currentYear: dto.current_year ?? null,
-        currentSemester: dto.current_semester ?? null,
+        currentYear: dto.currentYear ?? null,
+        currentSemester: dto.currentSemester ?? null,
       }),
     );
 
@@ -82,19 +81,19 @@ export class StudentsService {
     const skip = (page - 1) * limit;
 
     const where: any = {};
-    if (query.department_id) where.departmentId = query.department_id;
+    if (query.departmentId) where.departmentId = query.departmentId;
     if (query.semester) where.semester = query.semester;
     if (query.gender) where.gender = query.gender;
     if (query.year) where.currentYear = query.year;
 
     // Handle enrollment status filter
-    if (query.enrollment_status) {
-      if (query.enrollment_status === 'active') {
+    if (query.enrollmentStatus) {
+      if (query.enrollmentStatus === 'active') {
         where.deletedAt = null;
-      } else if (query.enrollment_status === 'inactive') {
+      } else if (query.enrollmentStatus === 'inactive') {
         // This would need a specific status field, for now treat as non-deleted
         where.deletedAt = null;
-      } else if (query.enrollment_status === 'graduated') {
+      } else if (query.enrollmentStatus === 'graduated') {
         // This would need a specific status field
         // For now, we'll skip this filter
       }
@@ -167,28 +166,28 @@ export class StudentsService {
     const student = await this.studentRepo.findOne({ where: { id } });
     if (!student) throw new NotFoundException('Student not found');
 
-    if (dto.student_id && dto.student_id !== student.studentId) {
+    if (dto.studentId && dto.studentId !== student.studentId) {
       const used = await this.studentRepo.findOne({
-        where: { studentId: dto.student_id },
+        where: { studentId: dto.studentId },
       });
       if (used) throw new ConflictException('student_id already exists');
     }
 
     Object.assign(student, {
-      userId: dto.user_id !== undefined ? dto.user_id : student.userId,
-      studentId: dto.student_id ?? student.studentId,
-      dateOfBirth: dto.date_of_birth ?? student.dateOfBirth,
+      userId: dto.userId !== undefined ? dto.userId : student.userId,
+      studentId: dto.studentId ?? student.studentId,
+      dateOfBirth: dto.dateOfBirth ?? student.dateOfBirth,
       gender: dto.gender !== undefined ? dto.gender : student.gender,
       address: dto.address !== undefined ? dto.address : student.address,
       phone: dto.phone !== undefined ? dto.phone : student.phone,
       emergencyContact:
-        dto.emergency_contact !== undefined
-          ? dto.emergency_contact
+        dto.emergencyContact !== undefined
+          ? dto.emergencyContact
           : student.emergencyContact,
-      enrollmentDate: dto.enrollment_date ?? student.enrollmentDate,
+      enrollmentDate: dto.enrollmentDate ?? student.enrollmentDate,
       departmentId:
-        dto.department_id !== undefined
-          ? dto.department_id
+        dto.departmentId !== undefined
+          ? dto.departmentId
           : student.departmentId,
       semester: dto.semester !== undefined ? dto.semester : student.semester,
     });
@@ -378,52 +377,51 @@ export class StudentsService {
 
         // Map CSV fields to DTO fields
         const dto: CreateStudentDto = {
-          student_id: row['Student ID'] || row['studentId'],
-          enrollment_date: row['Enrollment Date'] || row['enrollmentDate'],
-          user_id: row['user_id'] || undefined,
-          date_of_birth:
-            row['Date of Birth'] || row['dateOfBirth'] || undefined,
+          studentId: row['Student ID'] || row['studentId'],
+          enrollmentDate: row['Enrollment Date'] || row['enrollmentDate'],
+          userId: row['user_id'] || undefined,
+          dateOfBirth: row['Date of Birth'] || row['dateOfBirth'] || undefined,
           gender: row['Gender'] || row['gender'] || undefined,
           address: row['Address'] || row['address'] || undefined,
           phone: row['Phone'] || row['phone'] || undefined,
-          emergency_contact:
+          emergencyContact:
             row['Emergency Contact'] || row['emergencyContact'] || undefined,
-          blood_group: row['Blood Group'] || row['bloodGroup'] || undefined,
+          bloodGroup: row['Blood Group'] || row['bloodGroup'] || undefined,
           nationality: row['Nationality'] || row['nationality'] || undefined,
-          emergency_contact_name:
+          emergencyContactName:
             row['Emergency Contact Name'] ||
             row['emergencyContactName'] ||
             undefined,
-          emergency_contact_phone:
+          emergencyContactPhone:
             row['Emergency Contact Phone'] ||
             row['emergencyContactPhone'] ||
             undefined,
-          emergency_contact_relationship:
+          emergencyContactRelationship:
             row['Emergency Contact Relationship'] ||
             row['emergencyContactRelationship'] ||
             undefined,
-          guardian_name:
+          guardianName:
             row['Guardian Name'] || row['guardianName'] || undefined,
-          guardian_phone:
+          guardianPhone:
             row['Guardian Phone'] || row['guardianPhone'] || undefined,
-          guardian_email:
+          guardianEmail:
             row['Guardian Email'] || row['guardianEmail'] || undefined,
-          guardian_relationship:
+          guardianRelationship:
             row['Guardian Relationship'] ||
             row['guardianRelationship'] ||
             undefined,
-          medical_conditions:
+          medicalConditions:
             row['Medical Conditions'] || row['medicalConditions'] || undefined,
           allergies: row['Allergies'] || row['allergies'] || undefined,
-          department_id: row['department_id']
+          departmentId: row['department_id']
             ? parseInt(row['department_id'])
             : undefined,
           semester: row['semester'] ? parseInt(row['semester']) : undefined,
-          current_year:
+          currentYear:
             row['Current Year'] || row['currentYear']
               ? parseInt(row['Current Year'] || row['currentYear'])
               : undefined,
-          current_semester:
+          currentSemester:
             row['Current Semester'] || row['currentSemester']
               ? parseInt(row['Current Semester'] || row['currentSemester'])
               : undefined,

@@ -24,8 +24,8 @@ export class AcademicTermsService {
     if (existingName)
       throw new ConflictException('Academic term name already exists');
 
-    const startDate = new Date(dto.start_date);
-    const endDate = new Date(dto.end_date);
+    const startDate = new Date(dto.startDate);
+    const endDate = new Date(dto.endDate);
 
     if (startDate >= endDate) {
       throw new BadRequestException('Start date must be before end date');
@@ -35,7 +35,7 @@ export class AcademicTermsService {
       name: dto.name,
       startDate: startDate,
       endDate: endDate,
-      isActive: dto.is_active ?? false,
+      isActive: dto.isActive ?? false,
     });
 
     // If setting this term as active, deactivate others
@@ -87,17 +87,15 @@ export class AcademicTermsService {
         throw new ConflictException('Academic term name already exists');
     }
 
-    const startDate = dto.start_date
-      ? new Date(dto.start_date)
-      : term.startDate;
-    const endDate = dto.end_date ? new Date(dto.end_date) : term.endDate;
+    const startDate = dto.startDate ? new Date(dto.startDate) : term.startDate;
+    const endDate = dto.endDate ? new Date(dto.endDate) : term.endDate;
 
     if (startDate >= endDate) {
       throw new BadRequestException('Start date must be before end date');
     }
 
     // If setting this term as active, deactivate others
-    if (dto.is_active === true && !term.isActive) {
+    if (dto.isActive === true && !term.isActive) {
       await this.termRepo
         .createQueryBuilder()
         .update()
@@ -110,7 +108,7 @@ export class AcademicTermsService {
       name: dto.name ?? term.name,
       startDate: startDate,
       endDate: endDate,
-      isActive: dto.is_active !== undefined ? dto.is_active : term.isActive,
+      isActive: dto.isActive !== undefined ? dto.isActive : term.isActive,
     });
 
     return this.termRepo.save(term);

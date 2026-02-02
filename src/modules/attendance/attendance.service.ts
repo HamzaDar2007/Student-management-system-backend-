@@ -27,19 +27,19 @@ export class AttendanceService {
 
   async create(dto: CreateAttendanceDto, recordedById: string) {
     const student = await this.studentRepo.findOne({
-      where: { id: dto.student_id },
+      where: { id: dto.studentId },
     });
     if (!student) throw new NotFoundException('Student not found');
 
     const course = await this.courseRepo.findOne({
-      where: { id: dto.course_id },
+      where: { id: dto.courseId },
     });
     if (!course) throw new NotFoundException('Course not found');
 
     const existing = await this.attendanceRepo.findOne({
       where: {
-        studentId: dto.student_id,
-        courseId: dto.course_id,
+        studentId: dto.studentId,
+        courseId: dto.courseId,
         date: dto.date,
       },
     });
@@ -50,8 +50,8 @@ export class AttendanceService {
 
     const attendance = await this.attendanceRepo.save(
       this.attendanceRepo.create({
-        studentId: dto.student_id,
-        courseId: dto.course_id,
+        studentId: dto.studentId,
+        courseId: dto.courseId,
         date: dto.date,
         status: dto.status,
         notes: dto.notes ?? null,
@@ -64,7 +64,7 @@ export class AttendanceService {
 
   async bulkCreate(dto: BulkAttendanceDto, recordedById: string) {
     const course = await this.courseRepo.findOne({
-      where: { id: dto.course_id },
+      where: { id: dto.courseId },
     });
     if (!course) throw new NotFoundException('Course not found');
 
@@ -72,14 +72,14 @@ export class AttendanceService {
 
     for (const record of dto.records) {
       const student = await this.studentRepo.findOne({
-        where: { id: record.student_id },
+        where: { id: record.studentId },
       });
       if (!student) continue;
 
       const existing = await this.attendanceRepo.findOne({
         where: {
-          studentId: record.student_id,
-          courseId: dto.course_id,
+          studentId: record.studentId,
+          courseId: dto.courseId,
           date: dto.date,
         },
       });
@@ -92,8 +92,8 @@ export class AttendanceService {
       } else {
         const newRecord = await this.attendanceRepo.save(
           this.attendanceRepo.create({
-            studentId: record.student_id,
-            courseId: dto.course_id,
+            studentId: record.studentId,
+            courseId: dto.courseId,
             date: dto.date,
             status: record.status,
             notes: record.notes ?? null,
@@ -113,11 +113,11 @@ export class AttendanceService {
     const skip = (page - 1) * limit;
 
     const where: FindOptionsWhere<Attendance> = {};
-    if (query.student_id) where.studentId = query.student_id;
-    if (query.course_id) where.courseId = query.course_id;
+    if (query.studentId) where.studentId = query.studentId;
+    if (query.courseId) where.courseId = query.courseId;
     if (query.status) where.status = query.status;
-    if (query.start_date && query.end_date) {
-      where.date = Between(query.start_date, query.end_date);
+    if (query.startDate && query.endDate) {
+      where.date = Between(query.startDate, query.endDate);
     }
 
     const [items, total] = await this.attendanceRepo.findAndCount({
@@ -152,20 +152,20 @@ export class AttendanceService {
     const attendance = await this.attendanceRepo.findOne({ where: { id } });
     if (!attendance) throw new NotFoundException('Attendance not found');
 
-    if (dto.student_id !== undefined) {
+    if (dto.studentId !== undefined) {
       const student = await this.studentRepo.findOne({
-        where: { id: dto.student_id },
+        where: { id: dto.studentId },
       });
       if (!student) throw new NotFoundException('Student not found');
-      attendance.studentId = dto.student_id;
+      attendance.studentId = dto.studentId;
     }
 
-    if (dto.course_id !== undefined) {
+    if (dto.courseId !== undefined) {
       const course = await this.courseRepo.findOne({
-        where: { id: dto.course_id },
+        where: { id: dto.courseId },
       });
       if (!course) throw new NotFoundException('Course not found');
-      attendance.courseId = dto.course_id;
+      attendance.courseId = dto.courseId;
     }
 
     Object.assign(attendance, {
@@ -185,7 +185,7 @@ export class AttendanceService {
     return { deleted: true };
   }
 
-  async getReport(courseId: number, startDate?: string, endDate?: string) {
+  async getReport(courseId: string, startDate?: string, endDate?: string) {
     const course = await this.courseRepo.findOne({ where: { id: courseId } });
     if (!course) throw new NotFoundException('Course not found');
 

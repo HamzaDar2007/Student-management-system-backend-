@@ -1,13 +1,13 @@
-import { IsDateString, IsInt, IsOptional } from 'class-validator';
+import { IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class CreateEnrollmentDto {
-  @IsInt()
-  student_id: string;
+  @IsString()
+  studentId: string;
 
-  @IsInt()
-  course_id: number;
+  @IsString()
+  courseId: string;
 
   @IsOptional()
   @IsDateString()
-  enrollment_date?: string;
+  enrollmentDate?: string;
 }

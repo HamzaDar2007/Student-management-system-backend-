@@ -6,14 +6,13 @@ export class GradeListQueryDto extends PaginationDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  student_id?: string;
-
-  @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  course_id?: number;
+  studentId?: string;
 
   @IsOptional()
   @IsString()
-  assessment_type?: string;
+  courseId?: string;
+
+  @IsOptional()
+  @IsString()
+  assessmentType?: string;
 }

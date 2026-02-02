@@ -12,7 +12,7 @@ export class UpdateTeacherProfileDto {
   @IsOptional()
   @IsString()
   @Length(2, 20)
-  employee_id?: string;
+  employeeId?: string;
 
   @IsOptional()
   @IsEnum(AcademicRank)
@@ -26,11 +26,11 @@ export class UpdateTeacherProfileDto {
   @IsOptional()
   @IsString()
   @Length(1, 100)
-  office_location?: string;
+  officeLocation?: string;
 
   @IsOptional()
   @IsString()
-  office_hours?: string;
+  officeHours?: string;
 
   @IsOptional()
   @IsString()
@@ -43,9 +43,9 @@ export class UpdateTeacherProfileDto {
 
   @IsOptional()
   @IsDateString()
-  hire_date?: string;
+  hireDate?: string;
 
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 }

@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Patch,
   Post,
   Put,
@@ -61,38 +61,38 @@ export class CoursesController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get course by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Course ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Course ID' })
   @ApiResponse({ status: 200, description: 'Returns course data' })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.coursesService.findOne(id);
   }
 
   @Put(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update course by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Course ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Course ID' })
   @ApiResponse({ status: 200, description: 'Course updated successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateCourseDto) {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateCourseDto) {
     return this.coursesService.update(id, dto);
   }
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete course by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Course ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Course ID' })
   @ApiResponse({ status: 200, description: 'Course deleted successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.coursesService.remove(id);
   }
 
@@ -111,7 +111,7 @@ export class CoursesController {
   @Patch(':id/restore')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Restore a soft-deleted course (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Course ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Course ID' })
   @ApiResponse({ status: 200, description: 'Course restored successfully' })
   @ApiResponse({
     status: 403,
@@ -119,33 +119,33 @@ export class CoursesController {
   })
   @ApiResponse({ status: 404, description: 'Course not found' })
   @ApiResponse({ status: 409, description: 'Course is not deleted' })
-  restore(@Param('id', ParseIntPipe) id: number) {
+  restore(@Param('id', ParseUUIDPipe) id: string) {
     return this.coursesService.restore(id);
   }
 
   @Get(':id/students')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get all students enrolled in a course' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Course ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Course ID' })
   @ApiResponse({
     status: 200,
     description: 'Returns list of enrolled students',
   })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  students(@Param('id', ParseIntPipe) id: number) {
+  students(@Param('id', ParseUUIDPipe) id: string) {
     return this.coursesService.getStudents(id);
   }
 
   @Get(':id/attendance')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get attendance records for a course' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Course ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Course ID' })
   @ApiResponse({
     status: 200,
     description: 'Returns course attendance records',
   })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  attendance(@Param('id', ParseIntPipe) id: number) {
+  attendance(@Param('id', ParseUUIDPipe) id: string) {
     return this.coursesService.getAttendance(id);
   }
 }

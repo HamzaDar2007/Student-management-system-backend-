@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   ParseIntPipe,
+  ParseUUIDPipe,
   Query,
 } from '@nestjs/common';
 import {
@@ -191,7 +192,7 @@ export class SchedulingController {
   @ApiParam({ name: 'courseId', type: 'number', description: 'Course ID' })
   @ApiResponse({ status: 200, description: 'Returns course schedules' })
   @ApiResponse({ status: 404, description: 'Course not found' })
-  findByCourse(@Param('courseId', ParseIntPipe) courseId: number) {
+  findByCourse(@Param('courseId', ParseUUIDPipe) courseId: string) {
     return this.schedulingService.findByCourse(courseId);
   }
 

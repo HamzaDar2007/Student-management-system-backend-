@@ -16,7 +16,7 @@ import { Gender } from '../entities/student.entity';
 export class UpdateStudentDto {
   @IsOptional()
   @IsString()
-  user_id?: string | null;
+  userId?: string | null;
 
   @IsOptional()
   @Transform(({ value }: { value: string | undefined }) =>
@@ -25,12 +25,12 @@ export class UpdateStudentDto {
   @IsString()
   @Length(7, 20)
   @IsStudentId()
-  student_id?: string;
+  studentId?: string;
 
   @IsOptional()
   @IsDateString()
   @MinAge(16, { message: 'student must be at least 16 years old' })
-  date_of_birth?: string;
+  dateOfBirth?: string;
 
   @IsOptional()
   @IsEnum(Gender)
@@ -48,15 +48,15 @@ export class UpdateStudentDto {
   @IsOptional()
   @IsString()
   @Length(1, 100)
-  emergency_contact?: string | null;
+  emergencyContact?: string | null;
 
   @IsOptional()
   @IsDateString()
-  enrollment_date?: string;
+  enrollmentDate?: string;
 
   @IsOptional()
   @IsInt()
-  department_id?: number | null;
+  departmentId?: number | null;
 
   @IsOptional()
   @IsInt()
@@ -67,7 +67,7 @@ export class UpdateStudentDto {
   @IsOptional()
   @IsString()
   @Length(1, 10)
-  blood_group?: string | null;
+  bloodGroup?: string | null;
 
   @IsOptional()
   @IsString()
@@ -77,41 +77,41 @@ export class UpdateStudentDto {
   @IsOptional()
   @IsString()
   @Length(1, 100)
-  emergency_contact_name?: string | null;
+  emergencyContactName?: string | null;
 
   @IsOptional()
   @IsString()
   @Length(6, 20)
-  emergency_contact_phone?: string | null;
+  emergencyContactPhone?: string | null;
 
   @IsOptional()
   @IsString()
   @Length(1, 50)
-  emergency_contact_relationship?: string | null;
+  emergencyContactRelationship?: string | null;
 
   @IsOptional()
   @IsString()
   @Length(1, 100)
-  guardian_name?: string | null;
+  guardianName?: string | null;
 
   @IsOptional()
   @IsString()
   @Length(6, 20)
-  guardian_phone?: string | null;
+  guardianPhone?: string | null;
 
   @IsOptional()
   @IsString()
   @Length(1, 100)
-  guardian_email?: string | null;
+  guardianEmail?: string | null;
 
   @IsOptional()
   @IsString()
   @Length(1, 50)
-  guardian_relationship?: string | null;
+  guardianRelationship?: string | null;
 
   @IsOptional()
   @IsString()
-  medical_conditions?: string | null;
+  medicalConditions?: string | null;
 
   @IsOptional()
   @IsString()
@@ -121,11 +121,11 @@ export class UpdateStudentDto {
   @IsInt()
   @Min(1)
   @Max(4)
-  current_year?: number | null;
+  currentYear?: number | null;
 
   @IsOptional()
   @IsInt()
   @Min(1)
   @Max(2)
-  current_semester?: number | null;
+  currentSemester?: number | null;
 }

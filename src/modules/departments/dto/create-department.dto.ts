@@ -19,5 +19,5 @@ export class CreateDepartmentDto {
 
   @IsOptional()
   @IsInt()
-  faculty_id?: number;
+  facultyId?: number;
 }

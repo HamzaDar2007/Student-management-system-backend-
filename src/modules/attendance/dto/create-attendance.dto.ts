@@ -1,7 +1,6 @@
 import {
   IsDateString,
   IsEnum,
-  IsInt,
   IsOptional,
   IsString,
   Length,
@@ -9,11 +8,11 @@ import {
 import { AttendanceStatus } from '../entities/attendance.entity';
 
 export class CreateAttendanceDto {
-  @IsInt()
-  student_id: string;
+  @IsString()
+  studentId: string;
 
-  @IsInt()
-  course_id: number;
+  @IsString()
+  courseId: string;
 
   @IsDateString()
   date: string;

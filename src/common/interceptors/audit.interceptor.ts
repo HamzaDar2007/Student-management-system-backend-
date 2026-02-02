@@ -52,10 +52,10 @@ export class AuditInterceptor implements NestInterceptor {
         next: (data: unknown) => {
           // Log successful operations
           void this.auditService.log({
-            user_id: user?.id,
+            userId: user?.id,
             action,
             resource: resource.charAt(0).toUpperCase() + resource.slice(1),
-            resource_id:
+            resourceId:
               resourceId || (data as { id?: unknown })?.id?.toString(),
             payload: this.sanitizePayload(body),
           });

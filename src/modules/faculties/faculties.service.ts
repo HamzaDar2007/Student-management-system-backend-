@@ -33,8 +33,8 @@ export class FacultiesService {
       throw new ConflictException('Faculty code already exists');
 
     let dean: User | null = null;
-    if (dto.dean_id) {
-      dean = await this.userRepo.findOne({ where: { id: dto.dean_id } });
+    if (dto.deanId) {
+      dean = await this.userRepo.findOne({ where: { id: dto.deanId } });
       if (!dean) throw new NotFoundException('Dean user not found');
     }
 
@@ -93,12 +93,12 @@ export class FacultiesService {
       if (existing) throw new ConflictException('Faculty code already exists');
     }
 
-    if (dto.dean_id !== undefined) {
-      if (dto.dean_id === null) {
+    if (dto.deanId !== undefined) {
+      if (dto.deanId === null) {
         faculty.dean = null as unknown as User;
       } else {
         const dean = await this.userRepo.findOne({
-          where: { id: dto.dean_id },
+          where: { id: dto.deanId },
         });
         if (!dean) throw new NotFoundException('Dean user not found');
         faculty.dean = dean;

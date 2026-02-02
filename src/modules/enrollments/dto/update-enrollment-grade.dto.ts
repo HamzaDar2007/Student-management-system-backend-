@@ -17,5 +17,5 @@ export class UpdateEnrollmentGradeDto {
   @IsNumber()
   @Min(0)
   @Max(4)
-  grade_points?: number;
+  gradePoints?: number;
 }

@@ -11,11 +11,11 @@ import { AttendanceStatus } from '../entities/attendance.entity';
 export class UpdateAttendanceDto {
   @IsOptional()
   @IsInt()
-  student_id?: string;
+  studentId?: string;
 
   @IsOptional()
-  @IsInt()
-  course_id?: number;
+  @IsString()
+  courseId?: string;
 
   @IsOptional()
   @IsDateString()

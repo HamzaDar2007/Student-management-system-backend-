@@ -11,15 +11,15 @@ import { EnrollmentStatus } from '../entities/enrollment.entity';
 export class UpdateEnrollmentDto {
   @IsOptional()
   @IsInt()
-  student_id?: string;
+  studentId?: string;
 
   @IsOptional()
-  @IsInt()
-  course_id?: number;
+  @IsString()
+  courseId?: string;
 
   @IsOptional()
   @IsDateString()
-  enrollment_date?: string;
+  enrollmentDate?: string;
 
   @IsOptional()
   @IsEnum(EnrollmentStatus)

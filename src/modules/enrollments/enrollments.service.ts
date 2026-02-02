@@ -29,23 +29,23 @@ export class EnrollmentsService {
 
   async create(dto: CreateEnrollmentDto) {
     const student = await this.studentRepo.findOne({
-      where: { id: dto.student_id },
+      where: { id: dto.studentId },
     });
     if (!student) throw new NotFoundException('Student not found');
 
     const course = await this.courseRepo.findOne({
-      where: { id: dto.course_id },
+      where: { id: dto.courseId },
     });
     if (!course) throw new NotFoundException('Course not found');
 
     const exists = await this.enrollmentRepo.findOne({
-      where: { studentId: dto.student_id, courseId: dto.course_id },
+      where: { studentId: dto.studentId, courseId: dto.courseId },
     });
     if (exists) throw new ConflictException('Enrollment already exists');
 
     if (course.maxStudents) {
       const count = await this.enrollmentRepo.count({
-        where: { courseId: dto.course_id, status: EnrollmentStatus.ACTIVE },
+        where: { courseId: dto.courseId, status: EnrollmentStatus.ACTIVE },
       });
       if (count >= course.maxStudents) {
         throw new ConflictException('Course has reached max students');
@@ -54,10 +54,10 @@ export class EnrollmentsService {
 
     const enrollment = await this.enrollmentRepo.save(
       this.enrollmentRepo.create({
-        studentId: dto.student_id,
-        courseId: dto.course_id,
+        studentId: dto.studentId,
+        courseId: dto.courseId,
         enrollmentDate:
-          dto.enrollment_date ?? new Date().toISOString().slice(0, 10),
+          dto.enrollmentDate ?? new Date().toISOString().slice(0, 10),
         status: EnrollmentStatus.ACTIVE,
       }),
     );
@@ -71,8 +71,8 @@ export class EnrollmentsService {
     const skip = (page - 1) * limit;
 
     const where: FindOptionsWhere<Enrollment> = {};
-    if (query.student_id) where.studentId = query.student_id;
-    if (query.course_id) where.courseId = query.course_id;
+    if (query.studentId) where.studentId = query.studentId;
+    if (query.courseId) where.courseId = query.courseId;
     if (query.status) where.status = query.status;
 
     const [items, total] = await this.enrollmentRepo.findAndCount({
@@ -107,26 +107,23 @@ export class EnrollmentsService {
     const enrollment = await this.enrollmentRepo.findOne({ where: { id } });
     if (!enrollment) throw new NotFoundException('Enrollment not found');
 
-    if (
-      dto.student_id !== undefined &&
-      dto.student_id !== enrollment.studentId
-    ) {
+    if (dto.studentId !== undefined && dto.studentId !== enrollment.studentId) {
       const student = await this.studentRepo.findOne({
-        where: { id: dto.student_id },
+        where: { id: dto.studentId },
       });
       if (!student) throw new NotFoundException('Student not found');
-      enrollment.studentId = dto.student_id;
+      enrollment.studentId = dto.studentId;
     }
 
-    if (dto.course_id !== undefined && dto.course_id !== enrollment.courseId) {
+    if (dto.courseId !== undefined && dto.courseId !== enrollment.courseId) {
       const course = await this.courseRepo.findOne({
-        where: { id: dto.course_id },
+        where: { id: dto.courseId },
       });
       if (!course) throw new NotFoundException('Course not found');
-      enrollment.courseId = dto.course_id;
+      enrollment.courseId = dto.courseId;
     }
 
-    if (dto.enrollment_date) enrollment.enrollmentDate = dto.enrollment_date;
+    if (dto.enrollmentDate) enrollment.enrollmentDate = dto.enrollmentDate;
     if (dto.status) enrollment.status = dto.status;
     if (dto.grade !== undefined) enrollment.grade = dto.grade;
 

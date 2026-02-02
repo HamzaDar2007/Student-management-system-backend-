@@ -50,8 +50,8 @@ export class AuthService {
         username,
         passwordHash,
         role: dto.role || UserRole.STUDENT,
-        firstName: dto.first_name ?? null,
-        lastName: dto.last_name ?? null,
+        firstName: dto.firstName ?? null,
+        lastName: dto.lastName ?? null,
         isActive: true,
       }),
     );

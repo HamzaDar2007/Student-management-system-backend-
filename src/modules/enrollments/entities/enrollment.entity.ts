@@ -32,8 +32,8 @@ export class Enrollment {
   student: Student;
 
   @Index('idx_enrollments_course_id')
-  @Column({ name: 'course_id', type: 'int' })
-  courseId: number;
+  @Column({ name: 'course_id', type: 'uuid' })
+  courseId: string;
 
   @ManyToOne(() => Course, (c) => c.enrollments, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'course_id' })

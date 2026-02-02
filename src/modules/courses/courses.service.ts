@@ -29,26 +29,26 @@ export class CoursesService {
 
   async create(dto: CreateCourseDto) {
     const exists = await this.courseRepo.findOne({
-      where: { courseCode: dto.course_code },
+      where: { courseCode: dto.courseCode },
     });
     if (exists) throw new ConflictException('course_code already exists');
 
     const course = this.courseRepo.create({
-      courseCode: dto.course_code,
-      courseName: dto.course_name,
+      courseCode: dto.courseCode,
+      courseName: dto.courseName,
       description: dto.description ?? null,
       credits: dto.credits,
-      departmentId: dto.department_id ?? null,
+      departmentId: dto.departmentId ?? null,
       semester: dto.semester ?? null,
-      maxStudents: dto.max_students ?? 50,
-      isActive: dto.is_active ?? true,
+      maxStudents: dto.maxStudents ?? 50,
+      isActive: dto.isActive ?? true,
     });
 
-    if (dto.teacher_ids && dto.teacher_ids.length > 0) {
+    if (dto.teacherIds && dto.teacherIds.length > 0) {
       const teachers = await this.userRepo.find({
-        where: { id: In(dto.teacher_ids), role: UserRole.TEACHER },
+        where: { id: In(dto.teacherIds), role: UserRole.TEACHER },
       });
-      if (teachers.length !== dto.teacher_ids.length) {
+      if (teachers.length !== dto.teacherIds.length) {
         throw new NotFoundException(
           'Some teacher IDs not found or not teachers',
         );
@@ -68,19 +68,19 @@ export class CoursesService {
       .createQueryBuilder('course')
       .leftJoinAndSelect('course.teachers', 'teacher');
 
-    if (query.is_active !== undefined) {
-      qb.andWhere('course.isActive = :active', { active: query.is_active });
+    if (query.isActive !== undefined) {
+      qb.andWhere('course.isActive = :active', { active: query.isActive });
     }
     if (query.semester) {
       qb.andWhere('course.semester = :semester', { semester: query.semester });
     }
-    if (query.department_id) {
+    if (query.departmentId) {
       qb.andWhere('course.departmentId = :departmentId', {
-        departmentId: query.department_id,
+        departmentId: query.departmentId,
       });
     }
-    if (query.teacher_id) {
-      qb.andWhere('teacher.id = :teacherId', { teacherId: query.teacher_id });
+    if (query.teacherId) {
+      qb.andWhere('teacher.id = :teacherId', { teacherId: query.teacherId });
     }
 
     if (query.search) {
@@ -109,7 +109,7 @@ export class CoursesService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const course = await this.courseRepo.findOne({
       where: { id },
       relations: ['teachers'],
@@ -118,44 +118,42 @@ export class CoursesService {
     return course;
   }
 
-  async update(id: number, dto: UpdateCourseDto) {
+  async update(id: string, dto: UpdateCourseDto) {
     const course = await this.courseRepo.findOne({
       where: { id },
       relations: ['teachers'],
     });
     if (!course) throw new NotFoundException('Course not found');
 
-    if (dto.course_code && dto.course_code !== course.courseCode) {
+    if (dto.courseCode && dto.courseCode !== course.courseCode) {
       const used = await this.courseRepo.findOne({
-        where: { courseCode: dto.course_code },
+        where: { courseCode: dto.courseCode },
       });
       if (used) throw new ConflictException('course_code already exists');
     }
 
     Object.assign(course, {
-      courseCode: dto.course_code ?? course.courseCode,
-      courseName: dto.course_name ?? course.courseName,
+      courseCode: dto.courseCode ?? course.courseCode,
+      courseName: dto.courseName ?? course.courseName,
       description:
         dto.description !== undefined ? dto.description : course.description,
       credits: dto.credits ?? course.credits,
       departmentId:
-        dto.department_id !== undefined
-          ? dto.department_id
-          : course.departmentId,
+        dto.departmentId !== undefined ? dto.departmentId : course.departmentId,
       semester: dto.semester !== undefined ? dto.semester : course.semester,
       maxStudents:
-        dto.max_students !== undefined ? dto.max_students : course.maxStudents,
-      isActive: dto.is_active !== undefined ? dto.is_active : course.isActive,
+        dto.maxStudents !== undefined ? dto.maxStudents : course.maxStudents,
+      isActive: dto.isActive !== undefined ? dto.isActive : course.isActive,
     });
 
-    if (dto.teacher_ids !== undefined) {
-      if (dto.teacher_ids.length === 0) {
+    if (dto.teacherIds !== undefined) {
+      if (dto.teacherIds.length === 0) {
         course.teachers = [];
       } else {
         const teachers = await this.userRepo.find({
-          where: { id: In(dto.teacher_ids), role: UserRole.TEACHER },
+          where: { id: In(dto.teacherIds), role: UserRole.TEACHER },
         });
-        if (teachers.length !== dto.teacher_ids.length) {
+        if (teachers.length !== dto.teacherIds.length) {
           throw new NotFoundException(
             'Some teacher IDs not found or not teachers',
           );
@@ -167,14 +165,14 @@ export class CoursesService {
     return this.courseRepo.save(course);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const course = await this.courseRepo.findOne({ where: { id } });
     if (!course) throw new NotFoundException('Course not found');
     await this.courseRepo.softRemove(course);
     return { deleted: true };
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     const course = await this.courseRepo.findOne({
       where: { id },
       withDeleted: true,
@@ -196,7 +194,7 @@ export class CoursesService {
     });
   }
 
-  async getStudents(courseId: number) {
+  async getStudents(courseId: string) {
     const course = await this.courseRepo.findOne({ where: { id: courseId } });
     if (!course) throw new NotFoundException('Course not found');
 
@@ -207,7 +205,7 @@ export class CoursesService {
     });
   }
 
-  async getAttendance(courseId: number) {
+  async getAttendance(courseId: string) {
     const course = await this.courseRepo.findOne({ where: { id: courseId } });
     if (!course) throw new NotFoundException('Course not found');
 

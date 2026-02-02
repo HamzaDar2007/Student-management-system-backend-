@@ -18,7 +18,7 @@ export class UpdateCourseDto {
   )
   @IsString()
   @Length(2, 20)
-  course_code?: string;
+  courseCode?: string;
 
   @IsOptional()
   @Transform(({ value }: { value: unknown }) =>
@@ -26,7 +26,7 @@ export class UpdateCourseDto {
   )
   @IsString()
   @Length(2, 100)
-  course_name?: string;
+  courseName?: string;
 
   @IsOptional()
   @IsString()
@@ -40,7 +40,7 @@ export class UpdateCourseDto {
 
   @IsOptional()
   @IsInt()
-  department_id?: number | null;
+  departmentId?: number | null;
 
   @IsOptional()
   @IsInt()
@@ -52,20 +52,20 @@ export class UpdateCourseDto {
   @IsInt()
   @Min(1)
   @Max(200)
-  max_students?: number;
+  maxStudents?: number;
 
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 
   @IsOptional()
   @IsString()
-  created_by?: string | null;
+  createdBy?: string | null;
 
   @IsOptional()
   @IsArray()
   @ArrayUnique()
   @Type(() => Number)
   @IsInt({ each: true })
-  teacher_ids?: number[];
+  teacherIds?: number[];
 }

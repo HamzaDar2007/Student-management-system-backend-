@@ -3,7 +3,7 @@ import { AttendanceStatus } from '../entities/attendance.entity';
 
 export class AttendanceRecordDto {
   @IsInt()
-  student_id: string;
+  studentId: string;
 
   @IsEnum(AttendanceStatus)
   status: AttendanceStatus;

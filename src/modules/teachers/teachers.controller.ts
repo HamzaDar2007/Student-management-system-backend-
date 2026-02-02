@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Patch,
@@ -76,10 +76,10 @@ export class TeachersController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Get teacher by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Teacher profile ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Teacher profile ID' })
   @ApiResponse({ status: 200, description: 'Returns teacher data' })
   @ApiResponse({ status: 404, description: 'Teacher not found' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.teachersService.findOne(id);
   }
 
@@ -102,7 +102,7 @@ export class TeachersController {
   @Put(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update teacher profile by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Teacher profile ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Teacher profile ID' })
   @ApiResponse({
     status: 200,
     description: 'Teacher profile updated successfully',
@@ -113,7 +113,7 @@ export class TeachersController {
   })
   @ApiResponse({ status: 404, description: 'Teacher not found' })
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateTeacherProfileDto,
   ) {
     return this.teachersService.update(id, dto);
@@ -122,7 +122,7 @@ export class TeachersController {
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Soft delete teacher profile by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Teacher profile ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Teacher profile ID' })
   @ApiResponse({
     status: 200,
     description: 'Teacher profile deleted successfully',
@@ -132,7 +132,7 @@ export class TeachersController {
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Teacher not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.teachersService.remove(id);
   }
 
@@ -141,7 +141,7 @@ export class TeachersController {
   @ApiOperation({
     summary: 'Restore a soft-deleted teacher profile (Admin only)',
   })
-  @ApiParam({ name: 'id', type: 'number', description: 'Teacher profile ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Teacher profile ID' })
   @ApiResponse({
     status: 200,
     description: 'Teacher profile restored successfully',
@@ -151,7 +151,7 @@ export class TeachersController {
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Teacher not found' })
-  restore(@Param('id', ParseIntPipe) id: number) {
+  restore(@Param('id', ParseUUIDPipe) id: string) {
     return this.teachersService.restore(id);
   }
 }

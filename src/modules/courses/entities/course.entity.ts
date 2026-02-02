@@ -20,8 +20,8 @@ import { Department } from '../../departments/entities/department.entity';
 
 @Entity({ name: 'courses' })
 export class Course {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ name: 'course_code', type: 'varchar', length: 20, unique: true })
   courseCode: string;

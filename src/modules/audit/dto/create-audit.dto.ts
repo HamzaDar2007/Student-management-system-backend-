@@ -3,7 +3,7 @@ import { IsObject, IsOptional, IsString, Length } from 'class-validator';
 export class CreateAuditDto {
   @IsOptional()
   @IsString()
-  user_id?: string;
+  userId?: string;
 
   @IsString()
   @Length(1, 50)
@@ -16,7 +16,7 @@ export class CreateAuditDto {
   @IsOptional()
   @IsString()
   @Length(1, 50)
-  resource_id?: string;
+  resourceId?: string;
 
   @IsOptional()
   @IsObject()

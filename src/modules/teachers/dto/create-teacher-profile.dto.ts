@@ -9,11 +9,11 @@ import { AcademicRank } from '../entities/teacher-profile.entity';
 
 export class CreateTeacherProfileDto {
   @IsString()
-  user_id: string;
+  userId: string;
 
   @IsString()
   @Length(2, 20)
-  employee_id: string;
+  employeeId: string;
 
   @IsOptional()
   @IsEnum(AcademicRank)
@@ -27,11 +27,11 @@ export class CreateTeacherProfileDto {
   @IsOptional()
   @IsString()
   @Length(1, 100)
-  office_location?: string;
+  officeLocation?: string;
 
   @IsOptional()
   @IsString()
-  office_hours?: string;
+  officeHours?: string;
 
   @IsOptional()
   @IsString()
@@ -44,5 +44,5 @@ export class CreateTeacherProfileDto {
 
   @IsOptional()
   @IsDateString()
-  hire_date?: string;
+  hireDate?: string;
 }

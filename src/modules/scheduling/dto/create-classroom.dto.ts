@@ -13,7 +13,7 @@ export class CreateClassroomDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(20)
-  room_number: string;
+  roomNumber: string;
 
   @IsOptional()
   @IsString()

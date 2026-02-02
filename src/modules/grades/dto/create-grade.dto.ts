@@ -1,5 +1,4 @@
 import {
-  IsInt,
   IsNumber,
   IsOptional,
   IsString,
@@ -9,27 +8,27 @@ import {
 } from 'class-validator';
 
 export class CreateGradeDto {
-  @IsInt()
-  student_id: string;
+  @IsString()
+  studentId: string;
 
-  @IsInt()
-  course_id: number;
+  @IsString()
+  courseId: string;
 
   @IsString()
   @Length(1, 50)
-  assessment_type: string;
+  assessmentType: string;
 
   @IsString()
   @Length(1, 100)
-  assessment_name: string;
+  assessmentName: string;
 
   @IsNumber()
   @Min(1)
-  max_score: number;
+  maxScore: number;
 
   @IsNumber()
   @Min(0)
-  score_obtained: number;
+  scoreObtained: number;
 
   @IsOptional()
   @IsNumber()
@@ -39,5 +38,5 @@ export class CreateGradeDto {
 
   @IsOptional()
   @IsString()
-  graded_by?: string;
+  gradedBy?: string;
 }

@@ -20,14 +20,14 @@ export class TeachersService {
   ) {}
 
   async create(dto: CreateTeacherProfileDto) {
-    const user = await this.userRepo.findOne({ where: { id: dto.user_id } });
+    const user = await this.userRepo.findOne({ where: { id: dto.userId } });
     if (!user) throw new NotFoundException('User not found');
     if (user.role !== UserRole.TEACHER) {
       throw new ConflictException('User must have teacher role');
     }
 
     const existingByUser = await this.profileRepo.findOne({
-      where: { userId: dto.user_id },
+      where: { userId: dto.userId },
     });
     if (existingByUser)
       throw new ConflictException(
@@ -35,22 +35,22 @@ export class TeachersService {
       );
 
     const existingByEmpId = await this.profileRepo.findOne({
-      where: { employeeId: dto.employee_id },
+      where: { employeeId: dto.employeeId },
     });
     if (existingByEmpId)
       throw new ConflictException('Employee ID already exists');
 
     const profile = await this.profileRepo.save(
       this.profileRepo.create({
-        userId: dto.user_id,
-        employeeId: dto.employee_id,
+        userId: dto.userId,
+        employeeId: dto.employeeId,
         rank: dto.rank,
         specialization: dto.specialization ?? null,
-        officeLocation: dto.office_location ?? null,
-        officeHours: dto.office_hours ?? null,
+        officeLocation: dto.officeLocation ?? null,
+        officeHours: dto.officeHours ?? null,
         phone: dto.phone ?? null,
         bio: dto.bio ?? null,
-        hireDate: dto.hire_date ?? null,
+        hireDate: dto.hireDate ?? null,
       }),
     );
 
@@ -76,7 +76,7 @@ export class TeachersService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const profile = await this.profileRepo.findOne({
       where: { id },
       relations: ['user', 'user.teachingCourses'],
@@ -94,47 +94,47 @@ export class TeachersService {
     return profile;
   }
 
-  async update(id: number, dto: UpdateTeacherProfileDto) {
+  async update(id: string, dto: UpdateTeacherProfileDto) {
     const profile = await this.profileRepo.findOne({ where: { id } });
     if (!profile) throw new NotFoundException('Teacher profile not found');
 
-    if (dto.employee_id && dto.employee_id !== profile.employeeId) {
+    if (dto.employeeId && dto.employeeId !== profile.employeeId) {
       const existing = await this.profileRepo.findOne({
-        where: { employeeId: dto.employee_id },
+        where: { employeeId: dto.employeeId },
       });
       if (existing) throw new ConflictException('Employee ID already exists');
     }
 
     Object.assign(profile, {
-      employeeId: dto.employee_id ?? profile.employeeId,
+      employeeId: dto.employeeId ?? profile.employeeId,
       rank: dto.rank ?? profile.rank,
       specialization:
         dto.specialization !== undefined
           ? dto.specialization
           : profile.specialization,
       officeLocation:
-        dto.office_location !== undefined
-          ? dto.office_location
+        dto.officeLocation !== undefined
+          ? dto.officeLocation
           : profile.officeLocation,
       officeHours:
-        dto.office_hours !== undefined ? dto.office_hours : profile.officeHours,
+        dto.officeHours !== undefined ? dto.officeHours : profile.officeHours,
       phone: dto.phone !== undefined ? dto.phone : profile.phone,
       bio: dto.bio !== undefined ? dto.bio : profile.bio,
-      hireDate: dto.hire_date !== undefined ? dto.hire_date : profile.hireDate,
-      isActive: dto.is_active !== undefined ? dto.is_active : profile.isActive,
+      hireDate: dto.hireDate !== undefined ? dto.hireDate : profile.hireDate,
+      isActive: dto.isActive !== undefined ? dto.isActive : profile.isActive,
     });
 
     return this.profileRepo.save(profile);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const profile = await this.profileRepo.findOne({ where: { id } });
     if (!profile) throw new NotFoundException('Teacher profile not found');
     await this.profileRepo.softRemove(profile);
     return { deleted: true };
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     const profile = await this.profileRepo.findOne({
       where: { id },
       withDeleted: true,

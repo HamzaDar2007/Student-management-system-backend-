@@ -6,12 +6,12 @@ export class StudentListQueryDto extends PaginationDto {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  department_id?: number;
+  departmentId?: number;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
-  faculty_id?: number;
+  facultyId?: number;
 
   @IsOptional()
   @IsString()
@@ -29,7 +29,7 @@ export class StudentListQueryDto extends PaginationDto {
 
   @IsOptional()
   @IsString()
-  enrollment_status?: string;
+  enrollmentStatus?: string;
 
   @IsOptional()
   @IsString()

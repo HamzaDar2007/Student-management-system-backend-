@@ -15,13 +15,13 @@ export class CreateAcademicTermDto {
 
   @IsNotEmpty()
   @IsDateString()
-  start_date: string;
+  startDate: string;
 
   @IsNotEmpty()
   @IsDateString()
-  end_date: string;
+  endDate: string;
 
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 }

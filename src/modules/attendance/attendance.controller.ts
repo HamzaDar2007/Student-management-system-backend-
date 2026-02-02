@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -90,7 +91,7 @@ export class AttendanceController {
   @ApiResponse({ status: 200, description: 'Returns attendance report' })
   @ApiResponse({ status: 404, description: 'Course not found' })
   report(
-    @Param('courseId', ParseIntPipe) courseId: number,
+    @Param('courseId', ParseUUIDPipe) courseId: string,
     @Query('start_date') startDate?: string,
     @Query('end_date') endDate?: string,
   ) {

@@ -33,9 +33,9 @@ export class DepartmentsService {
       throw new ConflictException('Department code already exists');
 
     let faculty: Faculty | null = null;
-    if (dto.faculty_id) {
+    if (dto.facultyId) {
       faculty = await this.facultyRepo.findOne({
-        where: { id: dto.faculty_id },
+        where: { id: dto.facultyId },
       });
       if (!faculty) throw new NotFoundException('Faculty not found');
     }
@@ -97,12 +97,12 @@ export class DepartmentsService {
         throw new ConflictException('Department code already exists');
     }
 
-    if (dto.faculty_id !== undefined) {
-      if (dto.faculty_id === null) {
+    if (dto.facultyId !== undefined) {
+      if (dto.facultyId === null) {
         department.faculty = null as unknown as Faculty;
       } else {
         const faculty = await this.facultyRepo.findOne({
-          where: { id: dto.faculty_id },
+          where: { id: dto.facultyId },
         });
         if (!faculty) throw new NotFoundException('Faculty not found');
         department.faculty = faculty;

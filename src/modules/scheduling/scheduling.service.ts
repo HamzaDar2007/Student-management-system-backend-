@@ -28,21 +28,21 @@ export class SchedulingService {
   // Schedule methods
   async create(dto: CreateSchedulingDto) {
     const course = await this.courseRepo.findOne({
-      where: { id: dto.course_id },
+      where: { id: dto.courseId },
     });
     if (!course) throw new NotFoundException('Course not found');
 
     const classroom = await this.classroomRepo.findOne({
-      where: { id: dto.classroom_id },
+      where: { id: dto.classroomId },
     });
     if (!classroom) throw new NotFoundException('Classroom not found');
 
     // Check for time conflicts in the same classroom
     const conflict = await this.checkScheduleConflict(
-      dto.classroom_id,
-      dto.day_of_week,
-      dto.start_time,
-      dto.end_time,
+      dto.classroomId,
+      dto.dayOfWeek,
+      dto.startTime,
+      dto.endTime,
     );
     if (conflict) {
       throw new ConflictException(
@@ -51,11 +51,11 @@ export class SchedulingService {
     }
 
     const schedule = this.scheduleRepo.create({
-      courseId: dto.course_id,
-      classroomId: dto.classroom_id,
-      dayOfWeek: dto.day_of_week,
-      startTime: dto.start_time,
-      endTime: dto.end_time,
+      courseId: dto.courseId,
+      classroomId: dto.classroomId,
+      dayOfWeek: dto.dayOfWeek,
+      startTime: dto.startTime,
+      endTime: dto.endTime,
     });
 
     return this.scheduleRepo.save(schedule);
@@ -103,7 +103,7 @@ export class SchedulingService {
     return schedule;
   }
 
-  async findByCourse(courseId: number) {
+  async findByCourse(courseId: string) {
     return this.scheduleRepo.find({
       where: { courseId },
       relations: ['classroom'],
@@ -123,25 +123,25 @@ export class SchedulingService {
     const schedule = await this.scheduleRepo.findOne({ where: { id } });
     if (!schedule) throw new NotFoundException('Schedule not found');
 
-    if (dto.course_id && dto.course_id !== schedule.courseId) {
+    if (dto.courseId && dto.courseId !== schedule.courseId) {
       const course = await this.courseRepo.findOne({
-        where: { id: dto.course_id },
+        where: { id: dto.courseId },
       });
       if (!course) throw new NotFoundException('Course not found');
     }
 
-    if (dto.classroom_id && dto.classroom_id !== schedule.classroomId) {
+    if (dto.classroomId && dto.classroomId !== schedule.classroomId) {
       const classroom = await this.classroomRepo.findOne({
-        where: { id: dto.classroom_id },
+        where: { id: dto.classroomId },
       });
       if (!classroom) throw new NotFoundException('Classroom not found');
     }
 
     // Check for conflicts if time/classroom changed
-    const classroomId = dto.classroom_id ?? schedule.classroomId;
-    const dayOfWeek = dto.day_of_week ?? schedule.dayOfWeek;
-    const startTime = dto.start_time ?? schedule.startTime;
-    const endTime = dto.end_time ?? schedule.endTime;
+    const classroomId = dto.classroomId ?? schedule.classroomId;
+    const dayOfWeek = dto.dayOfWeek ?? schedule.dayOfWeek;
+    const startTime = dto.startTime ?? schedule.startTime;
+    const endTime = dto.endTime ?? schedule.endTime;
 
     const conflict = await this.checkScheduleConflict(
       classroomId,
@@ -157,11 +157,11 @@ export class SchedulingService {
     }
 
     Object.assign(schedule, {
-      courseId: dto.course_id ?? schedule.courseId,
-      classroomId: dto.classroom_id ?? schedule.classroomId,
-      dayOfWeek: dto.day_of_week ?? schedule.dayOfWeek,
-      startTime: dto.start_time ?? schedule.startTime,
-      endTime: dto.end_time ?? schedule.endTime,
+      courseId: dto.courseId ?? schedule.courseId,
+      classroomId: dto.classroomId ?? schedule.classroomId,
+      dayOfWeek: dto.dayOfWeek ?? schedule.dayOfWeek,
+      startTime: dto.startTime ?? schedule.startTime,
+      endTime: dto.endTime ?? schedule.endTime,
     });
 
     return this.scheduleRepo.save(schedule);
@@ -177,12 +177,12 @@ export class SchedulingService {
   // Classroom methods
   async createClassroom(dto: CreateClassroomDto) {
     const existing = await this.classroomRepo.findOne({
-      where: { roomNumber: dto.room_number },
+      where: { roomNumber: dto.roomNumber },
     });
     if (existing) throw new ConflictException('Room number already exists');
 
     const classroom = this.classroomRepo.create({
-      roomNumber: dto.room_number,
+      roomNumber: dto.roomNumber,
       building: dto.building ?? null,
       capacity: dto.capacity,
       type: dto.type ?? ClassroomType.LECTURE,
@@ -219,15 +219,15 @@ export class SchedulingService {
     const classroom = await this.classroomRepo.findOne({ where: { id } });
     if (!classroom) throw new NotFoundException('Classroom not found');
 
-    if (dto.room_number && dto.room_number !== classroom.roomNumber) {
+    if (dto.roomNumber && dto.roomNumber !== classroom.roomNumber) {
       const existing = await this.classroomRepo.findOne({
-        where: { roomNumber: dto.room_number },
+        where: { roomNumber: dto.roomNumber },
       });
       if (existing) throw new ConflictException('Room number already exists');
     }
 
     Object.assign(classroom, {
-      roomNumber: dto.room_number ?? classroom.roomNumber,
+      roomNumber: dto.roomNumber ?? classroom.roomNumber,
       building: dto.building !== undefined ? dto.building : classroom.building,
       capacity: dto.capacity ?? classroom.capacity,
       type: dto.type ?? classroom.type,

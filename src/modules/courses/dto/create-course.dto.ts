@@ -17,14 +17,14 @@ export class CreateCourseDto {
   )
   @IsString()
   @Length(2, 20)
-  course_code: string;
+  courseCode: string;
 
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
   )
   @IsString()
   @Length(2, 100)
-  course_name: string;
+  courseName: string;
 
   @IsOptional()
   @IsString()
@@ -37,7 +37,7 @@ export class CreateCourseDto {
 
   @IsOptional()
   @IsInt()
-  department_id?: number;
+  departmentId?: number;
 
   @IsOptional()
   @IsInt()
@@ -49,20 +49,20 @@ export class CreateCourseDto {
   @IsInt()
   @Min(1)
   @Max(200)
-  max_students?: number;
+  maxStudents?: number;
 
   @IsOptional()
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 
   @IsOptional()
   @IsString()
-  created_by?: string;
+  createdBy?: string;
 
   @IsOptional()
   @IsArray()
   @ArrayUnique()
   @Type(() => Number)
   @IsInt({ each: true })
-  teacher_ids?: number[];
+  teacherIds?: number[];
 }

@@ -14,10 +14,10 @@ export class AuditService {
 
   async log(dto: CreateAuditDto): Promise<AuditLog> {
     const auditLog = this.auditRepo.create({
-      userId: dto.user_id ?? null,
+      userId: dto.userId ?? null,
       action: dto.action,
       resource: dto.resource,
-      resourceId: dto.resource_id ?? null,
+      resourceId: dto.resourceId ?? null,
       payload: dto.payload ?? null,
     });
     return this.auditRepo.save(auditLog);
@@ -29,14 +29,14 @@ export class AuditService {
     const skip = (page - 1) * limit;
 
     const where: FindOptionsWhere<AuditLog> = {};
-    if (query.user_id) where.userId = query.user_id;
+    if (query.userId) where.userId = query.userId;
     if (query.action) where.action = query.action;
     if (query.resource) where.resource = query.resource;
-    if (query.resource_id) where.resourceId = query.resource_id;
-    if (query.start_date && query.end_date) {
+    if (query.resourceId) where.resourceId = query.resourceId;
+    if (query.startDate && query.endDate) {
       where.createdAt = Between(
-        new Date(query.start_date),
-        new Date(query.end_date),
+        new Date(query.startDate),
+        new Date(query.endDate),
       );
     }
 

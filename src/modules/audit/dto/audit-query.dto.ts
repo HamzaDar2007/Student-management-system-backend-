@@ -8,7 +8,7 @@ export class AuditQueryDto extends PaginationDto {
     value === undefined ? undefined : value,
   )
   @IsString()
-  user_id?: string;
+  userId?: string;
 
   @IsOptional()
   @IsString()
@@ -23,13 +23,13 @@ export class AuditQueryDto extends PaginationDto {
   @IsOptional()
   @IsString()
   @Length(1, 50)
-  resource_id?: string;
+  resourceId?: string;
 
   @IsOptional()
   @IsDateString()
-  start_date?: string;
+  startDate?: string;
 
   @IsOptional()
   @IsDateString()
-  end_date?: string;
+  endDate?: string;
 }

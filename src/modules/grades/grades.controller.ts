@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
@@ -65,7 +66,7 @@ export class GradesController {
   @ApiResponse({ status: 200, description: 'Returns course grades' })
   @ApiResponse({ status: 404, description: 'Course not found' })
   courseGrades(
-    @Param('courseId', ParseIntPipe) courseId: number,
+    @Param('courseId', ParseUUIDPipe) courseId: string,
     @Query('assessment_type') assessmentType?: string,
   ) {
     return this.gradesService.getCourseGrades(courseId, assessmentType);

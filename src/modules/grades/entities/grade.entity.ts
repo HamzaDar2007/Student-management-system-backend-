@@ -24,8 +24,8 @@ export class Grade {
   student: Student;
 
   @Index('idx_grades_course')
-  @Column({ name: 'course_id', type: 'int' })
-  courseId: number;
+  @Column({ name: 'course_id', type: 'uuid' })
+  courseId: string;
 
   @ManyToOne(() => Course, (c) => c.grades, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'course_id' })

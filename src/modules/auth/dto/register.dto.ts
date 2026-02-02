@@ -35,12 +35,12 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   @Length(1, 50)
-  first_name?: string;
+  firstName?: string;
 
   @IsOptional()
   @IsString()
   @Length(1, 50)
-  last_name?: string;
+  lastName?: string;
 
   @IsOptional()
   @IsEnum(UserRole, { message: 'role must be one of: admin, teacher, student' })

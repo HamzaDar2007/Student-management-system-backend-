@@ -21,8 +21,8 @@ export enum AcademicRank {
 
 @Entity({ name: 'teacher_profiles' })
 export class TeacherProfile {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Index('idx_teacher_profiles_user')
   @Column({ name: 'user_id', type: 'uuid', unique: true })

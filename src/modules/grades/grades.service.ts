@@ -22,25 +22,25 @@ export class GradesService {
 
   async create(dto: CreateGradeDto, gradedById: string) {
     const student = await this.studentRepo.findOne({
-      where: { id: dto.student_id },
+      where: { id: dto.studentId },
     });
     if (!student) throw new NotFoundException('Student not found');
 
     const course = await this.courseRepo.findOne({
-      where: { id: dto.course_id },
+      where: { id: dto.courseId },
     });
     if (!course) throw new NotFoundException('Course not found');
 
     const grade = await this.gradeRepo.save(
       this.gradeRepo.create({
-        studentId: dto.student_id,
-        courseId: dto.course_id,
-        assessmentType: dto.assessment_type,
-        assessmentName: dto.assessment_name,
-        maxScore: dto.max_score.toFixed(2),
-        scoreObtained: dto.score_obtained.toFixed(2),
+        studentId: dto.studentId,
+        courseId: dto.courseId,
+        assessmentType: dto.assessmentType,
+        assessmentName: dto.assessmentName,
+        maxScore: dto.maxScore.toFixed(2),
+        scoreObtained: dto.scoreObtained.toFixed(2),
         weightage: dto.weightage ? dto.weightage.toFixed(2) : '100.00',
-        gradedBy: dto.graded_by ?? gradedById,
+        gradedBy: dto.gradedBy ?? gradedById,
         gradedAt: new Date(),
       }),
     );
@@ -54,9 +54,9 @@ export class GradesService {
     const skip = (page - 1) * limit;
 
     const where: FindOptionsWhere<Grade> = {};
-    if (query.student_id) where.studentId = query.student_id;
-    if (query.course_id) where.courseId = query.course_id;
-    if (query.assessment_type) where.assessmentType = query.assessment_type;
+    if (query.studentId) where.studentId = query.studentId;
+    if (query.courseId) where.courseId = query.courseId;
+    if (query.assessmentType) where.assessmentType = query.assessmentType;
 
     const [items, total] = await this.gradeRepo.findAndCount({
       where,
@@ -90,30 +90,30 @@ export class GradesService {
     const grade = await this.gradeRepo.findOne({ where: { id } });
     if (!grade) throw new NotFoundException('Grade not found');
 
-    if (dto.student_id !== undefined) {
+    if (dto.studentId !== undefined) {
       const student = await this.studentRepo.findOne({
-        where: { id: dto.student_id },
+        where: { id: dto.studentId },
       });
       if (!student) throw new NotFoundException('Student not found');
-      grade.studentId = dto.student_id;
+      grade.studentId = dto.studentId;
     }
 
-    if (dto.course_id !== undefined) {
+    if (dto.courseId !== undefined) {
       const course = await this.courseRepo.findOne({
-        where: { id: dto.course_id },
+        where: { id: dto.courseId },
       });
       if (!course) throw new NotFoundException('Course not found');
-      grade.courseId = dto.course_id;
+      grade.courseId = dto.courseId;
     }
 
     Object.assign(grade, {
-      assessmentType: dto.assessment_type ?? grade.assessmentType,
-      assessmentName: dto.assessment_name ?? grade.assessmentName,
+      assessmentType: dto.assessmentType ?? grade.assessmentType,
+      assessmentName: dto.assessmentName ?? grade.assessmentName,
       maxScore:
-        dto.max_score !== undefined ? dto.max_score.toFixed(2) : grade.maxScore,
+        dto.maxScore !== undefined ? dto.maxScore.toFixed(2) : grade.maxScore,
       scoreObtained:
-        dto.score_obtained !== undefined
-          ? dto.score_obtained.toFixed(2)
+        dto.scoreObtained !== undefined
+          ? dto.scoreObtained.toFixed(2)
           : grade.scoreObtained,
       weightage:
         dto.weightage !== undefined
@@ -133,7 +133,7 @@ export class GradesService {
     return { deleted: true };
   }
 
-  async getCourseGrades(courseId: number, assessmentType?: string) {
+  async getCourseGrades(courseId: string, assessmentType?: string) {
     const course = await this.courseRepo.findOne({ where: { id: courseId } });
     if (!course) throw new NotFoundException('Course not found');
 
