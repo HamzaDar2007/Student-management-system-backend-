@@ -23,8 +23,8 @@ export enum UserRole {
 
 @Entity({ name: 'users' })
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Index('idx_users_email')
   @Column({ type: 'varchar', length: 100, unique: true })

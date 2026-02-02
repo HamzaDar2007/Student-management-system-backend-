@@ -1,7 +1,6 @@
 import {
   IsDateString,
   IsEnum,
-  IsInt,
   IsOptional,
   IsString,
   Length,
@@ -9,8 +8,8 @@ import {
 import { AcademicRank } from '../entities/teacher-profile.entity';
 
 export class CreateTeacherProfileDto {
-  @IsInt()
-  user_id: number;
+  @IsString()
+  user_id: string;
 
   @IsString()
   @Length(2, 20)

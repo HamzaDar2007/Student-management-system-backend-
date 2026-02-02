@@ -4,6 +4,7 @@ import {
   DeleteDateColumn,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -25,8 +26,12 @@ export class Faculty {
   @Column({ type: 'varchar', length: 20, unique: true })
   code: string;
 
+  @Column({ name: 'deanId', type: 'uuid', nullable: true })
+  deanId?: string | null;
+
   @ManyToOne(() => User, { nullable: true })
-  dean: User;
+  @JoinColumn({ name: 'deanId' })
+  dean?: User | null;
 
   @OneToMany(() => Department, (dept) => dept.faculty)
   departments: Department[];

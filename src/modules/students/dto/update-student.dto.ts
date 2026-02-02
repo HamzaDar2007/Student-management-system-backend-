@@ -15,8 +15,8 @@ import { Gender } from '../entities/student.entity';
 
 export class UpdateStudentDto {
   @IsOptional()
-  @IsInt()
-  user_id?: number | null;
+  @IsString()
+  user_id?: string | null;
 
   @IsOptional()
   @Transform(({ value }: { value: string | undefined }) =>
@@ -63,4 +63,69 @@ export class UpdateStudentDto {
   @Min(1)
   @Max(8)
   semester?: number | null;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 10)
+  blood_group?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 100)
+  nationality?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 100)
+  emergency_contact_name?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Length(6, 20)
+  emergency_contact_phone?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 50)
+  emergency_contact_relationship?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 100)
+  guardian_name?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Length(6, 20)
+  guardian_phone?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 100)
+  guardian_email?: string | null;
+
+  @IsOptional()
+  @IsString()
+  @Length(1, 50)
+  guardian_relationship?: string | null;
+
+  @IsOptional()
+  @IsString()
+  medical_conditions?: string | null;
+
+  @IsOptional()
+  @IsString()
+  allergies?: string | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(4)
+  current_year?: number | null;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(2)
+  current_semester?: number | null;
 }

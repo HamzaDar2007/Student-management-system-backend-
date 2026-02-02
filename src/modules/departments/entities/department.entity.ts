@@ -28,7 +28,7 @@ export class Department {
   @ManyToOne(() => Faculty, (faculty) => faculty.departments)
   faculty: Faculty;
 
-  @OneToMany(() => Student, (student) => student.departmentEntity)
+  @OneToMany(() => Student, (student) => student.department)
   students: Student[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })

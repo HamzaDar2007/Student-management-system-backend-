@@ -95,7 +95,7 @@ export class TeachersController {
     status: 404,
     description: 'Teacher profile not found for this user',
   })
-  findByUser(@Param('userId', ParseIntPipe) userId: number) {
+  findByUser(@Param('userId') userId: string) {
     return this.teachersService.findByUserId(userId);
   }
 

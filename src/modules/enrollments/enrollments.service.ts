@@ -140,7 +140,7 @@ export class EnrollmentsService {
     return { deleted: true };
   }
 
-  async updateGrade(id: number, grade: string, gradedById: number) {
+  async updateGrade(id: number, grade: string, gradedById: string) {
     const enrollment = await this.enrollmentRepo.findOne({ where: { id } });
     if (!enrollment) throw new NotFoundException('Enrollment not found');
 

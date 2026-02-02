@@ -25,8 +25,8 @@ export class TeacherProfile {
   id: number;
 
   @Index('idx_teacher_profiles_user')
-  @Column({ name: 'user_id', type: 'int', unique: true })
-  userId: number;
+  @Column({ name: 'user_id', type: 'uuid', unique: true })
+  userId: string;
 
   @OneToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })

@@ -46,8 +46,8 @@ export class Grade {
   @Column({ type: 'decimal', precision: 5, scale: 2, default: '100.00' })
   weightage: string;
 
-  @Column({ name: 'graded_by', type: 'int', nullable: true })
-  gradedBy?: number | null;
+  @Column({ name: 'graded_by', type: 'uuid', nullable: true })
+  gradedBy?: string | null;
 
   @ManyToOne(() => User, (u) => u.gradedItems, {
     nullable: true,

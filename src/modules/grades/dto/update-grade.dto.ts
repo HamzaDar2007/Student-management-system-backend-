@@ -44,6 +44,6 @@ export class UpdateGradeDto {
   weightage?: number;
 
   @IsOptional()
-  @IsInt()
-  graded_by?: number | null;
+  @IsString()
+  graded_by?: string | null;
 }

@@ -54,8 +54,8 @@ export class Course {
   isActive: boolean;
 
   // created_by FK -> users.id (nullable) ON DELETE SET NULL
-  @Column({ name: 'created_by', type: 'int', nullable: true })
-  createdBy?: number | null;
+  @Column({ name: 'created_by', type: 'uuid', nullable: true })
+  createdBy?: string | null;
 
   @ManyToOne(() => User, (u) => u.createdCourses, { nullable: true })
   @JoinColumn({ name: 'created_by' })

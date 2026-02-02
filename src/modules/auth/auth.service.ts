@@ -164,7 +164,7 @@ export class AuthService {
     };
   }
 
-  async refreshToken(userId: number, refreshToken: string) {
+  async refreshToken(userId: string, refreshToken: string) {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user || !user.refreshToken)
       throw new UnauthorizedException('Access Denied');
@@ -178,14 +178,14 @@ export class AuthService {
     return tokens;
   }
 
-  async updateRefreshToken(userId: number, refreshToken: string) {
+  async updateRefreshToken(userId: string, refreshToken: string) {
     const hashedRefreshToken = await bcrypt.hash(refreshToken, 10);
     await this.userRepo.update(userId, {
       refreshToken: hashedRefreshToken,
     });
   }
 
-  async getTokens(userId: number, email: string, role: string) {
+  async getTokens(userId: string, email: string, role: string) {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         { sub: userId, email, role },
@@ -280,7 +280,7 @@ export class AuthService {
     return { message: 'Email verified successfully' };
   }
 
-  async getMe(userId: number) {
+  async getMe(userId: string) {
     const user = await this.userRepo.findOne({
       where: { id: userId },
       relations: ['studentProfile'],
@@ -304,7 +304,7 @@ export class AuthService {
     };
   }
 
-  async logout(userId: number) {
+  async logout(userId: string) {
     await this.userRepo.update(userId, { refreshToken: null });
     return { message: 'Logged out successfully' };
   }

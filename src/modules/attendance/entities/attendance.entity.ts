@@ -50,8 +50,8 @@ export class Attendance {
   @Column({ type: 'text', nullable: true })
   notes?: string | null;
 
-  @Column({ name: 'recorded_by', type: 'int', nullable: true })
-  recordedBy?: number | null;
+  @Column({ name: 'recorded_by', type: 'uuid', nullable: true })
+  recordedBy?: string | null;
 
   @ManyToOne(() => User, (u) => u.recordedAttendance, {
     nullable: true,

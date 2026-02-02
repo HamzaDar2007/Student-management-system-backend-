@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -70,35 +69,35 @@ export class UsersController {
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
   @Put(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update user by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'User ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateUserDto) {
+  update(@Param('id') id: string, @Body() dto: UpdateUserDto) {
     return this.usersService.update(id, dto);
   }
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete user by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'User ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'User ID' })
   @ApiResponse({ status: 200, description: 'User deleted successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
 
@@ -125,7 +124,7 @@ export class UsersController {
   })
   @ApiResponse({ status: 404, description: 'User not found' })
   @ApiResponse({ status: 409, description: 'User is not deleted' })
-  restore(@Param('id', ParseIntPipe) id: number) {
+  restore(@Param('id') id: string) {
     return this.usersService.restore(id);
   }
 }

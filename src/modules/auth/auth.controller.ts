@@ -65,7 +65,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid refresh token' })
   refreshToken(
     @Body('refresh_token') rt: string,
-    @Body('user_id') userId: number,
+    @Body('user_id') userId: string,
   ) {
     return this.authService.refreshToken(userId, rt);
   }

@@ -10,7 +10,12 @@ import {
   Put,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  Res,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import type { Response } from 'express';
 import {
   ApiTags,
   ApiOperation,
@@ -145,5 +150,55 @@ export class StudentsController {
   @ApiResponse({ status: 404, description: 'Student not found' })
   attendance(@Param('id', ParseIntPipe) id: number) {
     return this.studentsService.getAttendance(id);
+  }
+
+  @Get('export/csv')
+  @Roles(UserRole.ADMIN, UserRole.TEACHER)
+  @ApiOperation({ summary: 'Export students to CSV' })
+  @ApiResponse({ status: 200, description: 'Returns CSV file' })
+  async exportToCSV(@Query() query: StudentListQueryDto, @Res() res: Response) {
+    const csv = await this.studentsService.exportToCSV(query);
+    res.set({
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="students-${Date.now()}.csv"`,
+    });
+    res.send(csv);
+  }
+
+  @Post('import/csv')
+  @Roles(UserRole.ADMIN)
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiOperation({ summary: 'Import students from CSV (Admin only)' })
+  @ApiResponse({ status: 200, description: 'Returns import results' })
+  @ApiResponse({ status: 400, description: 'Invalid file or data' })
+  async importFromCSV(@UploadedFile() file: Express.Multer.File) {
+    return this.studentsService.importFromCSV(file);
+  }
+
+  @Post('bulk-delete')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Bulk delete students (Admin only)' })
+  @ApiResponse({ status: 200, description: 'Students deleted successfully' })
+  async bulkDelete(@Body('studentIds') studentIds: number[]) {
+    return this.studentsService.bulkDelete(studentIds);
+  }
+
+  @Post('bulk-activate')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Bulk activate students (Admin only)' })
+  @ApiResponse({ status: 200, description: 'Students activated successfully' })
+  async bulkActivate(@Body('studentIds') studentIds: number[]) {
+    return this.studentsService.bulkActivate(studentIds);
+  }
+
+  @Post('bulk-deactivate')
+  @Roles(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Bulk deactivate students (Admin only)' })
+  @ApiResponse({
+    status: 200,
+    description: 'Students deactivated successfully',
+  })
+  async bulkDeactivate(@Body('studentIds') studentIds: number[]) {
+    return this.studentsService.bulkDeactivate(studentIds);
   }
 }

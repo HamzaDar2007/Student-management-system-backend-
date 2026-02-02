@@ -131,7 +131,7 @@ export class AnalyticsService {
   }
 
   // Teacher Analytics
-  async getTeacherStats(userId: number) {
+  async getTeacherStats(userId: string) {
     const teacher = await this.teacherRepo.findOne({ where: { userId } });
     if (!teacher) return null;
 
@@ -184,7 +184,7 @@ export class AnalyticsService {
     };
   }
 
-  async getTeacherCharts(userId: number) {
+  async getTeacherCharts(userId: string) {
     const teacher = await this.teacherRepo.findOne({ where: { userId } });
     if (!teacher) return null;
 
@@ -237,7 +237,7 @@ export class AnalyticsService {
   }
 
   // Student Analytics
-  async getStudentStats(userId: number) {
+  async getStudentStats(userId: string) {
     const student = await this.studentRepo.findOne({ where: { userId } });
     if (!student) return null;
 
@@ -322,7 +322,7 @@ export class AnalyticsService {
     };
   }
 
-  async getStudentCharts(userId: number) {
+  async getStudentCharts(userId: string) {
     const student = await this.studentRepo.findOne({ where: { userId } });
     if (!student) return null;
 

@@ -93,13 +93,13 @@ export class UsersService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const user = await this.userRepo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
     return this.sanitize(user);
   }
 
-  async update(id: number, dto: UpdateUserDto) {
+  async update(id: string, dto: UpdateUserDto) {
     const user = await this.userRepo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
 
@@ -129,14 +129,14 @@ export class UsersService {
     return this.sanitize(saved);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const user = await this.userRepo.findOne({ where: { id } });
     if (!user) throw new NotFoundException('User not found');
     await this.userRepo.softRemove(user);
     return { deleted: true };
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     const user = await this.userRepo.findOne({
       where: { id },
       withDeleted: true,

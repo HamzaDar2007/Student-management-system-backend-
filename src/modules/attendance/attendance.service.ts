@@ -25,7 +25,7 @@ export class AttendanceService {
     private readonly courseRepo: Repository<Course>,
   ) {}
 
-  async create(dto: CreateAttendanceDto, recordedById: number) {
+  async create(dto: CreateAttendanceDto, recordedById: string) {
     const student = await this.studentRepo.findOne({
       where: { id: dto.student_id },
     });
@@ -62,7 +62,7 @@ export class AttendanceService {
     return attendance;
   }
 
-  async bulkCreate(dto: BulkAttendanceDto, recordedById: number) {
+  async bulkCreate(dto: BulkAttendanceDto, recordedById: string) {
     const course = await this.courseRepo.findOne({
       where: { id: dto.course_id },
     });
@@ -148,7 +148,7 @@ export class AttendanceService {
     return attendance;
   }
 
-  async update(id: number, dto: UpdateAttendanceDto, recordedById: number) {
+  async update(id: number, dto: UpdateAttendanceDto, recordedById: string) {
     const attendance = await this.attendanceRepo.findOne({ where: { id } });
     if (!attendance) throw new NotFoundException('Attendance not found');
 

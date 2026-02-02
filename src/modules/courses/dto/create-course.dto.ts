@@ -56,8 +56,8 @@ export class CreateCourseDto {
   is_active?: boolean;
 
   @IsOptional()
-  @IsInt()
-  created_by?: number;
+  @IsString()
+  created_by?: string;
 
   @IsOptional()
   @IsArray()

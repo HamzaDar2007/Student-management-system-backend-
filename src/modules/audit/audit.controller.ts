@@ -92,7 +92,7 @@ export class AuditController {
     status: 403,
     description: 'Forbidden - Admin access required',
   })
-  findByUser(@Param('userId', ParseIntPipe) userId: number) {
+  findByUser(@Param('userId') userId: string) {
     return this.auditService.findByUser(userId);
   }
 }

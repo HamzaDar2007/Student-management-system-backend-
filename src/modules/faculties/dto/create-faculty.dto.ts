@@ -1,10 +1,4 @@
-import {
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  MaxLength,
-  IsInt,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateFacultyDto {
   @IsNotEmpty()
@@ -18,6 +12,6 @@ export class CreateFacultyDto {
   code: string;
 
   @IsOptional()
-  @IsInt()
-  dean_id?: number;
+  @IsString()
+  dean_id?: string;
 }

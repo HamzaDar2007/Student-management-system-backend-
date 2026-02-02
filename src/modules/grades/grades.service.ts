@@ -20,7 +20,7 @@ export class GradesService {
     private readonly courseRepo: Repository<Course>,
   ) {}
 
-  async create(dto: CreateGradeDto, gradedById: number) {
+  async create(dto: CreateGradeDto, gradedById: string) {
     const student = await this.studentRepo.findOne({
       where: { id: dto.student_id },
     });
@@ -86,7 +86,7 @@ export class GradesService {
     return grade;
   }
 
-  async update(id: number, dto: UpdateGradeDto, gradedById: number) {
+  async update(id: number, dto: UpdateGradeDto, gradedById: string) {
     const grade = await this.gradeRepo.findOne({ where: { id } });
     if (!grade) throw new NotFoundException('Grade not found');
 

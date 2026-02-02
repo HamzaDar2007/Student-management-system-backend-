@@ -85,7 +85,7 @@ export class TeachersService {
     return profile;
   }
 
-  async findByUserId(userId: number) {
+  async findByUserId(userId: string) {
     const profile = await this.profileRepo.findOne({
       where: { userId },
       relations: ['user', 'user.teachingCourses'],

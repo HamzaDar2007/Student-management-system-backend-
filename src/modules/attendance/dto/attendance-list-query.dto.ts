@@ -1,20 +1,16 @@
 import { IsDateString, IsEnum, IsInt, IsOptional } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 import { AttendanceStatus } from '../entities/attendance.entity';
 
 export class AttendanceListQueryDto extends PaginationDto {
   @IsOptional()
-  @Transform(({ value }: { value: string }) =>
-    value === undefined ? undefined : parseInt(value, 10),
-  )
+  @Type(() => Number)
   @IsInt()
   student_id?: number;
 
   @IsOptional()
-  @Transform(({ value }: { value: string }) =>
-    value === undefined ? undefined : parseInt(value, 10),
-  )
+  @Type(() => Number)
   @IsInt()
   course_id?: number;
 

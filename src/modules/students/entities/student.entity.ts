@@ -30,8 +30,8 @@ export class Student {
   id: number;
 
   // UNIQUE user_id (nullable) with FK ON DELETE SET NULL
-  @Column({ name: 'user_id', type: 'int', unique: true, nullable: true })
-  userId?: number | null;
+  @Column({ name: 'user_id', type: 'uuid', unique: true, nullable: true })
+  userId?: string | null;
 
   @OneToOne(() => User, (user) => user.studentProfile, { nullable: true })
   @JoinColumn({ name: 'user_id' })
@@ -70,11 +70,85 @@ export class Student {
 
   @ManyToOne(() => Department, (dept) => dept.students, { nullable: true })
   @JoinColumn({ name: 'department_id' })
-  departmentEntity?: Department | null;
+  department?: Department | null;
 
   @Index('idx_students_semester')
   @Column({ type: 'int', nullable: true })
   semester?: number | null;
+
+  @Column({ name: 'blood_group', type: 'varchar', length: 10, nullable: true })
+  bloodGroup?: string | null;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  nationality?: string | null;
+
+  @Column({
+    name: 'emergency_contact_name',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  emergencyContactName?: string | null;
+
+  @Column({
+    name: 'emergency_contact_phone',
+    type: 'varchar',
+    length: 20,
+    nullable: true,
+  })
+  emergencyContactPhone?: string | null;
+
+  @Column({
+    name: 'emergency_contact_relationship',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
+  emergencyContactRelationship?: string | null;
+
+  @Column({
+    name: 'guardian_name',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  guardianName?: string | null;
+
+  @Column({
+    name: 'guardian_phone',
+    type: 'varchar',
+    length: 20,
+    nullable: true,
+  })
+  guardianPhone?: string | null;
+
+  @Column({
+    name: 'guardian_email',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  guardianEmail?: string | null;
+
+  @Column({
+    name: 'guardian_relationship',
+    type: 'varchar',
+    length: 50,
+    nullable: true,
+  })
+  guardianRelationship?: string | null;
+
+  @Column({ name: 'medical_conditions', type: 'text', nullable: true })
+  medicalConditions?: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  allergies?: string | null;
+
+  @Column({ name: 'current_year', type: 'int', nullable: true })
+  currentYear?: number | null;
+
+  @Column({ name: 'current_semester', type: 'int', nullable: true })
+  currentSemester?: number | null;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;

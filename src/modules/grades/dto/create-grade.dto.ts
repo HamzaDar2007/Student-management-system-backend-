@@ -38,6 +38,6 @@ export class CreateGradeDto {
   weightage?: number;
 
   @IsOptional()
-  @IsInt()
-  graded_by?: number;
+  @IsString()
+  graded_by?: string;
 }

@@ -1,26 +1,37 @@
-import { IsInt, IsOptional, IsString, Length, Max, Min } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsInt, IsOptional, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 export class StudentListQueryDto extends PaginationDto {
   @IsOptional()
-  @Transform(({ value }: { value: string }) =>
-    value === undefined ? undefined : parseInt(value, 10),
-  )
+  @Type(() => Number)
   @IsInt()
   department_id?: number;
 
   @IsOptional()
-  @Transform(({ value }: { value: string }) =>
-    value === undefined ? undefined : parseInt(value, 10),
-  )
+  @Type(() => Number)
   @IsInt()
-  @Min(1)
-  @Max(8)
+  faculty_id?: number;
+
+  @IsOptional()
+  @IsString()
+  gender?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  year?: number;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
   semester?: number;
 
   @IsOptional()
   @IsString()
-  @Length(1, 100)
+  enrollment_status?: string;
+
+  @IsOptional()
+  @IsString()
   search?: string;
 }

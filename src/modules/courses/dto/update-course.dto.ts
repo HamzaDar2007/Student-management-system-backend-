@@ -59,8 +59,8 @@ export class UpdateCourseDto {
   is_active?: boolean;
 
   @IsOptional()
-  @IsInt()
-  created_by?: number | null;
+  @IsString()
+  created_by?: string | null;
 
   @IsOptional()
   @IsArray()

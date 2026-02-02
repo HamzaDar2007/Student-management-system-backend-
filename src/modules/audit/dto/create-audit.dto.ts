@@ -1,9 +1,9 @@
-import { IsInt, IsObject, IsOptional, IsString, Length } from 'class-validator';
+import { IsObject, IsOptional, IsString, Length } from 'class-validator';
 
 export class CreateAuditDto {
   @IsOptional()
-  @IsInt()
-  user_id?: number;
+  @IsString()
+  user_id?: string;
 
   @IsString()
   @Length(1, 50)

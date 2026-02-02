@@ -82,7 +82,7 @@ export class AuditService {
     });
   }
 
-  async findByUser(userId: number, limit = 50) {
+  async findByUser(userId: string, limit = 50) {
     return this.auditRepo.find({
       where: { userId },
       order: { createdAt: 'DESC' },
