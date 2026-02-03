@@ -77,7 +77,7 @@ export class GradesService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const grade = await this.gradeRepo.findOne({
       where: { id },
       relations: ['student', 'student.user', 'course', 'gradedByUser'],
@@ -86,7 +86,7 @@ export class GradesService {
     return grade;
   }
 
-  async update(id: number, dto: UpdateGradeDto, gradedById: string) {
+  async update(id: string, dto: UpdateGradeDto, gradedById: string) {
     const grade = await this.gradeRepo.findOne({ where: { id } });
     if (!grade) throw new NotFoundException('Grade not found');
 
@@ -126,7 +126,7 @@ export class GradesService {
     return this.gradeRepo.save(grade);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const grade = await this.gradeRepo.findOne({ where: { id } });
     if (!grade) throw new NotFoundException('Grade not found');
     await this.gradeRepo.remove(grade);

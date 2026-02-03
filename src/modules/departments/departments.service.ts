@@ -68,7 +68,7 @@ export class DepartmentsService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const department = await this.departmentRepo.findOne({
       where: { id },
       relations: ['faculty', 'students'],
@@ -77,7 +77,7 @@ export class DepartmentsService {
     return department;
   }
 
-  async update(id: number, dto: UpdateDepartmentDto) {
+  async update(id: string, dto: UpdateDepartmentDto) {
     const department = await this.departmentRepo.findOne({ where: { id } });
     if (!department) throw new NotFoundException('Department not found');
 
@@ -117,7 +117,7 @@ export class DepartmentsService {
     return this.departmentRepo.save(department);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const department = await this.findOne(id);
     // Check if department has students
     if (department.students && department.students.length > 0) {
@@ -128,7 +128,7 @@ export class DepartmentsService {
     return this.departmentRepo.softDelete(id);
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     const department = await this.departmentRepo.findOne({
       where: { id },
       withDeleted: true,

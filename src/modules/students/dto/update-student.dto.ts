@@ -55,8 +55,8 @@ export class UpdateStudentDto {
   enrollmentDate?: string;
 
   @IsOptional()
-  @IsInt()
-  departmentId?: number | null;
+  @IsString()
+  departmentId?: string | null;
 
   @IsOptional()
   @IsInt()

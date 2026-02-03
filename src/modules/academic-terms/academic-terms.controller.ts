@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -63,17 +64,17 @@ export class AcademicTermsController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get academic term by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Academic term ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Academic term ID' })
   @ApiResponse({ status: 200, description: 'Returns academic term data' })
   @ApiResponse({ status: 404, description: 'Academic term not found' })
-  findOne(@Param('id') id: string) {
-    return this.academicTermsService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.academicTermsService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update academic term by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Academic term ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Academic term ID' })
   @ApiResponse({
     status: 200,
     description: 'Academic term updated successfully',
@@ -85,16 +86,16 @@ export class AcademicTermsController {
   })
   @ApiResponse({ status: 404, description: 'Academic term not found' })
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateAcademicTermDto: UpdateAcademicTermDto,
   ) {
-    return this.academicTermsService.update(+id, updateAcademicTermDto);
+    return this.academicTermsService.update(id, updateAcademicTermDto);
   }
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete academic term by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Academic term ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Academic term ID' })
   @ApiResponse({
     status: 200,
     description: 'Academic term deleted successfully',
@@ -104,8 +105,8 @@ export class AcademicTermsController {
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Academic term not found' })
-  remove(@Param('id') id: string) {
-    return this.academicTermsService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.academicTermsService.remove(id);
   }
 
   @Patch(':id/restore')
@@ -113,14 +114,14 @@ export class AcademicTermsController {
   @ApiOperation({
     summary: 'Restore a soft-deleted academic term (Admin only)',
   })
-  @ApiParam({ name: 'id', type: 'number', description: 'Academic term ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Academic term ID' })
   @ApiResponse({
     status: 200,
     description: 'Academic term restored successfully',
   })
   @ApiResponse({ status: 404, description: 'Academic term not found' })
   @ApiResponse({ status: 409, description: 'Academic term is not deleted' })
-  restore(@Param('id') id: string) {
-    return this.academicTermsService.restore(+id);
+  restore(@Param('id', ParseUUIDPipe) id: string) {
+    return this.academicTermsService.restore(id);
   }
 }

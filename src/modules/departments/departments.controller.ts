@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -59,17 +60,17 @@ export class DepartmentsController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get department by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Department ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Department ID' })
   @ApiResponse({ status: 200, description: 'Returns department data' })
   @ApiResponse({ status: 404, description: 'Department not found' })
-  findOne(@Param('id') id: string) {
-    return this.departmentsService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.departmentsService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update department by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Department ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Department ID' })
   @ApiResponse({ status: 200, description: 'Department updated successfully' })
   @ApiResponse({
     status: 403,
@@ -77,16 +78,16 @@ export class DepartmentsController {
   })
   @ApiResponse({ status: 404, description: 'Department not found' })
   update(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateDepartmentDto: UpdateDepartmentDto,
   ) {
-    return this.departmentsService.update(+id, updateDepartmentDto);
+    return this.departmentsService.update(id, updateDepartmentDto);
   }
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete department by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Department ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Department ID' })
   @ApiResponse({ status: 200, description: 'Department deleted successfully' })
   @ApiResponse({
     status: 403,
@@ -97,18 +98,18 @@ export class DepartmentsController {
     status: 409,
     description: 'Cannot delete department with existing students',
   })
-  remove(@Param('id') id: string) {
-    return this.departmentsService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.departmentsService.remove(id);
   }
 
   @Patch(':id/restore')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Restore a soft-deleted department (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Department ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Department ID' })
   @ApiResponse({ status: 200, description: 'Department restored successfully' })
   @ApiResponse({ status: 404, description: 'Department not found' })
   @ApiResponse({ status: 409, description: 'Department is not deleted' })
-  restore(@Param('id') id: string) {
-    return this.departmentsService.restore(+id);
+  restore(@Param('id', ParseUUIDPipe) id: string) {
+    return this.departmentsService.restore(id);
   }
 }

@@ -139,7 +139,7 @@ export class AttendanceService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const attendance = await this.attendanceRepo.findOne({
       where: { id },
       relations: ['student', 'student.user', 'course', 'recordedByUser'],
@@ -148,7 +148,7 @@ export class AttendanceService {
     return attendance;
   }
 
-  async update(id: number, dto: UpdateAttendanceDto, recordedById: string) {
+  async update(id: string, dto: UpdateAttendanceDto, recordedById: string) {
     const attendance = await this.attendanceRepo.findOne({ where: { id } });
     if (!attendance) throw new NotFoundException('Attendance not found');
 
@@ -178,7 +178,7 @@ export class AttendanceService {
     return this.attendanceRepo.save(attendance);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const attendance = await this.attendanceRepo.findOne({ where: { id } });
     if (!attendance) throw new NotFoundException('Attendance not found');
     await this.attendanceRepo.remove(attendance);

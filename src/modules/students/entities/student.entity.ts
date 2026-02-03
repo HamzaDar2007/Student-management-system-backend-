@@ -65,8 +65,8 @@ export class Student {
   @Column({ name: 'enrollment_date', type: 'date' })
   enrollmentDate: string;
 
-  @Column({ name: 'department_id', type: 'int', nullable: true })
-  departmentId?: number | null;
+  @Column({ name: 'department_id', type: 'uuid', nullable: true })
+  departmentId?: string | null;
 
   @ManyToOne(() => Department, (dept) => dept.students, { nullable: true })
   @JoinColumn({ name: 'department_id' })

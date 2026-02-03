@@ -66,7 +66,7 @@ export class FacultiesService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const faculty = await this.facultyRepo.findOne({
       where: { id },
       relations: ['dean', 'departments'],
@@ -75,7 +75,7 @@ export class FacultiesService {
     return faculty;
   }
 
-  async update(id: number, dto: UpdateFacultyDto) {
+  async update(id: string, dto: UpdateFacultyDto) {
     const faculty = await this.facultyRepo.findOne({ where: { id } });
     if (!faculty) throw new NotFoundException('Faculty not found');
 
@@ -113,7 +113,7 @@ export class FacultiesService {
     return this.facultyRepo.save(faculty);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const faculty = await this.facultyRepo.findOne({
       where: { id },
       relations: ['departments'],
@@ -130,7 +130,7 @@ export class FacultiesService {
     return { deleted: true };
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     const faculty = await this.facultyRepo.findOne({
       where: { id },
       withDeleted: true,

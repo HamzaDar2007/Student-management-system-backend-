@@ -10,8 +10,8 @@ import {
 
 @Entity({ name: 'academic_terms' })
 export class AcademicTerm {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Index('idx_academic_terms_name')
   @Column({ type: 'varchar', length: 50, unique: true })

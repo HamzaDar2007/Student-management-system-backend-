@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Post,
   Put,
@@ -101,24 +100,24 @@ export class AttendanceController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get attendance record by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Attendance ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Attendance ID' })
   @ApiResponse({ status: 200, description: 'Returns attendance record' })
   @ApiResponse({ status: 404, description: 'Attendance record not found' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.attendanceService.findOne(id);
   }
 
   @Put(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Update attendance record by ID (Admin/Teacher)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Attendance ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Attendance ID' })
   @ApiResponse({
     status: 200,
     description: 'Attendance record updated successfully',
   })
   @ApiResponse({ status: 404, description: 'Attendance record not found' })
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateAttendanceDto,
     @CurrentUser() user: User,
   ) {
@@ -128,13 +127,13 @@ export class AttendanceController {
   @Delete(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Delete attendance record by ID (Admin/Teacher)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Attendance ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Attendance ID' })
   @ApiResponse({
     status: 200,
     description: 'Attendance record deleted successfully',
   })
   @ApiResponse({ status: 404, description: 'Attendance record not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.attendanceService.remove(id);
   }
 }

@@ -4,7 +4,7 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
+  ParseUUIDPipe,
   Post,
   Put,
   Patch,
@@ -67,17 +67,17 @@ export class EnrollmentsController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get enrollment by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Enrollment ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Enrollment ID' })
   @ApiResponse({ status: 200, description: 'Returns enrollment data' })
   @ApiResponse({ status: 404, description: 'Enrollment not found' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.enrollmentsService.findOne(id);
   }
 
   @Put(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update enrollment by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Enrollment ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Enrollment ID' })
   @ApiResponse({ status: 200, description: 'Enrollment updated successfully' })
   @ApiResponse({
     status: 403,
@@ -85,7 +85,7 @@ export class EnrollmentsController {
   })
   @ApiResponse({ status: 404, description: 'Enrollment not found' })
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateEnrollmentDto,
   ) {
     return this.enrollmentsService.update(id, dto);
@@ -94,28 +94,28 @@ export class EnrollmentsController {
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete enrollment by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Enrollment ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Enrollment ID' })
   @ApiResponse({ status: 200, description: 'Enrollment deleted successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Enrollment not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.enrollmentsService.remove(id);
   }
 
   @Patch(':id/grade')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Update enrollment grade (Admin/Teacher)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Enrollment ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Enrollment ID' })
   @ApiBody({
     schema: { properties: { grade: { type: 'string', example: 'A' } } },
   })
   @ApiResponse({ status: 200, description: 'Grade updated successfully' })
   @ApiResponse({ status: 404, description: 'Enrollment not found' })
   updateGrade(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body('grade') grade: string,
     @CurrentUser() user: User,
   ) {

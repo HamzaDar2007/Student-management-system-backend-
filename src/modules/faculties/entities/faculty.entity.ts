@@ -15,8 +15,8 @@ import { Department } from '../../departments/entities/department.entity';
 
 @Entity({ name: 'faculties' })
 export class Faculty {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Index('idx_faculties_name')
   @Column({ type: 'varchar', length: 100, unique: true })

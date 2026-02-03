@@ -94,7 +94,7 @@ export class EnrollmentsService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const enrollment = await this.enrollmentRepo.findOne({
       where: { id },
       relations: ['student', 'student.user', 'course'],
@@ -103,7 +103,7 @@ export class EnrollmentsService {
     return enrollment;
   }
 
-  async update(id: number, dto: UpdateEnrollmentDto) {
+  async update(id: string, dto: UpdateEnrollmentDto) {
     const enrollment = await this.enrollmentRepo.findOne({ where: { id } });
     if (!enrollment) throw new NotFoundException('Enrollment not found');
 
@@ -130,14 +130,14 @@ export class EnrollmentsService {
     return this.enrollmentRepo.save(enrollment);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const enrollment = await this.enrollmentRepo.findOne({ where: { id } });
     if (!enrollment) throw new NotFoundException('Enrollment not found');
     await this.enrollmentRepo.remove(enrollment);
     return { deleted: true };
   }
 
-  async updateGrade(id: number, grade: string, gradedById: string) {
+  async updateGrade(id: string, grade: string, gradedById: string) {
     const enrollment = await this.enrollmentRepo.findOne({ where: { id } });
     if (!enrollment) throw new NotFoundException('Enrollment not found');
 

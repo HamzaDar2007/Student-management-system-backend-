@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -58,31 +59,34 @@ export class FacultiesController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get faculty by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Faculty ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Faculty ID' })
   @ApiResponse({ status: 200, description: 'Returns faculty data' })
   @ApiResponse({ status: 404, description: 'Faculty not found' })
-  findOne(@Param('id') id: string) {
-    return this.facultiesService.findOne(+id);
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.facultiesService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update faculty by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Faculty ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Faculty ID' })
   @ApiResponse({ status: 200, description: 'Faculty updated successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Faculty not found' })
-  update(@Param('id') id: string, @Body() updateFacultyDto: UpdateFacultyDto) {
-    return this.facultiesService.update(+id, updateFacultyDto);
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateFacultyDto: UpdateFacultyDto,
+  ) {
+    return this.facultiesService.update(id, updateFacultyDto);
   }
 
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete faculty by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Faculty ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Faculty ID' })
   @ApiResponse({ status: 200, description: 'Faculty deleted successfully' })
   @ApiResponse({
     status: 403,
@@ -93,18 +97,18 @@ export class FacultiesController {
     status: 409,
     description: 'Cannot delete faculty with existing departments',
   })
-  remove(@Param('id') id: string) {
-    return this.facultiesService.remove(+id);
+  remove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.facultiesService.remove(id);
   }
 
   @Patch(':id/restore')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Restore a soft-deleted faculty (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Faculty ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Faculty ID' })
   @ApiResponse({ status: 200, description: 'Faculty restored successfully' })
   @ApiResponse({ status: 404, description: 'Faculty not found' })
   @ApiResponse({ status: 409, description: 'Faculty is not deleted' })
-  restore(@Param('id') id: string) {
-    return this.facultiesService.restore(+id);
+  restore(@Param('id', ParseUUIDPipe) id: string) {
+    return this.facultiesService.restore(id);
   }
 }

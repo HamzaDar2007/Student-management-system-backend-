@@ -40,7 +40,7 @@ export class AcademicTermsService {
 
     // If setting this term as active, deactivate others
     if (term.isActive) {
-      await this.termRepo.update({}, { isActive: false });
+      await this.termRepo.update({ isActive: true }, { isActive: false });
     }
 
     return this.termRepo.save(term);
@@ -64,7 +64,7 @@ export class AcademicTermsService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const term = await this.termRepo.findOne({ where: { id } });
     if (!term) throw new NotFoundException('Academic term not found');
     return term;
@@ -75,7 +75,7 @@ export class AcademicTermsService {
     return term;
   }
 
-  async update(id: number, dto: UpdateAcademicTermDto) {
+  async update(id: string, dto: UpdateAcademicTermDto) {
     const term = await this.termRepo.findOne({ where: { id } });
     if (!term) throw new NotFoundException('Academic term not found');
 
@@ -114,7 +114,7 @@ export class AcademicTermsService {
     return this.termRepo.save(term);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const term = await this.termRepo.findOne({ where: { id } });
     if (!term) throw new NotFoundException('Academic term not found');
 
@@ -126,7 +126,7 @@ export class AcademicTermsService {
     return { deleted: true };
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     const term = await this.termRepo.findOne({
       where: { id },
       withDeleted: true,

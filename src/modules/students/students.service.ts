@@ -413,9 +413,7 @@ export class StudentsService {
           medicalConditions:
             row['Medical Conditions'] || row['medicalConditions'] || undefined,
           allergies: row['Allergies'] || row['allergies'] || undefined,
-          departmentId: row['department_id']
-            ? parseInt(row['department_id'])
-            : undefined,
+          departmentId: row['department_id'] || undefined,
           semester: row['semester'] ? parseInt(row['semester']) : undefined,
           currentYear:
             row['Current Year'] || row['currentYear']

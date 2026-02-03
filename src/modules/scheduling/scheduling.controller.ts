@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   UseGuards,
-  ParseIntPipe,
   ParseUUIDPipe,
   Query,
 } from '@nestjs/common';
@@ -116,27 +115,27 @@ export class SchedulingController {
   @Get('classrooms/:id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get classroom by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Classroom ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Classroom ID' })
   @ApiResponse({ status: 200, description: 'Returns classroom data' })
   @ApiResponse({ status: 404, description: 'Classroom not found' })
-  findOneClassroom(@Param('id', ParseIntPipe) id: number) {
+  findOneClassroom(@Param('id', ParseUUIDPipe) id: string) {
     return this.schedulingService.findOneClassroom(id);
   }
 
   @Get('classrooms/:id/schedules')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get all schedules for a specific classroom' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Classroom ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Classroom ID' })
   @ApiResponse({ status: 200, description: 'Returns classroom schedules' })
   @ApiResponse({ status: 404, description: 'Classroom not found' })
-  findClassroomSchedules(@Param('id', ParseIntPipe) id: number) {
+  findClassroomSchedules(@Param('id', ParseUUIDPipe) id: string) {
     return this.schedulingService.findByClassroom(id);
   }
 
   @Patch('classrooms/:id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update classroom by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Classroom ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Classroom ID' })
   @ApiResponse({ status: 200, description: 'Classroom updated successfully' })
   @ApiResponse({
     status: 403,
@@ -144,7 +143,7 @@ export class SchedulingController {
   })
   @ApiResponse({ status: 404, description: 'Classroom not found' })
   updateClassroom(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateClassroomDto,
   ) {
     return this.schedulingService.updateClassroom(id, dto);
@@ -153,7 +152,7 @@ export class SchedulingController {
   @Delete('classrooms/:id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete classroom by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Classroom ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Classroom ID' })
   @ApiResponse({ status: 200, description: 'Classroom deleted successfully' })
   @ApiResponse({
     status: 403,
@@ -164,7 +163,7 @@ export class SchedulingController {
     status: 409,
     description: 'Cannot delete classroom with existing schedules',
   })
-  removeClassroom(@Param('id', ParseIntPipe) id: number) {
+  removeClassroom(@Param('id', ParseUUIDPipe) id: string) {
     return this.schedulingService.removeClassroom(id);
   }
 
@@ -178,7 +177,7 @@ export class SchedulingController {
   })
   @ApiResponse({ status: 404, description: 'Classroom not found' })
   @ApiResponse({ status: 409, description: 'Classroom is not deleted' })
-  restoreClassroom(@Param('id', ParseIntPipe) id: number) {
+  restoreClassroom(@Param('id', ParseUUIDPipe) id: string) {
     return this.schedulingService.restoreClassroom(id);
   }
 
@@ -199,17 +198,17 @@ export class SchedulingController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get schedule by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Schedule ID' })
   @ApiResponse({ status: 200, description: 'Returns schedule data' })
   @ApiResponse({ status: 404, description: 'Schedule not found' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.schedulingService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update schedule by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Schedule ID' })
   @ApiResponse({ status: 200, description: 'Schedule updated successfully' })
   @ApiResponse({
     status: 403,
@@ -218,7 +217,7 @@ export class SchedulingController {
   @ApiResponse({ status: 404, description: 'Schedule not found' })
   @ApiResponse({ status: 409, description: 'Schedule conflict detected' })
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateSchedulingDto: UpdateSchedulingDto,
   ) {
     return this.schedulingService.update(id, updateSchedulingDto);
@@ -227,25 +226,25 @@ export class SchedulingController {
   @Delete(':id')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete schedule by ID (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Schedule ID' })
   @ApiResponse({ status: 200, description: 'Schedule deleted successfully' })
   @ApiResponse({
     status: 403,
     description: 'Forbidden - Admin access required',
   })
   @ApiResponse({ status: 404, description: 'Schedule not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.schedulingService.remove(id);
   }
 
   @Patch(':id/restore')
   @Roles(UserRole.ADMIN)
   @ApiOperation({ summary: 'Restore a soft-deleted schedule (Admin only)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Schedule ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Schedule ID' })
   @ApiResponse({ status: 200, description: 'Schedule restored successfully' })
   @ApiResponse({ status: 404, description: 'Schedule not found' })
   @ApiResponse({ status: 409, description: 'Schedule is not deleted' })
-  restore(@Param('id', ParseIntPipe) id: number) {
+  restore(@Param('id', ParseUUIDPipe) id: string) {
     return this.schedulingService.restore(id);
   }
 }

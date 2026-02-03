@@ -35,8 +35,8 @@ export class Course {
   @Column({ type: 'int' })
   credits: number;
 
-  @Column({ name: 'department_id', type: 'int', nullable: true })
-  departmentId?: number | null;
+  @Column({ name: 'department_id', type: 'uuid', nullable: true })
+  departmentId?: string | null;
 
   @ManyToOne(() => Department, { nullable: true })
   @JoinColumn({ name: 'department_id' })

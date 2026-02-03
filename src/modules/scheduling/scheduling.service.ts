@@ -94,7 +94,7 @@ export class SchedulingService {
     };
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const schedule = await this.scheduleRepo.findOne({
       where: { id },
       relations: ['course', 'classroom'],
@@ -111,7 +111,7 @@ export class SchedulingService {
     });
   }
 
-  async findByClassroom(classroomId: number) {
+  async findByClassroom(classroomId: string) {
     return this.scheduleRepo.find({
       where: { classroomId },
       relations: ['course'],
@@ -119,7 +119,7 @@ export class SchedulingService {
     });
   }
 
-  async update(id: number, dto: UpdateSchedulingDto) {
+  async update(id: string, dto: UpdateSchedulingDto) {
     const schedule = await this.scheduleRepo.findOne({ where: { id } });
     if (!schedule) throw new NotFoundException('Schedule not found');
 
@@ -148,7 +148,7 @@ export class SchedulingService {
       dayOfWeek,
       startTime,
       endTime,
-      id,
+      schedule.id,
     );
     if (conflict) {
       throw new ConflictException(
@@ -167,7 +167,7 @@ export class SchedulingService {
     return this.scheduleRepo.save(schedule);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const schedule = await this.scheduleRepo.findOne({ where: { id } });
     if (!schedule) throw new NotFoundException('Schedule not found');
     await this.scheduleRepo.softRemove(schedule);
@@ -209,13 +209,13 @@ export class SchedulingService {
     };
   }
 
-  async findOneClassroom(id: number) {
+  async findOneClassroom(id: string) {
     const classroom = await this.classroomRepo.findOne({ where: { id } });
     if (!classroom) throw new NotFoundException('Classroom not found');
     return classroom;
   }
 
-  async updateClassroom(id: number, dto: UpdateClassroomDto) {
+  async updateClassroom(id: string, dto: UpdateClassroomDto) {
     const classroom = await this.classroomRepo.findOne({ where: { id } });
     if (!classroom) throw new NotFoundException('Classroom not found');
 
@@ -236,7 +236,7 @@ export class SchedulingService {
     return this.classroomRepo.save(classroom);
   }
 
-  async removeClassroom(id: number) {
+  async removeClassroom(id: string) {
     const classroom = await this.classroomRepo.findOne({ where: { id } });
     if (!classroom) throw new NotFoundException('Classroom not found');
 
@@ -254,7 +254,7 @@ export class SchedulingService {
     return { deleted: true };
   }
 
-  async restoreClassroom(id: number) {
+  async restoreClassroom(id: string) {
     const classroom = await this.classroomRepo.findOne({
       where: { id },
       withDeleted: true,
@@ -271,7 +271,7 @@ export class SchedulingService {
     return this.classroomRepo.restore(id);
   }
 
-  async restore(id: number) {
+  async restore(id: string) {
     const schedule = await this.scheduleRepo.findOne({
       where: { id },
       withDeleted: true,
@@ -290,11 +290,11 @@ export class SchedulingService {
 
   // Helper method to check for schedule conflicts
   private async checkScheduleConflict(
-    classroomId: number,
+    classroomId: string | null,
     dayOfWeek: number,
     startTime: string,
     endTime: string,
-    excludeId?: number,
+    excludeId?: string,
   ): Promise<boolean> {
     const query = this.scheduleRepo
       .createQueryBuilder('schedule')

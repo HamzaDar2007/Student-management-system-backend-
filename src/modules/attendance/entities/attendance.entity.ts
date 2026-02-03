@@ -21,8 +21,8 @@ export enum AttendanceStatus {
 @Entity({ name: 'attendance' })
 @Unique('uq_attendance_student_course_date', ['studentId', 'courseId', 'date'])
 export class Attendance {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Index('idx_attendance_student_date')
   @Column({ name: 'student_id', type: 'uuid' })

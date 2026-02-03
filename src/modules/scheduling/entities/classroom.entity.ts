@@ -16,8 +16,8 @@ export enum ClassroomType {
 
 @Entity({ name: 'classrooms' })
 export class Classroom {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ name: 'room_number', type: 'varchar', length: 20, unique: true })
   roomNumber: string;

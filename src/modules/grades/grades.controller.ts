@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  ParseIntPipe,
   ParseUUIDPipe,
   Post,
   Put,
@@ -75,22 +74,22 @@ export class GradesController {
   @Get(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER, UserRole.STUDENT)
   @ApiOperation({ summary: 'Get grade by ID' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Grade ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Grade ID' })
   @ApiResponse({ status: 200, description: 'Returns grade data' })
   @ApiResponse({ status: 404, description: 'Grade not found' })
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.gradesService.findOne(id);
   }
 
   @Put(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Update grade by ID (Admin/Teacher)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Grade ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Grade ID' })
   @ApiResponse({ status: 200, description: 'Grade updated successfully' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Grade not found' })
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: UpdateGradeDto,
     @CurrentUser() user: User,
   ) {
@@ -100,11 +99,11 @@ export class GradesController {
   @Delete(':id')
   @Roles(UserRole.ADMIN, UserRole.TEACHER)
   @ApiOperation({ summary: 'Delete grade by ID (Admin/Teacher)' })
-  @ApiParam({ name: 'id', type: 'number', description: 'Grade ID' })
+  @ApiParam({ name: 'id', type: 'string', description: 'Grade ID' })
   @ApiResponse({ status: 200, description: 'Grade deleted successfully' })
   @ApiResponse({ status: 403, description: 'Forbidden' })
   @ApiResponse({ status: 404, description: 'Grade not found' })
-  remove(@Param('id', ParseIntPipe) id: number) {
+  remove(@Param('id', ParseUUIDPipe) id: string) {
     return this.gradesService.remove(id);
   }
 }

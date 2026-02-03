@@ -13,8 +13,8 @@ import { Classroom } from './classroom.entity';
 
 @Entity({ name: 'schedules' })
 export class Schedule {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({ name: 'course_id', type: 'uuid' })
   courseId: string;
@@ -23,8 +23,8 @@ export class Schedule {
   @JoinColumn({ name: 'course_id' })
   course: Course;
 
-  @Column({ name: 'classroom_id', type: 'int' })
-  classroomId: number;
+  @Column({ name: 'classroom_id', type: 'uuid', nullable: true })
+  classroomId: string | null;
 
   @ManyToOne(() => Classroom, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'classroom_id' })

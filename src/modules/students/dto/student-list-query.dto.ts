@@ -4,14 +4,12 @@ import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 export class StudentListQueryDto extends PaginationDto {
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  departmentId?: number;
+  @IsString()
+  departmentId?: string;
 
   @IsOptional()
-  @Type(() => Number)
-  @IsInt()
-  facultyId?: number;
+  @IsString()
+  facultyId?: string;
 
   @IsOptional()
   @IsString()

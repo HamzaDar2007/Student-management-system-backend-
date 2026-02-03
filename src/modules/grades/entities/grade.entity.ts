@@ -12,8 +12,8 @@ import { User } from '../../users/entities/user.entity';
 
 @Entity({ name: 'grades' })
 export class Grade {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Index('idx_grades_student_course')
   @Column({ name: 'student_id', type: 'uuid' })

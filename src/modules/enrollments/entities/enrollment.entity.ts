@@ -20,8 +20,8 @@ export enum EnrollmentStatus {
 @Entity({ name: 'enrollments' })
 @Unique('uq_enrollments_student_course', ['studentId', 'courseId'])
 export class Enrollment {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Index('idx_enrollments_student_id')
   @Column({ name: 'student_id', type: 'uuid' })

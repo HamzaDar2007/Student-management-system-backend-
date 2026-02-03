@@ -1,14 +1,18 @@
-import { IsBoolean, IsInt, IsOptional, Max, Min } from 'class-validator';
+import {
+  IsBoolean,
+  IsInt,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 import { Transform } from 'class-transformer';
 import { PaginationDto } from '../../../common/dto/pagination.dto';
 
 export class CourseListQueryDto extends PaginationDto {
   @IsOptional()
-  @Transform(({ value }: { value: string }) =>
-    value === undefined ? undefined : parseInt(value, 10),
-  )
-  @IsInt()
-  departmentId?: number;
+  @IsString()
+  departmentId?: string;
 
   @IsOptional()
   @Transform(({ value }: { value: string }) =>

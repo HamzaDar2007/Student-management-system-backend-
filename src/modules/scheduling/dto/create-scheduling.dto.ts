@@ -13,8 +13,8 @@ export class CreateSchedulingDto {
   courseId: string;
 
   @IsNotEmpty()
-  @IsInt()
-  classroomId: number;
+  @IsString()
+  classroomId: string;
 
   @IsNotEmpty()
   @IsInt()
