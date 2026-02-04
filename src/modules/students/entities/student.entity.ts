@@ -29,13 +29,13 @@ export class Student {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  // UNIQUE user_id (nullable) with FK ON DELETE SET NULL
-  @Column({ name: 'user_id', type: 'uuid', unique: true, nullable: true })
-  userId?: string | null;
+  // UNIQUE user_id (required) with FK ON DELETE CASCADE
+  @Column({ name: 'user_id', type: 'uuid', unique: true })
+  userId: string;
 
-  @OneToOne(() => User, (user) => user.studentProfile, { nullable: true })
+  @OneToOne(() => User, (user) => user.studentProfile)
   @JoinColumn({ name: 'user_id' })
-  user?: User | null;
+  user: User;
 
   @Index('idx_students_student_id')
   @Column({ name: 'student_id', type: 'varchar', length: 20, unique: true })

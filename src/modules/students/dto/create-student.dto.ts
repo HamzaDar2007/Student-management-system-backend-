@@ -2,6 +2,7 @@ import {
   IsDateString,
   IsEnum,
   IsInt,
+  IsNotEmpty,
   IsOptional,
   IsString,
   Length,
@@ -14,9 +15,9 @@ import { MinAge } from '../../../common/validators/min-age.decorator';
 import { Gender } from '../entities/student.entity';
 
 export class CreateStudentDto {
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  userId?: string;
+  userId: string;
 
   @Transform(({ value }: { value: string }) =>
     typeof value === 'string' ? value.trim().toUpperCase() : value,
